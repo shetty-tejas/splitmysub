@@ -1,12 +1,20 @@
 class BillingCyclesController < ApplicationController
-  before_action :set_project, only: [ :index, :show, :new, :create, :edit, :update, :destroy, :generate_upcoming ]
-  before_action :set_billing_cycle, only: [ :show, :edit, :update, :destroy ]
-  before_action :ensure_project_access, only: [ :index, :show, :new, :create, :edit, :update, :destroy, :generate_upcoming ]
-  before_action :ensure_project_owner, only: [ :destroy, :generate_upcoming ]
+  before_action :set_project, only: [ :index, :show, :new, :create, :edit, :update, :destroy, :generate_upcoming, :archive, :unarchive, :adjust ]
+  before_action :set_billing_cycle, only: [ :show, :edit, :update, :destroy, :archive, :unarchive, :adjust ]
+  before_action :ensure_project_access, only: [ :index, :show, :new, :create, :edit, :update, :destroy, :generate_upcoming, :archive, :unarchive, :adjust ]
+  before_action :ensure_project_owner, only: [ :destroy, :generate_upcoming, :archive, :unarchive, :adjust ]
 
   def index
     @billing_cycles = @project.billing_cycles.includes(:payments)
-                              .order(due_date: :desc)
+
+    # Apply archive filter
+    if params[:show_archived] == "true"
+      @billing_cycles = @billing_cycles.archived
+    else
+      @billing_cycles = @billing_cycles.active
+    end
+
+    @billing_cycles = @billing_cycles.order(due_date: :desc)
 
     # Apply filters
     @billing_cycles = @billing_cycles.upcoming if params[:filter] == "upcoming"
@@ -38,7 +46,8 @@ class BillingCyclesController < ApplicationController
       filters: {
         filter: params[:filter],
         search: params[:search],
-        sort: params[:sort]
+        sort: params[:sort],
+        show_archived: params[:show_archived]
       }
     }
   end
@@ -120,6 +129,41 @@ class BillingCyclesController < ApplicationController
     end
   end
 
+  def archive
+    @billing_cycle.archive!
+    redirect_to project_billing_cycles_path(@project), notice: "Billing cycle archived successfully!"
+  end
+
+  def unarchive
+    @billing_cycle.unarchive!
+    redirect_to project_billing_cycles_path(@project), notice: "Billing cycle unarchived successfully!"
+  end
+
+  def adjust
+    if request.post?
+      adjustment_params = params.require(:adjustment).permit(:new_amount, :new_due_date, :reason)
+
+      begin
+        if adjustment_params[:new_amount].present?
+          @billing_cycle.adjust_amount!(adjustment_params[:new_amount].to_f, adjustment_params[:reason])
+        end
+
+        if adjustment_params[:new_due_date].present?
+          @billing_cycle.adjust_due_date!(Date.parse(adjustment_params[:new_due_date]), adjustment_params[:reason])
+        end
+
+        redirect_to [ @project, @billing_cycle ], notice: "Billing cycle adjusted successfully!"
+      rescue => e
+        redirect_to [ @project, @billing_cycle ], alert: "Failed to adjust billing cycle: #{e.message}"
+      end
+    else
+      render inertia: "billing_cycles/Adjust", props: {
+        project: project_props(@project),
+        billing_cycle: billing_cycle_props(@billing_cycle)
+      }
+    end
+  end
+
   private
 
   def set_project
@@ -186,7 +230,16 @@ class BillingCyclesController < ApplicationController
       expected_payment_per_member: billing_cycle.expected_payment_per_member,
       payments_count: billing_cycle.payments.count,
       created_at: billing_cycle.created_at,
-      updated_at: billing_cycle.updated_at
+      updated_at: billing_cycle.updated_at,
+      archived: billing_cycle.archived?,
+      archived_at: billing_cycle.archived_at,
+      archivable: billing_cycle.archivable?,
+      adjusted: billing_cycle.adjusted?,
+      adjusted_at: billing_cycle.adjusted_at,
+      adjustment_reason: billing_cycle.adjustment_reason,
+      adjustment_summary: billing_cycle.adjustment_summary,
+      original_amount: billing_cycle.original_amount,
+      original_due_date: billing_cycle.original_due_date
     }
   end
 
@@ -221,17 +274,24 @@ class BillingCyclesController < ApplicationController
 
   def billing_cycle_stats
     all_cycles = @project.billing_cycles
+    active_cycles = all_cycles.active
+    archived_cycles = all_cycles.archived
+
     {
       total: all_cycles.count,
-      upcoming: all_cycles.upcoming.count,
-      overdue: all_cycles.overdue.count,
-      due_soon: all_cycles.due_soon.count,
-      fully_paid: all_cycles.select(&:fully_paid?).count,
-      partially_paid: all_cycles.select(&:partially_paid?).count,
-      unpaid: all_cycles.select(&:unpaid?).count,
-      total_amount: all_cycles.sum(:total_amount),
-      total_paid: all_cycles.sum(&:total_paid),
-      total_remaining: all_cycles.sum(&:amount_remaining)
+      active: active_cycles.count,
+      archived: archived_cycles.count,
+      upcoming: active_cycles.upcoming.count,
+      overdue: active_cycles.overdue.count,
+      due_soon: active_cycles.due_soon.count,
+      fully_paid: active_cycles.select(&:fully_paid?).count,
+      partially_paid: active_cycles.select(&:partially_paid?).count,
+      unpaid: active_cycles.select(&:unpaid?).count,
+      adjusted: all_cycles.select(&:adjusted?).count,
+      archivable: all_cycles.select(&:archivable?).count,
+      total_amount: active_cycles.sum(:total_amount),
+      total_paid: active_cycles.sum(&:total_paid),
+      total_remaining: active_cycles.sum(&:amount_remaining)
     }
   end
 

@@ -225,6 +225,120 @@ class BillingCyclesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Project not found or access denied.", flash[:alert]
   end
 
+  test "should archive billing cycle as project owner" do
+    assert_not @billing_cycle.archived?
+
+    patch archive_project_billing_cycle_path(@project, @billing_cycle)
+
+    assert_redirected_to project_billing_cycles_path(@project)
+    assert_equal "Billing cycle archived successfully!", flash[:notice]
+    assert @billing_cycle.reload.archived?
+  end
+
+  test "should unarchive billing cycle as project owner" do
+    @billing_cycle.archive!
+    assert @billing_cycle.archived?
+
+    patch unarchive_project_billing_cycle_path(@project, @billing_cycle)
+
+    assert_redirected_to project_billing_cycles_path(@project)
+    assert_equal "Billing cycle unarchived successfully!", flash[:notice]
+    assert_not @billing_cycle.reload.archived?
+  end
+
+  test "should not archive billing cycle as project member" do
+    sign_in_as(@member)
+
+    patch archive_project_billing_cycle_path(@project, @billing_cycle)
+
+    assert_redirected_to root_path
+    assert_not @billing_cycle.reload.archived?
+  end
+
+  test "should get adjust form as project owner" do
+    get adjust_project_billing_cycle_path(@project, @billing_cycle)
+    assert_response :success
+  end
+
+  test "should adjust billing cycle amount as project owner" do
+    original_amount = @billing_cycle.total_amount
+    new_amount = 25.99
+    reason = "Price increase"
+
+    post adjust_project_billing_cycle_path(@project, @billing_cycle), params: {
+      adjustment: {
+        new_amount: new_amount,
+        reason: reason
+      }
+    }
+
+    assert_redirected_to project_billing_cycle_path(@project, @billing_cycle)
+    assert_equal "Billing cycle adjusted successfully!", flash[:notice]
+
+    @billing_cycle.reload
+    assert_equal new_amount, @billing_cycle.total_amount
+    assert_equal original_amount, @billing_cycle.original_amount
+    assert_equal reason, @billing_cycle.adjustment_reason
+    assert @billing_cycle.adjusted?
+  end
+
+  test "should adjust billing cycle due date as project owner" do
+    original_due_date = @billing_cycle.due_date
+    new_due_date = 2.weeks.from_now.to_date
+    reason = "Extended deadline"
+
+    post adjust_project_billing_cycle_path(@project, @billing_cycle), params: {
+      adjustment: {
+        new_due_date: new_due_date.to_s,
+        reason: reason
+      }
+    }
+
+    assert_redirected_to project_billing_cycle_path(@project, @billing_cycle)
+    assert_equal "Billing cycle adjusted successfully!", flash[:notice]
+
+    @billing_cycle.reload
+    assert_equal new_due_date, @billing_cycle.due_date
+    assert_equal original_due_date, @billing_cycle.original_due_date
+    assert_equal reason, @billing_cycle.adjustment_reason
+    assert @billing_cycle.adjusted?
+  end
+
+  test "should not adjust billing cycle as project member" do
+    sign_in_as(@member)
+
+    get adjust_project_billing_cycle_path(@project, @billing_cycle)
+    assert_redirected_to root_path
+  end
+
+  test "should filter archived billing cycles" do
+    archived_cycle = @project.billing_cycles.create!(
+      due_date: 1.month.from_now,
+      total_amount: 15.99,
+      archived: true
+    )
+
+    # Test showing active cycles (default)
+    get project_billing_cycles_path(@project)
+    assert_response :success
+
+    # Test showing archived cycles
+    get project_billing_cycles_path(@project), params: { show_archived: "true" }
+    assert_response :success
+  end
+
+  test "should handle adjustment errors gracefully" do
+    post adjust_project_billing_cycle_path(@project, @billing_cycle), params: {
+      adjustment: {
+        new_amount: "invalid",
+        reason: "Test"
+      }
+    }
+
+    assert_redirected_to project_billing_cycle_path(@project, @billing_cycle)
+    assert_includes flash[:alert], "Failed to adjust billing cycle"
+  end
+
   private
 
   def sign_in_as(user)

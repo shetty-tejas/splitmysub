@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_192005) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_203245) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -45,6 +45,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_192005) do
     t.decimal "total_amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "archived", default: false, null: false
+    t.datetime "archived_at"
+    t.text "adjustment_reason"
+    t.datetime "adjusted_at"
+    t.decimal "original_amount"
+    t.date "original_due_date"
+    t.index ["adjusted_at"], name: "index_billing_cycles_on_adjusted_at"
+    t.index ["archived"], name: "index_billing_cycles_on_archived"
+    t.index ["archived_at"], name: "index_billing_cycles_on_archived_at"
     t.index ["due_date"], name: "index_billing_cycles_on_due_date"
     t.index ["project_id", "due_date"], name: "index_billing_cycles_on_project_id_and_due_date"
     t.index ["project_id"], name: "index_billing_cycles_on_project_id"
