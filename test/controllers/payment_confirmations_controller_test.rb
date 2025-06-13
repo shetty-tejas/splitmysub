@@ -26,7 +26,13 @@ class PaymentConfirmationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not get index when not project owner" do
-    sign_in_as(@other_user)
+    # Create a user with no relationship to the project
+    non_member_user = User.create!(
+      email_address: "nonmember@example.com",
+      first_name: "Non",
+      last_name: "Member"
+    )
+    sign_in_as(non_member_user)
     get project_payment_confirmations_url(@project)
     assert_redirected_to project_url(@project)
     assert_equal "You don't have permission to manage payment confirmations.", flash[:alert]
@@ -39,7 +45,13 @@ class PaymentConfirmationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not get show when not project owner" do
-    sign_in_as(@other_user)
+    # Create a user with no relationship to the project
+    non_member_user = User.create!(
+      email_address: "nonmember2@example.com",
+      first_name: "Non",
+      last_name: "Member2"
+    )
+    sign_in_as(non_member_user)
     get project_payment_confirmation_url(@project, @payment)
     assert_redirected_to project_url(@project)
     assert_equal "You don't have permission to manage payment confirmations.", flash[:alert]
@@ -211,12 +223,14 @@ class PaymentConfirmationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should handle project not found" do
-    get project_payment_confirmations_url(id: 99999)
+    get project_payment_confirmations_url(project_id: 99999)
     assert_redirected_to projects_url
     assert_equal "Project not found.", flash[:alert]
   end
 
   test "should allow admin to access payment confirmations" do
+    # Clear existing memberships to avoid conflicts
+    @project.project_memberships.where(user: @other_user).destroy_all
     # Create an admin membership for other_user
     @project.project_memberships.create!(user: @other_user, role: "admin")
     sign_in_as(@other_user)
@@ -226,6 +240,8 @@ class PaymentConfirmationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not allow regular member to access payment confirmations" do
+    # Clear existing memberships to avoid conflicts
+    @project.project_memberships.where(user: @other_user).destroy_all
     # Create a regular membership for other_user
     @project.project_memberships.create!(user: @other_user, role: "member")
     sign_in_as(@other_user)

@@ -2,6 +2,7 @@ class BillingCyclesController < ApplicationController
   before_action :set_project, only: [ :index, :show, :new, :create, :edit, :update, :destroy, :generate_upcoming ]
   before_action :set_billing_cycle, only: [ :show, :edit, :update, :destroy ]
   before_action :ensure_project_access, only: [ :index, :show, :new, :create, :edit, :update, :destroy, :generate_upcoming ]
+  before_action :ensure_project_owner, only: [ :destroy, :generate_upcoming ]
 
   def index
     @billing_cycles = @project.billing_cycles.includes(:payments)
@@ -15,7 +16,7 @@ class BillingCyclesController < ApplicationController
     # Apply search
     if params[:search].present?
       search_term = "%#{params[:search]}%"
-      @billing_cycles = @billing_cycles.where("total_amount::text LIKE ?", search_term)
+      @billing_cycles = @billing_cycles.where("CAST(total_amount AS TEXT) LIKE ?", search_term)
     end
 
     # Apply sorting
@@ -140,6 +141,12 @@ class BillingCyclesController < ApplicationController
 
   def ensure_project_access
     unless @project.is_owner?(Current.user) || @project.is_member?(Current.user)
+      redirect_to root_path, alert: "Access denied."
+    end
+  end
+
+  def ensure_project_owner
+    unless @project.is_owner?(Current.user)
       redirect_to root_path, alert: "Access denied."
     end
   end

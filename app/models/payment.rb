@@ -177,11 +177,11 @@ class Payment < ApplicationRecord
   end
 
   def track_status_change
-    return unless status.present? && status_changed?
+    return unless status.present? && saved_change_to_status?
 
     change_record = {
-      from_status: status_was,
-      to_status: status,
+      from_status: saved_change_to_status[0],
+      to_status: saved_change_to_status[1],
       changed_at: Time.current.iso8601,
       changed_by: confirmed_by&.email_address
     }

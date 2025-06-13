@@ -16,7 +16,7 @@ class PaymentConfirmationsController < ApplicationController
     if params[:search].present?
       search_term = "%#{params[:search]}%"
       @payments = @payments.joins(:user)
-                          .where("users.email_address ILIKE ? OR payments.transaction_id ILIKE ? OR payments.confirmation_notes ILIKE ?",
+                          .where("users.email_address LIKE ? OR payments.transaction_id LIKE ? OR payments.confirmation_notes LIKE ?",
                                 search_term, search_term, search_term)
     end
 
@@ -109,6 +109,13 @@ class PaymentConfirmationsController < ApplicationController
     end
 
     payments = @project.payments.where(id: payment_ids)
+
+    if payments.empty?
+      redirect_back(fallback_location: project_payment_confirmations_path(@project),
+                   alert: "No payments selected.")
+      return
+    end
+
     success_count = 0
     error_count = 0
 

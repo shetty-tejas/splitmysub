@@ -19,14 +19,15 @@ class BillingCycle < ApplicationRecord
 
   # Business logic methods
   def overdue?
-    due_date < Date.current
+    due_date && due_date < Date.current
   end
 
   def due_soon?(days = 7)
-    due_date <= days.days.from_now && due_date >= Date.current
+    due_date && due_date <= days.days.from_now && due_date >= Date.current
   end
 
   def days_until_due
+    return 0 unless due_date
     (due_date - Date.current).to_i
   end
 
