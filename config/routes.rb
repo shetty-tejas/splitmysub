@@ -17,6 +17,13 @@ Rails.application.routes.draw do
 
   resources :passwords, param: :token, only: %i[new create edit update]
 
+  # Dashboard routes
+  get "dashboard" => "dashboard#index", as: :dashboard
+  get "dashboard/payment_history" => "dashboard#payment_history", as: :dashboard_payment_history
+  get "dashboard/upcoming_payments" => "dashboard#upcoming_payments", as: :dashboard_upcoming_payments
+  get "dashboard/analytics" => "dashboard#analytics", as: :dashboard_analytics
+  get "dashboard/export_payments" => "dashboard#export_payments", as: :dashboard_export_payments
+
   resources :projects do
     resources :invitations, only: [ :index, :create, :destroy ]
     # Payment confirmation routes for project creators

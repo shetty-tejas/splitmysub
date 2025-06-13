@@ -2,7 +2,13 @@
   // grab page props from inertia
   import { page, Link, router } from "@inertiajs/svelte";
   import Logo from "$lib/components/logo.svelte";
-  import { UserCircle, Menu, LogOut, FolderOpen } from "lucide-svelte";
+  import {
+    UserCircle,
+    Menu,
+    LogOut,
+    FolderOpen,
+    BarChart3,
+  } from "lucide-svelte";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { Button, buttonVariants } from "$lib/components/ui/button/index.js";
   import { cn } from "$lib/utils.js";
@@ -35,15 +41,32 @@
         <Logo class="h-10 w-42 text-primary" />
       </Link>
       <div class="hidden md:flex items-center">
-        {#each links as link}
+        {#if currentUser}
           <Link
-            href={link.href}
+            href="/dashboard"
             class={cn(
               buttonVariants({ variant: "ghost" }),
               "rounded-full text-muted-foreground",
-            )}>{link.label}</Link
+            )}>Dashboard</Link
           >
-        {/each}
+          <Link
+            href="/projects"
+            class={cn(
+              buttonVariants({ variant: "ghost" }),
+              "rounded-full text-muted-foreground",
+            )}>Projects</Link
+          >
+        {:else}
+          {#each links as link}
+            <Link
+              href={link.href}
+              class={cn(
+                buttonVariants({ variant: "ghost" }),
+                "rounded-full text-muted-foreground",
+              )}>{link.label}</Link
+            >
+          {/each}
+        {/if}
       </div>
     </div>
     {#if currentUser}
@@ -68,6 +91,10 @@
               </div>
             </DropdownMenu.GroupHeading>
             <DropdownMenu.Separator />
+            <DropdownMenu.Item onclick={() => router.visit("/dashboard")}>
+              <BarChart3 class="mr-2 size-4" />
+              <span>Dashboard</span>
+            </DropdownMenu.Item>
             <DropdownMenu.Item onclick={() => router.visit(projectsPath())}>
               <FolderOpen class="mr-2 size-4" />
               <span>Projects</span>

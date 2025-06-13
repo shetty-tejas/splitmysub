@@ -35,7 +35,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
 
     get verify_magic_link_url(token: magic_link.token)
 
-    assert_redirected_to projects_url
+    assert_redirected_to dashboard_url
     assert_equal "Successfully signed in with magic link!", flash[:notice]
 
     # Verify magic link was used

@@ -67,3 +67,7 @@ gem "vite_rails", "~> 3.0"
 gem "bcrypt", "~> 3.1"
 
 gem "js-routes", "~> 2.3"
+
+gem "kaminari", "~> 1.2"
+
+gem "csv", "~> 3.3"
