@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+login_link:
+  user: test_user
+  token: "abc123def456"
+  expires_at: <%= 1.hour.from_now %>
+  used: false
+
+payment_submission_link:
+  user: member_user
+  token: "xyz789uvw012"
+  expires_at: <%= 30.minutes.from_now %>
+  used: false
+
+expired_link:
+  user: other_user
+  token: "expired123"
+  expires_at: <%= 1.hour.ago %>
+  used: false
+
+used_link:
+  user: test_user
+  token: "used456"
+  expires_at: <%= 30.minutes.from_now %>
+  used: true

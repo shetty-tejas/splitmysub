@@ -1,0 +1,176 @@
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_112718) do
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "billing_cycles", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.date "due_date"
+    t.decimal "total_amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["due_date"], name: "index_billing_cycles_on_due_date"
+    t.index ["project_id", "due_date"], name: "index_billing_cycles_on_project_id_and_due_date"
+    t.index ["project_id"], name: "index_billing_cycles_on_project_id"
+  end
+
+  create_table "invitations", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.string "email", null: false
+    t.string "token", null: false
+    t.string "status", default: "pending", null: false
+    t.integer "invited_by_id", null: false
+    t.string "role", default: "member", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_invitations_on_email"
+    t.index ["expires_at"], name: "index_invitations_on_expires_at"
+    t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
+    t.index ["project_id", "email"], name: "index_invitations_on_project_id_and_email", unique: true
+    t.index ["project_id"], name: "index_invitations_on_project_id"
+    t.index ["status"], name: "index_invitations_on_status"
+    t.index ["token"], name: "index_invitations_on_token", unique: true
+  end
+
+  create_table "magic_links", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "token"
+    t.datetime "expires_at"
+    t.boolean "used", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_magic_links_on_expires_at"
+    t.index ["token", "expires_at", "used"], name: "index_magic_links_for_validation"
+    t.index ["token"], name: "index_magic_links_on_token", unique: true
+    t.index ["user_id", "used"], name: "index_magic_links_on_user_id_and_used"
+    t.index ["user_id"], name: "index_magic_links_on_user_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.integer "billing_cycle_id", null: false
+    t.integer "user_id", null: false
+    t.decimal "amount"
+    t.string "status"
+    t.date "confirmation_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "transaction_id"
+    t.text "notes"
+    t.index ["billing_cycle_id", "user_id"], name: "index_payments_on_billing_cycle_id_and_user_id", unique: true
+    t.index ["billing_cycle_id"], name: "index_payments_on_billing_cycle_id"
+    t.index ["status", "confirmation_date"], name: "index_payments_on_status_and_confirmation_date"
+    t.index ["status"], name: "index_payments_on_status"
+    t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
+  create_table "project_memberships", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "project_id", null: false
+    t.string "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_project_memberships_on_project_id"
+    t.index ["role"], name: "index_project_memberships_on_role"
+    t.index ["user_id", "project_id"], name: "index_project_memberships_on_user_id_and_project_id", unique: true
+    t.index ["user_id"], name: "index_project_memberships_on_user_id"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.string "name"
+    t.decimal "cost"
+    t.string "billing_cycle"
+    t.date "renewal_date"
+    t.text "payment_instructions"
+    t.integer "reminder_days"
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "description"
+    t.string "subscription_url"
+    t.index ["billing_cycle"], name: "index_projects_on_billing_cycle"
+    t.index ["renewal_date"], name: "index_projects_on_renewal_date"
+    t.index ["user_id", "renewal_date"], name: "index_projects_on_user_id_and_renewal_date"
+    t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "reminder_schedules", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "days_before"
+    t.integer "escalation_level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["days_before"], name: "index_reminder_schedules_on_days_before"
+    t.index ["project_id", "escalation_level"], name: "index_reminder_schedules_on_project_id_and_escalation_level"
+    t.index ["project_id"], name: "index_reminder_schedules_on_project_id"
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email_address", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "preferences"
+    t.string "first_name"
+    t.string "last_name"
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "billing_cycles", "projects"
+  add_foreign_key "invitations", "projects"
+  add_foreign_key "invitations", "users", column: "invited_by_id"
+  add_foreign_key "magic_links", "users"
+  add_foreign_key "payments", "billing_cycles"
+  add_foreign_key "payments", "users"
+  add_foreign_key "project_memberships", "projects"
+  add_foreign_key "project_memberships", "users"
+  add_foreign_key "projects", "users"
+  add_foreign_key "reminder_schedules", "projects"
+  add_foreign_key "sessions", "users"
+end

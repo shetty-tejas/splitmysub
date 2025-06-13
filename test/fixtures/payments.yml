@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+netflix_member_payment:
+  user: member_user
+  billing_cycle: netflix_current
+  amount: 8.00
+  status: "pending"
+
+netflix_previous_payment:
+  user: member_user
+  billing_cycle: netflix_previous
+  amount: 8.00
+  status: "verified"
+  confirmation_date: <%= 1.month.ago.to_date %>
+
+spotify_member_payment:
+  user: other_user
+  billing_cycle: spotify_current
+  amount: 5.00
+  status: "submitted"
+  confirmation_date: <%= 2.days.ago.to_date %>
+
+adobe_pending:
+  user: test_user
+  billing_cycle: adobe_current
+  amount: 26.50
+  status: "pending"

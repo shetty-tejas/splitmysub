@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+member_netflix:
+  user: member_user
+  project: netflix
+  role: "member"
+
+admin_netflix:
+  user: other_user
+  project: netflix
+  role: "admin"
+
+member_spotify:
+  user: other_user
+  project: spotify
+  role: "member"
+
+member_adobe:
+  user: test_user
+  project: adobe
+  role: "member"

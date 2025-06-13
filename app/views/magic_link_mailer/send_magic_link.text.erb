@@ -1,0 +1,20 @@
+SplitSub - Your Secure Sign-in Link
+=====================================
+
+Hi there!
+
+You requested a magic link to sign in to your SplitSub account.
+
+Click or copy this link to sign in securely:
+<%= @magic_link_url %>
+
+SECURITY NOTICE:
+- This link will expire in <%= @expires_in_minutes.round %> minutes
+- This link can only be used once
+- If you didn't request this link, you can safely ignore this email
+
+This email was sent to <%= @user.email_address %>
+
+If you have any questions, please contact our support team.
+
+© <%= Date.current.year %> SplitSub. All rights reserved. 

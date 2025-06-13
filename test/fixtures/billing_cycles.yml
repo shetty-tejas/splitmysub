@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+netflix_current:
+  project: netflix
+  due_date: <%= 1.week.from_now.to_date %>
+  total_amount: 15.99
+
+netflix_previous:
+  project: netflix
+  due_date: <%= 1.month.ago.to_date %>
+  total_amount: 15.99
+
+spotify_current:
+  project: spotify
+  due_date: <%= 10.days.from_now.to_date %>
+  total_amount: 9.99
+
+adobe_current:
+  project: adobe
+  due_date: <%= 2.weeks.from_now.to_date %>
+  total_amount: 52.99

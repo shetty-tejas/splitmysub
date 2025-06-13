@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+netflix_reminder_1:
+  project: netflix
+  days_before: 7
+  escalation_level: 1
+
+netflix_reminder_2:
+  project: netflix
+  days_before: 3
+  escalation_level: 2
+
+spotify_reminder:
+  project: spotify
+  days_before: 5
+  escalation_level: 1
+
+adobe_reminder:
+  project: adobe
+  days_before: 10
+  escalation_level: 1

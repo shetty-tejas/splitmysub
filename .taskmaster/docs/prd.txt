@@ -1,0 +1,201 @@
+# Overview  
+SplitSub is a web-based subscription bill-splitting reminder system built on Rails with a modern Svelte frontend. It solves the problem of subscription owners having to manually chase down payment contributions from friends, family, or teammates every billing cycle. The application targets groups who share subscriptions (Netflix, Spotify, etc.) but struggle with the administrative burden of collecting payments.
+
+The value proposition is automation and transparency - subscription owners can set up payment reminders once and let the system handle recurring notifications, while contributors get clear visibility into their payment obligations and history.
+
+# Core Features  
+**Project Management**
+- Create projects for each shared subscription (Netflix, Spotify, etc.)
+- Set subscription details: name, cost, billing cycle, renewal date
+- Configure reminder timing (default 7 days before, customizable)
+- Add payment instructions (UPI ID, PayPal link, bank details, etc.)
+- Equal bill splitting among all project members
+
+**User & Invitation System**
+- Project creators can invite users via email
+- Passwordless authentication using magic links sent to email
+- Users can view all projects they're part of
+- Clear role distinction: Project Creator vs Member
+
+**Reminder & Notification System**
+- Automated email reminders at configured intervals
+- Escalating reminder sequence (initial → follow-up → final notice)
+- Visual dashboard showing upcoming payment obligations
+- Payment deadline tracking with overdue indicators
+
+**Payment Tracking**
+- Users submit payment evidence (screenshots, PDFs, transaction IDs)
+- Project creators can mark payments as confirmed/pending
+- Payment history tracking for all project members
+- Status indicators for each billing cycle
+
+**Dashboard & History**
+- Personal dashboard showing all subscriptions and payment status
+- Payment history with evidence attachments
+- Upcoming payment obligations calendar view
+- Project-level payment status overview for creators
+
+# User Experience  
+**Primary User Personas**: 
+- **Subscription Owner**: Person whose credit card is charged, needs to collect money from others
+- **Contributor**: Person who shares the subscription cost and needs payment reminders
+
+**Key User Flows**:
+1. **Project Setup**: Creator adds subscription details, payment info, and invites members
+2. **Payment Reminder Response**: User receives email, clicks magic link to login, submits payment evidence
+3. **Payment Confirmation**: Creator reviews evidence and marks payment as confirmed
+4. **Recurring Cycle**: System automatically handles next billing cycle reminders
+
+**UI/UX Considerations**:
+- Clean dashboard showing payment status at a glance
+- Mobile-responsive design for payment submissions on-the-go
+- Clear visual indicators for payment status (paid, pending, overdue)
+- Simple evidence upload with drag-and-drop functionality
+- Email templates that are clear and actionable
+- Passwordless login experience with magic links for convenience
+
+# Technical Architecture  
+**System Components**:
+- Rails 8 API backend with magic link authentication
+- Svelte frontend with Inertia.js for SPA experience
+- PostgreSQL database for data persistence
+- Vite for frontend asset bundling
+- ActionMailer for email notifications and magic links
+- ActiveJob for scheduled reminder processing
+- Yarn for package management
+
+**Data Models**:
+- User (email, preferences, magic link tokens)
+- Project (subscription name, cost, billing cycle, renewal date, payment instructions)
+- ProjectMembership (user-project association, role)
+- BillingCycle (project association, due date, total amount)
+- Payment (billing cycle, user, amount, evidence file, status, confirmation date)
+- ReminderSchedule (project association, days before due date, escalation level)
+- MagicLink (user association, token, expiry, used status)
+
+**APIs and Integrations**:
+- RESTful Rails controllers for CRUD operations
+- File upload handling for payment evidence
+- Email delivery system with customizable templates
+- Background job scheduling for automated reminders
+- JS Routes for frontend-backend communication
+
+**Infrastructure Requirements**:
+- Development: Local Rails server with Vite dev server
+- Production: Dockerized deployment with PostgreSQL
+- File storage for payment evidence (ActiveStorage)
+- Background job processing for scheduled reminders (Sidekiq/GoodJob)
+
+# Development Roadmap  
+
+**Phase 1: MVP Foundation (Email Reminders)**
+- Set up basic Rails models and database schema
+- Implement magic link authentication system
+- Create project creation and management interface
+- Build user invitation and membership system
+- Implement basic email reminder scheduling
+- Payment evidence upload and confirmation workflow
+- Basic dashboard for users and project creators
+
+**Phase 2: Enhanced Functionality**
+- Configurable reminder timing and escalation
+- Payment history and analytics dashboard
+- Advanced filtering and search for projects/payments
+- Email template customization
+- Mobile-responsive optimization
+- File management for payment evidence
+
+**Phase 3: Communication Expansion**
+- Telegram bot integration for reminders
+- WhatsApp integration for notifications
+- In-app notification system
+- SMS reminders as backup option
+
+**Phase 4: Advanced Features**
+- Multiple currency support per project
+- Custom split ratios (beyond equal splits)
+- Subscription service integrations for automatic renewal detection
+- Payment method integrations (direct payment processing)
+- Team management and admin roles
+- Subscription analytics and cost tracking
+
+# Logical Dependency Chain
+**Foundation First**:
+1. Database schema and Rails models (User, Project, Payment, MagicLink, etc.)
+2. Magic link authentication and user management system
+3. Basic Inertia.js setup connecting Rails to Svelte
+
+**Core Workflow**:
+4. Project creation and management interface
+5. User invitation and membership system
+6. Payment evidence upload functionality
+7. Basic email reminder system
+
+**Automation Layer**:
+8. Scheduled job processing for automated reminders
+9. Escalating reminder sequences
+10. Payment confirmation workflow
+
+**User Experience Enhancement**:
+11. Dashboard with payment status overview
+12. Payment history and evidence management
+13. Mobile-responsive design and UX polish
+
+# Risks and Mitigations  
+**Technical Challenges**:
+- Email deliverability for reminder notifications
+- File upload security for payment evidence
+- Background job reliability for scheduled reminders
+- Time zone handling for global users
+
+**User Adoption Risks**:
+- Users forgetting to submit payment evidence after paying
+- Project creators not confirming payments promptly
+- Mitigation: Clear UI flows and follow-up notifications
+
+**Data Security**:
+- Payment evidence files containing sensitive information
+- Mitigation: Secure file storage, limited access controls, automatic cleanup
+
+**Scope Management**:
+- Risk of over-engineering payment processing beyond evidence submission
+- Mitigation: Focus on reminder and tracking system, not payment processing
+
+# Appendix  
+**Technical Specifications**:
+- Rails 8 with custom magic link authentication
+- Svelte 4+ with ShadcnUI component library
+- Tailwind CSS for styling
+- PostgreSQL for production database
+- Vite for frontend bundling
+- Phosphor Icons for consistent iconography
+- ActiveStorage for file uploads
+- ActionMailer for email notifications and magic links
+
+**Email Integration Requirements**:
+- Gmail SMTP configuration for reliable delivery (default)
+- Email template system with project variables
+- Magic link generation and secure token handling
+- Link expiration and security validation
+- Bounce handling and delivery tracking
+- Unsubscribe functionality for legal compliance
+
+**File Upload Specifications**:
+- Support for common image formats (PNG, JPG, HEIC)
+- PDF support for bank statements
+- File size limits and validation
+- Secure storage with limited access
+- Automatic cleanup of old evidence files
+
+**Reminder Logic**:
+- Configurable timing (X days before due date)
+- Escalation sequence: Initial → Follow-up → Final notice
+- Skip reminders for already-paid users
+- Time zone aware scheduling
+
+**Gmail SMTP Configuration**:
+- Use Gmail SMTP servers (smtp.gmail.com:587)
+- App-specific password authentication
+- TLS encryption for secure email delivery
+- Rate limiting compliance with Gmail sending limits
+- Environment variables for credentials (GMAIL_USERNAME, GMAIL_PASSWORD) 

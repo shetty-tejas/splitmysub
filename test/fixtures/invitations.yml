@@ -1,0 +1,55 @@
+# Test fixtures for invitations
+
+pending_invitation:
+  email: "pending@example.com"
+  project: netflix
+  invited_by: test_user
+  role: "member"
+  status: "pending"
+  expires_at: <%= 7.days.from_now %>
+  token: "pending_invitation_token_123456789"
+
+accepted_invitation:
+  email: "accepted@example.com"
+  project: netflix
+  invited_by: test_user
+  role: "member"
+  status: "accepted"
+  expires_at: <%= Time.current %>
+  token: "accepted_invitation_token_123456789"
+
+declined_invitation:
+  email: "declined@example.com"
+  project: netflix
+  invited_by: test_user
+  role: "admin"
+  status: "declined"
+  expires_at: <%= Time.current %>
+  token: "declined_invitation_token_123456789"
+
+expired_invitation:
+  email: "expired@example.com"
+  project: netflix
+  invited_by: test_user
+  role: "member"
+  status: "expired"
+  expires_at: <%= 1.day.ago %>
+  token: "expired_invitation_token_123456789"
+
+old_pending_invitation:
+  email: "old@example.com"
+  project: netflix
+  invited_by: test_user
+  role: "member"
+  status: "pending"
+  expires_at: <%= 1.day.ago %>
+  token: "old_pending_invitation_token_123456789"
+
+admin_invitation:
+  email: "admin@example.com"
+  project: adobe
+  invited_by: other_user
+  role: "admin"
+  status: "pending"
+  expires_at: <%= 7.days.from_now %>
+  token: "admin_invitation_token_123456789" 

@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+test_user:
+  email_address: "test@example.com"
+  first_name: "Test"
+  last_name: "User"
+  created_at: <%= 1.week.ago %>
+  updated_at: <%= 1.day.ago %>
+
+other_user:
+  email_address: "other@example.com"
+  first_name: "Other"
+  last_name: "User"
+  created_at: <%= 2.weeks.ago %>
+  updated_at: <%= 2.days.ago %>
+
+member_user:
+  email_address: "member@example.com"
+  first_name: "Member"
+  last_name: "User"
+  created_at: <%= 1.month.ago %>
+  updated_at: <%= 3.days.ago %>
+ 

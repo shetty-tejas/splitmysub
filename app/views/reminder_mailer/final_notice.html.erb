@@ -1,0 +1,77 @@
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+  <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 3px solid #dc2626;">
+    <div style="text-align: center; margin-bottom: 30px; background-color: #991b1b; color: white; padding: 20px; border-radius: 6px;">
+      <h1 style="margin: 0; font-size: 28px;">🚨 FINAL NOTICE 🚨</h1>
+      <p style="margin: 10px 0 0 0; font-size: 16px;">IMMEDIATE PAYMENT REQUIRED</p>
+    </div>
+
+    <p style="font-size: 16px; line-height: 1.6; color: #374151;">
+      Hi <%= @user.email_address %>,
+    </p>
+
+    <% if @days_until_due > 0 %>
+      <p style="font-size: 20px; line-height: 1.6; color: #991b1b; font-weight: bold; text-align: center; background-color: #fef2f2; padding: 15px; border-radius: 6px;">
+        🚨 FINAL NOTICE: Payment for <%= @project.name %> is due in <%= @days_until_due %> days!
+      </p>
+    <% else %>
+      <p style="font-size: 20px; line-height: 1.6; color: #991b1b; font-weight: bold; text-align: center; background-color: #fef2f2; padding: 15px; border-radius: 6px;">
+        🚨 CRITICAL: Payment for <%= @project.name %> is <%= @days_overdue %> days OVERDUE!
+      </p>
+    <% end %>
+
+    <div style="background-color: #991b1b; color: white; padding: 25px; border-radius: 6px; margin: 25px 0;">
+      <h3 style="margin: 0 0 15px 0; font-size: 20px;">⚠️ CRITICAL PAYMENT INFORMATION:</h3>
+      <p style="margin: 8px 0; font-size: 16px;"><strong>Project:</strong> <%= @project.name %></p>
+      <p style="margin: 8px 0; font-size: 16px;"><strong>Amount Due:</strong> $<%= number_with_precision(@amount_due, precision: 2) %></p>
+      <p style="margin: 8px 0; font-size: 16px;"><strong>Original Due Date:</strong> <%= @billing_cycle.due_date.strftime("%B %d, %Y") %></p>
+      <% if @days_until_due <= 0 %>
+        <p style="margin: 15px 0 8px 0; font-size: 18px; font-weight: bold;">
+          🚨 OVERDUE BY: <%= @days_overdue %> DAYS
+        </p>
+      <% else %>
+        <p style="margin: 15px 0 8px 0; font-size: 18px; font-weight: bold;">
+          ⏰ FINAL WARNING: <%= @days_until_due %> DAYS REMAINING
+        </p>
+      <% end %>
+    </div>
+
+    <% if @project.payment_instructions.present? %>
+      <div style="background-color: #fef3c7; padding: 20px; border-radius: 6px; margin: 20px 0; border: 2px solid #f59e0b;">
+        <h3 style="margin: 0 0 10px 0; color: #92400e; font-size: 18px;">💳 PAYMENT INSTRUCTIONS - ACT NOW:</h3>
+        <div style="color: #92400e; line-height: 1.6; font-size: 16px;">
+          <%= simple_format(@project.payment_instructions) %>
+        </div>
+      </div>
+    <% end %>
+
+    <div style="background-color: #fee2e2; padding: 25px; border-radius: 6px; margin: 25px 0; border: 2px solid #dc2626;">
+      <h3 style="margin: 0 0 15px 0; color: #991b1b; font-size: 18px;">🚨 IMMEDIATE ACTION REQUIRED:</h3>
+      <ul style="color: #991b1b; font-size: 16px; line-height: 1.6; margin: 0; padding-left: 20px;">
+        <li><strong>Submit payment IMMEDIATELY</strong> to avoid service termination</li>
+        <li>Contact the project organizer if payment has been made</li>
+        <li>Respond to this email if you need assistance</li>
+        <% if @days_until_due <= 0 %>
+          <li style="font-weight: bold;">Late fees may apply for overdue payments</li>
+        <% end %>
+      </ul>
+    </div>
+
+    <p style="font-size: 16px; line-height: 1.6; color: #374151; text-align: center; font-weight: bold;">
+      This is your FINAL NOTICE. Failure to respond may result in removal from the project.
+    </p>
+
+    <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #f3f4f6; border-radius: 6px;">
+      <p style="margin: 0; color: #374151; font-size: 14px;">
+        <strong>Need help?</strong> Contact the project organizer immediately at: 
+        <a href="mailto:<%= @project.user.email_address %>" style="color: #2563eb;"><%= @project.user.email_address %></a>
+      </p>
+    </div>
+
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+      <p style="font-size: 12px; color: #6b7280; text-align: center;">
+        If you no longer wish to receive these reminders, 
+        <a href="<%= unsubscribe_url(token: @unsubscribe_token) %>" style="color: #2563eb;">click here to unsubscribe</a>.
+      </p>
+    </div>
+  </div>
+</div> 
