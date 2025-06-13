@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_112718) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_192005) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -93,8 +93,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_112718) do
     t.datetime "updated_at", null: false
     t.string "transaction_id"
     t.text "notes"
+    t.text "confirmation_notes"
+    t.bigint "confirmed_by_id"
+    t.boolean "disputed", default: false
+    t.text "dispute_reason"
+    t.datetime "dispute_resolved_at"
+    t.json "status_history", default: []
     t.index ["billing_cycle_id", "user_id"], name: "index_payments_on_billing_cycle_id_and_user_id", unique: true
     t.index ["billing_cycle_id"], name: "index_payments_on_billing_cycle_id"
+    t.index ["confirmed_by_id"], name: "index_payments_on_confirmed_by_id"
+    t.index ["disputed"], name: "index_payments_on_disputed"
     t.index ["status", "confirmation_date"], name: "index_payments_on_status_and_confirmation_date"
     t.index ["status"], name: "index_payments_on_status"
     t.index ["user_id"], name: "index_payments_on_user_id"
@@ -168,6 +176,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_112718) do
   add_foreign_key "magic_links", "users"
   add_foreign_key "payments", "billing_cycles"
   add_foreign_key "payments", "users"
+  add_foreign_key "payments", "users", column: "confirmed_by_id"
   add_foreign_key "project_memberships", "projects"
   add_foreign_key "project_memberships", "users"
   add_foreign_key "projects", "users"

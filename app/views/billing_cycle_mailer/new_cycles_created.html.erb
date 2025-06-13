@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Billing Cycles Created - <%= @project.name %></title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #374151;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9fafb;
+      }
+      .container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e5e7eb;
+      }
+      .header h1 {
+        color: #1f2937;
+        margin: 0;
+        font-size: 24px;
+      }
+      .project-info {
+        background-color: #f3f4f6;
+        padding: 20px;
+        border-radius: 6px;
+        margin: 20px 0;
+      }
+      .billing-cycles {
+        margin: 20px 0;
+      }
+      .cycle-item {
+        background-color: #eff6ff;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 10px 0;
+        border-left: 4px solid #2563eb;
+      }
+      .cycle-item h4 {
+        margin: 0 0 10px 0;
+        color: #1e40af;
+      }
+      .cycle-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .cycle-details span {
+        color: #374151;
+        font-size: 14px;
+      }
+      .amount {
+        font-weight: bold;
+        color: #059669;
+      }
+      .due-date {
+        font-weight: bold;
+        color: #dc2626;
+      }
+      .action-button {
+        display: inline-block;
+        background-color: #2563eb;
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        margin: 20px 0;
+        text-align: center;
+      }
+      .footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        text-align: center;
+        color: #6b7280;
+        font-size: 14px;
+      }
+      .summary {
+        background-color: #f0fdf4;
+        padding: 20px;
+        border-radius: 6px;
+        margin: 20px 0;
+        border-left: 4px solid #059669;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📅 New Billing Cycles Created</h1>
+        <p>Automatic billing cycles have been generated for your project</p>
+      </div>
+
+      <div class="project-info">
+        <h3 style="margin: 0 0 10px 0; color: #1f2937;">Project: <%= @project.name %></h3>
+        <p style="margin: 5px 0; color: #6b7280;">
+          <strong>Billing Frequency:</strong> <%= @project.billing_cycle.capitalize %>
+        </p>
+        <p style="margin: 5px 0; color: #6b7280;">
+          <strong>Cost per Cycle:</strong> $<%= number_with_precision(@project.cost, precision: 2) %>
+        </p>
+        <p style="margin: 5px 0; color: #6b7280;">
+          <strong>Members:</strong> <%= @project.total_members %>
+        </p>
+      </div>
+
+      <div class="summary">
+        <h3 style="margin: 0 0 10px 0; color: #059669;">📊 Summary</h3>
+        <p style="margin: 5px 0; color: #059669;">
+          <strong><%= @billing_cycles.count %></strong> new billing cycle<%= @billing_cycles.count == 1 ? '' : 's' %> created
+        </p>
+        <p style="margin: 5px 0; color: #059669;">
+          <strong>Total Amount:</strong> $<%= number_with_precision(@billing_cycles.sum(&:total_amount), precision: 2) %>
+        </p>
+      </div>
+
+      <div class="billing-cycles">
+        <h3 style="color: #1f2937;">New Billing Cycles:</h3>
+        
+        <% @billing_cycles.each_with_index do |cycle, index| %>
+          <div class="cycle-item">
+            <h4>Billing Cycle #<%= index + 1 %></h4>
+            <div class="cycle-details">
+              <span class="due-date">Due: <%= cycle.due_date.strftime("%B %d, %Y") %></span>
+              <span class="amount">Amount: $<%= number_with_precision(cycle.total_amount, precision: 2) %></span>
+              <span>Per Member: $<%= number_with_precision(cycle.expected_payment_per_member, precision: 2) %></span>
+            </div>
+            <% if cycle.due_soon? %>
+              <p style="margin: 10px 0 0 0; color: #dc2626; font-size: 14px; font-weight: bold;">
+                ⚠️ Due in <%= cycle.days_until_due %> day<%= cycle.days_until_due == 1 ? '' : 's' %>
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="<%= project_billing_cycles_url(@project) %>" class="action-button">
+          View All Billing Cycles
+        </a>
+      </div>
+
+      <div style="background-color: #fef3c7; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+        <h4 style="margin: 0 0 10px 0; color: #92400e;">📋 What's Next?</h4>
+        <ul style="margin: 0; padding-left: 20px; color: #92400e;">
+          <li>Payment reminders will be automatically sent to members</li>
+          <li>Members can submit payment evidence through the platform</li>
+          <li>You can review and confirm payments as they come in</li>
+          <li>Track payment progress in your project dashboard</li>
+        </ul>
+      </div>
+
+      <div class="footer">
+        <p>This is an automated notification from SplitSub.</p>
+        <p>You're receiving this because you're the owner of "<%= @project.name %>".</p>
+      </div>
+    </div>
+  </body>
+</html> 

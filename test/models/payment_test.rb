@@ -97,6 +97,75 @@ class PaymentTest < ActiveSupport::TestCase
     assert_nil payment.confirmation_date
   end
 
+    test "should track status changes in history" do
+    payment = Payment.create!(
+      user: users(:test_user),
+      billing_cycle: billing_cycles(:netflix_current),
+      amount: 8.00,
+      status: "pending"
+    )
+
+    payment.confirm!(users(:test_user), "Payment verified")
+    payment.reload
+
+    assert_equal 1, payment.status_changes.length
+    change = payment.status_changes.first
+    assert_equal "pending", change["from_status"]
+    assert_equal "confirmed", change["to_status"]
+    assert_equal users(:test_user).email_address, change["changed_by"]
+  end
+
+  test "should handle dispute functionality" do
+    payment = payments(:netflix_member_payment)
+
+    assert_not payment.disputed?
+
+    payment.dispute!("Amount doesn't match", users(:test_user))
+
+    assert payment.disputed?
+    assert_equal "Amount doesn't match", payment.dispute_reason
+    assert_equal users(:test_user), payment.confirmed_by
+  end
+
+  test "should resolve disputes" do
+    payment = payments(:netflix_member_payment)
+    payment.update!(disputed: true, dispute_reason: "Test dispute")
+
+    payment.resolve_dispute!(users(:test_user))
+
+    assert_not payment.disputed?
+    assert_not_nil payment.dispute_resolved_at
+    assert_equal users(:test_user), payment.confirmed_by
+  end
+
+  test "should add notes with timestamps" do
+    payment = payments(:netflix_member_payment)
+
+    payment.add_note!("First note", users(:test_user))
+    assert_includes payment.confirmation_notes, "First note"
+    assert_includes payment.confirmation_notes, users(:test_user).email_address
+
+    payment.add_note!("Second note", users(:test_user))
+    assert_includes payment.confirmation_notes, "First note"
+    assert_includes payment.confirmation_notes, "Second note"
+  end
+
+    test "should check if user can confirm payment" do
+    payment = payments(:netflix_member_payment)
+    project_owner = payment.project.user
+    regular_user = users(:member_user)  # Use member_user who is just a member
+
+    assert payment.can_be_confirmed_by?(project_owner)
+    assert_not payment.can_be_confirmed_by?(regular_user)
+  end
+
+  test "should allow admin to confirm payment" do
+    payment = payments(:netflix_member_payment)
+    admin_user = users(:other_user)  # other_user is already admin in fixtures
+
+    assert payment.can_be_confirmed_by?(admin_user)
+  end
+
   test "should have status helper methods" do
     payment = payments(:netflix_member_payment)
 

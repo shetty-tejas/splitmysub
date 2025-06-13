@@ -19,6 +19,21 @@ Rails.application.routes.draw do
 
   resources :projects do
     resources :invitations, only: [ :index, :create, :destroy ]
+    # Payment confirmation routes for project creators
+    resources :payment_confirmations, only: [ :index, :show, :update ] do
+      collection do
+        patch :batch_update
+      end
+      member do
+        post :add_note
+      end
+    end
+    # Billing cycle management routes
+    resources :billing_cycles do
+      member do
+        post :generate_upcoming
+      end
+    end
     member do
       get :preview_reminder
       get :reminder_settings

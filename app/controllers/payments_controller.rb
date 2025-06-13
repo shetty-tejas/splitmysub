@@ -111,7 +111,10 @@ class PaymentsController < ApplicationController
       transaction_id: payment.transaction_id,
       notes: payment.notes,
       status: payment.status,
+      disputed: payment.disputed?,
+      dispute_reason: payment.dispute_reason,
       confirmation_date: payment.confirmation_date,
+      confirmation_notes: payment.confirmation_notes,
       created_at: payment.created_at,
       updated_at: payment.updated_at,
       has_evidence: payment.has_evidence?,
@@ -122,7 +125,11 @@ class PaymentsController < ApplicationController
       user: {
         id: payment.user.id,
         email_address: payment.user.email_address
-      }
+      },
+      confirmed_by: payment.confirmed_by ? {
+        id: payment.confirmed_by.id,
+        email_address: payment.confirmed_by.email_address
+      } : nil
     }
   end
 

@@ -187,6 +187,24 @@
             <Settings class="h-4 w-4" />
             Manage Invitations
           </button>
+          <button
+            type="button"
+            on:click={() =>
+              router.visit(`/projects/${project.id}/payment_confirmations`)}
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
+          >
+            <CreditCard class="h-4 w-4" />
+            Payment Confirmations
+          </button>
+          <button
+            type="button"
+            on:click={() =>
+              router.visit(`/projects/${project.id}/billing_cycles`)}
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
+          >
+            <Calendar class="h-4 w-4" />
+            Billing Cycles
+          </button>
         {/if}
       </div>
     </div>
