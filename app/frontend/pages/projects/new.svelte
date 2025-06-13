@@ -93,22 +93,23 @@
 </svelte:head>
 
 <Layout>
-  <div class="container mx-auto px-4 py-8 max-w-2xl">
-    <div class="flex items-center gap-4 mb-8">
+  <div class="container mx-auto px-4 py-6 sm:py-8 max-w-2xl">
+    <div class="flex items-center gap-4 mb-6 sm:mb-8">
       <button
         type="button"
         on:click={goBack}
         class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
       >
         <ArrowLeft class="h-4 w-4" />
-        Back to Projects
+        <span class="hidden sm:inline">Back to Projects</span>
+        <span class="sm:hidden">Back</span>
       </button>
     </div>
 
     <Card>
-      <CardHeader>
-        <CardTitle class="text-2xl">Create New Project</CardTitle>
-        <CardDescription>
+      <CardHeader class="pb-4 sm:pb-6">
+        <CardTitle class="text-xl sm:text-2xl">Create New Project</CardTitle>
+        <CardDescription class="text-sm sm:text-base">
           Set up a new subscription project to split costs with others
         </CardDescription>
       </CardHeader>
@@ -116,15 +117,19 @@
         <form on:submit|preventDefault={handleSubmit} class="space-y-6">
           <!-- Basic Information -->
           <div class="space-y-4">
-            <h3 class="text-lg font-semibold">Basic Information</h3>
+            <h3 class="text-base sm:text-lg font-semibold">
+              Basic Information
+            </h3>
 
             <div class="space-y-2">
-              <Label for="name">Project Name *</Label>
+              <Label for="name" class="text-sm font-medium"
+                >Project Name *</Label
+              >
               <Input
                 id="name"
                 bind:value={form.name}
                 placeholder="e.g., Netflix Family Plan"
-                class={errors.name ? "border-destructive" : ""}
+                class="{errors.name ? 'border-destructive' : ''} h-10 sm:h-9"
               />
               {#if errors.name}
                 <p class="text-sm text-destructive">{errors.name[0]}</p>
@@ -132,13 +137,17 @@
             </div>
 
             <div class="space-y-2">
-              <Label for="description">Description</Label>
+              <Label for="description" class="text-sm font-medium"
+                >Description</Label
+              >
               <Textarea
                 id="description"
                 bind:value={form.description}
                 placeholder="Optional description of the subscription service"
                 rows="3"
-                class={errors.description ? "border-destructive" : ""}
+                class="{errors.description
+                  ? 'border-destructive'
+                  : ''} text-sm sm:text-base"
               />
               {#if errors.description}
                 <p class="text-sm text-destructive">{errors.description[0]}</p>
@@ -146,13 +155,17 @@
             </div>
 
             <div class="space-y-2">
-              <Label for="subscription_url">Subscription URL</Label>
+              <Label for="subscription_url" class="text-sm font-medium"
+                >Subscription URL</Label
+              >
               <Input
                 id="subscription_url"
                 bind:value={form.subscription_url}
                 placeholder="https://netflix.com/account"
                 type="url"
-                class={errors.subscription_url ? "border-destructive" : ""}
+                class="{errors.subscription_url
+                  ? 'border-destructive'
+                  : ''} h-10 sm:h-9"
               />
               {#if errors.subscription_url}
                 <p class="text-sm text-destructive">
@@ -164,11 +177,15 @@
 
           <!-- Billing Information -->
           <div class="space-y-4">
-            <h3 class="text-lg font-semibold">Billing Information</h3>
+            <h3 class="text-base sm:text-lg font-semibold">
+              Billing Information
+            </h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="space-y-2">
-                <Label for="cost">Total Cost *</Label>
+                <Label for="cost" class="text-sm font-medium"
+                  >Total Cost *</Label
+                >
                 <Input
                   id="cost"
                   bind:value={form.cost}
@@ -176,7 +193,7 @@
                   type="number"
                   step="0.01"
                   min="0"
-                  class={errors.cost ? "border-destructive" : ""}
+                  class="{errors.cost ? 'border-destructive' : ''} h-10 sm:h-9"
                 />
                 {#if errors.cost}
                   <p class="text-sm text-destructive">{errors.cost[0]}</p>
@@ -184,12 +201,14 @@
               </div>
 
               <div class="space-y-2">
-                <Label for="billing_cycle">Billing Cycle *</Label>
+                <Label for="billing_cycle" class="text-sm font-medium"
+                  >Billing Cycle *</Label
+                >
                 <select
                   id="billing_cycle"
                   bind:value={form.billing_cycle}
                   on:change={updateRenewalDate}
-                  class="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 {errors.billing_cycle
+                  class="flex h-10 sm:h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 {errors.billing_cycle
                     ? 'border-destructive'
                     : ''}"
                 >
@@ -206,9 +225,11 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="space-y-2">
-                <Label for="renewal_date">Next Renewal Date *</Label>
+                <Label for="renewal_date" class="text-sm font-medium"
+                  >Next Renewal Date *</Label
+                >
                 <Input
                   id="renewal_date"
                   bind:value={form.renewal_date}
@@ -223,7 +244,9 @@
               </div>
 
               <div class="space-y-2">
-                <Label for="reminder_days">Reminder Days Before *</Label>
+                <Label for="reminder_days" class="text-sm font-medium"
+                  >Reminder Days Before *</Label
+                >
                 <Input
                   id="reminder_days"
                   bind:value={form.reminder_days}
@@ -243,10 +266,14 @@
 
           <!-- Payment Instructions -->
           <div class="space-y-4">
-            <h3 class="text-lg font-semibold">Payment Instructions</h3>
+            <h3 class="text-base sm:text-lg font-semibold">
+              Payment Instructions
+            </h3>
 
             <div class="space-y-2">
-              <Label for="payment_instructions">Payment Instructions</Label>
+              <Label for="payment_instructions" class="text-sm font-medium"
+                >Payment Instructions</Label
+              >
               <Textarea
                 id="payment_instructions"
                 bind:value={form.payment_instructions}

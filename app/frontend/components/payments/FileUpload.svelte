@@ -176,6 +176,10 @@
     cursor: pointer;
     transition: all 0.2s ease;
     background-color: #f9fafb;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .upload-area:hover:not(.disabled) {
@@ -298,5 +302,69 @@
     border-radius: 4px;
     color: #dc2626;
     font-size: 0.875rem;
+  }
+
+  /* Mobile-specific styles */
+  @media (max-width: 640px) {
+    .upload-area {
+      padding: 1.5rem 1rem;
+      min-height: 100px;
+    }
+
+    .upload-icon {
+      font-size: 2rem;
+    }
+
+    .upload-text {
+      font-size: 0.875rem;
+    }
+
+    .upload-subtext {
+      font-size: 0.75rem;
+    }
+
+    .file-preview {
+      padding: 0.75rem;
+    }
+
+    .file-info {
+      gap: 0.5rem;
+    }
+
+    .file-name {
+      font-size: 0.875rem;
+    }
+
+    .file-size {
+      font-size: 0.75rem;
+    }
+
+    .remove-button {
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
+    }
+
+    .image-preview img {
+      max-height: 150px;
+    }
+  }
+
+  /* Touch device optimizations */
+  @media (hover: none) and (pointer: coarse) {
+    .upload-area {
+      min-height: 140px;
+      padding: 2rem 1rem;
+    }
+
+    .remove-button {
+      width: 40px;
+      height: 40px;
+      font-size: 1.1rem;
+    }
+
+    .upload-text {
+      font-size: 1rem;
+    }
   }
 </style>

@@ -115,9 +115,11 @@
 </svelte:head>
 
 <Layout>
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-0"
+    >
       <div class="flex items-center gap-4">
         <button
           type="button"
@@ -125,12 +127,13 @@
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
-          Back to Projects
+          <span class="hidden sm:inline">Back to Projects</span>
+          <span class="sm:hidden">Back</span>
         </button>
       </div>
 
       {#if project.is_owner}
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
           <button
             type="button"
             on:click={editProject}
@@ -152,20 +155,29 @@
     </div>
 
     <!-- Project Header -->
-    <div class="mb-8">
-      <div class="flex items-start justify-between mb-4">
+    <div class="mb-6 sm:mb-8">
+      <div
+        class="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-3 sm:gap-0"
+      >
         <div class="flex-1">
-          <h1 class="text-3xl font-bold tracking-tight mb-2">{project.name}</h1>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
+            {project.name}
+          </h1>
           {#if project.description}
-            <p class="text-muted-foreground text-lg">{project.description}</p>
+            <p class="text-muted-foreground text-base sm:text-lg">
+              {project.description}
+            </p>
           {/if}
         </div>
-        <Badge variant={getStatusBadgeVariant(project)} class="text-sm">
+        <Badge
+          variant={getStatusBadgeVariant(project)}
+          class="text-sm self-start"
+        >
           {getStatusText(project)}
         </Badge>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         {#if project.subscription_url}
           <button
             type="button"
@@ -173,7 +185,8 @@
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
           >
             <ExternalLink class="h-4 w-4" />
-            Open Subscription
+            <span class="hidden sm:inline">Open Subscription</span>
+            <span class="sm:hidden">Open</span>
           </button>
         {/if}
 
@@ -185,7 +198,8 @@
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
           >
             <Settings class="h-4 w-4" />
-            Manage Invitations
+            <span class="hidden sm:inline">Manage Invitations</span>
+            <span class="sm:hidden">Invites</span>
           </button>
           <button
             type="button"
@@ -194,7 +208,8 @@
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
           >
             <CreditCard class="h-4 w-4" />
-            Payment Confirmations
+            <span class="hidden sm:inline">Payment Confirmations</span>
+            <span class="sm:hidden">Payments</span>
           </button>
           <button
             type="button"
@@ -203,7 +218,8 @@
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
           >
             <Calendar class="h-4 w-4" />
-            Billing Cycles
+            <span class="hidden sm:inline">Billing Cycles</span>
+            <span class="sm:hidden">Cycles</span>
           </button>
         {/if}
       </div>

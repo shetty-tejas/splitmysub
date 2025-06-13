@@ -68,29 +68,33 @@
 </svelte:head>
 
 <Layout>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
     <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-      <p class="mt-2 text-gray-600">
+    <div class="mb-6 sm:mb-8">
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
+      <p class="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">
         Overview of your subscriptions and payments
       </p>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
+    >
       <Card.Root>
-        <Card.Content class="p-6">
+        <Card.Content class="p-4 sm:p-6">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <Users class="h-8 w-8 text-blue-600" />
+              <Users class="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
             </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Total Projects</p>
-              <p class="text-2xl font-bold text-gray-900">
+            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                Total Projects
+              </p>
+              <p class="text-xl sm:text-2xl font-bold text-gray-900">
                 {stats.total_projects || 0}
               </p>
-              <p class="text-xs text-gray-500">
+              <p class="text-xs text-gray-500 truncate">
                 {stats.owned_projects || 0} owned, {stats.member_projects || 0} member
               </p>
             </div>
@@ -99,34 +103,40 @@
       </Card.Root>
 
       <Card.Root>
-        <Card.Content class="p-6">
+        <Card.Content class="p-4 sm:p-6">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <DollarSign class="h-8 w-8 text-green-600" />
+              <DollarSign class="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
             </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Monthly Cost</p>
-              <p class="text-2xl font-bold text-gray-900">
+            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                Monthly Cost
+              </p>
+              <p class="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatCurrency(stats.total_monthly_cost || 0)}
               </p>
-              <p class="text-xs text-gray-500">Total monthly subscriptions</p>
+              <p class="text-xs text-gray-500 truncate">
+                Total monthly subscriptions
+              </p>
             </div>
           </div>
         </Card.Content>
       </Card.Root>
 
       <Card.Root>
-        <Card.Content class="p-6">
+        <Card.Content class="p-4 sm:p-6">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <CheckCircle class="h-8 w-8 text-green-600" />
+              <CheckCircle class="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
             </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Payments Made</p>
-              <p class="text-2xl font-bold text-gray-900">
+            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                Payments Made
+              </p>
+              <p class="text-xl sm:text-2xl font-bold text-gray-900">
                 {stats.total_payments_made || 0}
               </p>
-              <p class="text-xs text-gray-500">
+              <p class="text-xs text-gray-500 truncate">
                 {formatCurrency(stats.total_amount_paid || 0)} total
               </p>
             </div>
@@ -135,17 +145,19 @@
       </Card.Root>
 
       <Card.Root>
-        <Card.Content class="p-6">
+        <Card.Content class="p-4 sm:p-6">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <AlertTriangle class="h-8 w-8 text-orange-600" />
+              <AlertTriangle class="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
             </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Pending/Overdue</p>
-              <p class="text-2xl font-bold text-gray-900">
+            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                Pending/Overdue
+              </p>
+              <p class="text-xl sm:text-2xl font-bold text-gray-900">
                 {(stats.pending_payments || 0) + (stats.overdue_payments || 0)}
               </p>
-              <p class="text-xs text-gray-500">
+              <p class="text-xs text-gray-500 truncate">
                 {stats.pending_payments || 0} pending, {stats.overdue_payments ||
                   0} overdue
               </p>
@@ -155,52 +167,61 @@
       </Card.Root>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
       <!-- Recent Payments -->
       <Card.Root>
-        <Card.Header>
+        <Card.Header class="pb-3 sm:pb-4">
           <div class="flex items-center justify-between">
-            <Card.Title class="flex items-center gap-2">
-              <CreditCard class="h-5 w-5" />
+            <Card.Title class="flex items-center gap-2 text-lg sm:text-xl">
+              <CreditCard class="h-4 w-4 sm:h-5 sm:w-5" />
               Recent Payments
             </Card.Title>
             <Link href="/dashboard/payment_history">
-              <Button variant="outline" size="sm">
-                View All
-                <ArrowRight class="h-4 w-4 ml-1" />
+              <Button
+                variant="outline"
+                size="sm"
+                class="text-xs sm:text-sm h-8 sm:h-9"
+              >
+                <span class="hidden sm:inline">View All</span>
+                <span class="sm:hidden">All</span>
+                <ArrowRight class="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
               </Button>
             </Link>
           </div>
         </Card.Header>
-        <Card.Content>
+        <Card.Content class="pt-0">
           {#if recent_payments.length > 0}
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
               {#each recent_payments as payment}
                 <div
                   class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
-                  <div class="flex items-center space-x-3">
+                  <div class="flex items-center space-x-3 min-w-0 flex-1">
                     <div class="flex-shrink-0">
                       {#if payment.status === "confirmed"}
-                        <CheckCircle class="h-5 w-5 text-green-600" />
+                        <CheckCircle
+                          class="h-4 w-4 sm:h-5 sm:w-5 text-green-600"
+                        />
                       {:else if payment.status === "pending"}
-                        <Clock class="h-5 w-5 text-yellow-600" />
+                        <Clock class="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
                       {:else}
-                        <AlertTriangle class="h-5 w-5 text-red-600" />
+                        <AlertTriangle
+                          class="h-4 w-4 sm:h-5 sm:w-5 text-red-600"
+                        />
                       {/if}
                     </div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-medium text-gray-900 truncate">
                         {payment.project.name}
                       </p>
-                      <p class="text-xs text-gray-500">
+                      <p class="text-xs text-gray-500 truncate">
                         {formatDate(payment.created_at)} • Due: {formatDate(
                           payment.billing_cycle.due_date,
                         )}
                       </p>
                     </div>
                   </div>
-                  <div class="text-right">
+                  <div class="text-right flex-shrink-0">
                     <p class="text-sm font-medium text-gray-900">
                       {formatCurrency(payment.amount)}
                     </p>
@@ -212,9 +233,13 @@
               {/each}
             </div>
           {:else}
-            <div class="text-center py-8">
-              <CreditCard class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p class="text-gray-500">No recent payments</p>
+            <div class="text-center py-6 sm:py-8">
+              <CreditCard
+                class="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4"
+              />
+              <p class="text-sm sm:text-base text-gray-500">
+                No recent payments
+              </p>
             </div>
           {/if}
         </Card.Content>
@@ -222,41 +247,46 @@
 
       <!-- Upcoming Payments -->
       <Card.Root>
-        <Card.Header>
+        <Card.Header class="pb-3 sm:pb-4">
           <div class="flex items-center justify-between">
-            <Card.Title class="flex items-center gap-2">
-              <Calendar class="h-5 w-5" />
+            <Card.Title class="flex items-center gap-2 text-lg sm:text-xl">
+              <Calendar class="h-4 w-4 sm:h-5 sm:w-5" />
               Upcoming Payments
             </Card.Title>
             <Link href="/dashboard/upcoming_payments">
-              <Button variant="outline" size="sm">
-                View Calendar
-                <ArrowRight class="h-4 w-4 ml-1" />
+              <Button
+                variant="outline"
+                size="sm"
+                class="text-xs sm:text-sm h-8 sm:h-9"
+              >
+                <span class="hidden sm:inline">View Calendar</span>
+                <span class="sm:hidden">Calendar</span>
+                <ArrowRight class="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
               </Button>
             </Link>
           </div>
         </Card.Header>
-        <Card.Content>
+        <Card.Content class="pt-0">
           {#if upcoming_cycles.length > 0}
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
               {#each upcoming_cycles as cycle}
                 <div
                   class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
-                  <div class="flex items-center space-x-3">
+                  <div class="flex items-center space-x-3 min-w-0 flex-1">
                     <div class="flex-shrink-0">
-                      <Calendar class="h-5 w-5 text-blue-600" />
+                      <Calendar class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                     </div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-medium text-gray-900 truncate">
                         {cycle.project.name}
                       </p>
-                      <p class="text-xs text-gray-500">
+                      <p class="text-xs text-gray-500 truncate">
                         Due: {formatDate(cycle.due_date)}
                       </p>
                     </div>
                   </div>
-                  <div class="text-right">
+                  <div class="text-right flex-shrink-0">
                     <p class="text-sm font-medium text-gray-900">
                       {formatCurrency(cycle.expected_payment)}
                     </p>
@@ -278,9 +308,13 @@
               {/each}
             </div>
           {:else}
-            <div class="text-center py-8">
-              <Calendar class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p class="text-gray-500">No upcoming payments</p>
+            <div class="text-center py-6 sm:py-8">
+              <Calendar
+                class="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4"
+              />
+              <p class="text-sm sm:text-base text-gray-500">
+                No upcoming payments
+              </p>
             </div>
           {/if}
         </Card.Content>
@@ -288,54 +322,70 @@
     </div>
 
     <!-- Projects Overview -->
-    <div class="mt-8">
+    <div class="mt-6 sm:mt-8">
       <Card.Root>
-        <Card.Header>
-          <div class="flex items-center justify-between">
-            <Card.Title class="flex items-center gap-2">
-              <Users class="h-5 w-5" />
+        <Card.Header class="pb-3 sm:pb-4">
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0"
+          >
+            <Card.Title class="flex items-center gap-2 text-lg sm:text-xl">
+              <Users class="h-4 w-4 sm:h-5 sm:w-5" />
               Your Projects
             </Card.Title>
             <div class="flex gap-2">
               <Link href="/dashboard/analytics">
-                <Button variant="outline" size="sm">
-                  <BarChart3 class="h-4 w-4 mr-1" />
-                  Analytics
+                <Button
+                  variant="outline"
+                  size="sm"
+                  class="text-xs sm:text-sm h-8 sm:h-9"
+                >
+                  <BarChart3 class="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span class="hidden sm:inline">Analytics</span>
+                  <span class="sm:hidden">Stats</span>
                 </Button>
               </Link>
               <Link href="/projects/new">
-                <Button size="sm">
-                  <Plus class="h-4 w-4 mr-1" />
-                  New Project
+                <Button size="sm" class="text-xs sm:text-sm h-8 sm:h-9">
+                  <Plus class="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span class="hidden sm:inline">New Project</span>
+                  <span class="sm:hidden">New</span>
                 </Button>
               </Link>
             </div>
           </div>
         </Card.Header>
-        <Card.Content>
+        <Card.Content class="pt-0">
           {#if user_projects.length > 0 || member_projects.length > 0}
             <div class="space-y-6">
               {#if user_projects.length > 0}
                 <div>
-                  <h3 class="text-lg font-medium text-gray-900 mb-4">
+                  <h3
+                    class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4"
+                  >
                     Owned Projects
                   </h3>
                   <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
                   >
                     {#each user_projects as project}
                       <div
-                        class="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                        class="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
                       >
-                        <div class="flex items-center justify-between mb-2">
-                          <h4 class="font-medium text-gray-900">
+                        <div class="flex items-start justify-between mb-2">
+                          <h4
+                            class="font-medium text-gray-900 text-sm sm:text-base truncate pr-2"
+                          >
                             {project.name}
                           </h4>
-                          <Badge class={getStatusColor(project.payment_status)}>
+                          <Badge
+                            class="{getStatusColor(
+                              project.payment_status,
+                            )} text-xs flex-shrink-0"
+                          >
                             {project.payment_status}
                           </Badge>
                         </div>
-                        <p class="text-sm text-gray-600 mb-2">
+                        <p class="text-xs sm:text-sm text-gray-600 mb-2">
                           {formatCurrency(project.cost)} / {project.billing_cycle}
                         </p>
                         <p class="text-xs text-gray-500 mb-3">
@@ -343,7 +393,11 @@
                         </p>
                         <div class="flex gap-2">
                           <Link href="/projects/{project.id}">
-                            <Button variant="outline" size="sm">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              class="text-xs h-8"
+                            >
                               <Eye class="h-3 w-3 mr-1" />
                               View
                             </Button>
@@ -357,25 +411,33 @@
 
               {#if member_projects.length > 0}
                 <div>
-                  <h3 class="text-lg font-medium text-gray-900 mb-4">
+                  <h3
+                    class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4"
+                  >
                     Member Projects
                   </h3>
                   <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
                   >
                     {#each member_projects as project}
                       <div
-                        class="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                        class="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
                       >
-                        <div class="flex items-center justify-between mb-2">
-                          <h4 class="font-medium text-gray-900">
+                        <div class="flex items-start justify-between mb-2">
+                          <h4
+                            class="font-medium text-gray-900 text-sm sm:text-base truncate pr-2"
+                          >
                             {project.name}
                           </h4>
-                          <Badge class={getStatusColor(project.payment_status)}>
+                          <Badge
+                            class="{getStatusColor(
+                              project.payment_status,
+                            )} text-xs flex-shrink-0"
+                          >
                             {project.payment_status}
                           </Badge>
                         </div>
-                        <p class="text-sm text-gray-600 mb-2">
+                        <p class="text-xs sm:text-sm text-gray-600 mb-2">
                           {formatCurrency(project.cost_per_member)} / {project.billing_cycle}
                         </p>
                         <p class="text-xs text-gray-500 mb-3">
@@ -383,7 +445,11 @@
                         </p>
                         <div class="flex gap-2">
                           <Link href="/projects/{project.id}">
-                            <Button variant="outline" size="sm">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              class="text-xs h-8"
+                            >
                               <Eye class="h-3 w-3 mr-1" />
                               View
                             </Button>
