@@ -1,6 +1,6 @@
-# Svelte Starter Template for Ruby on Rails
+# Splitsub
 
-This is a starter template for Rails developers who want to integrate Svelte into their applications without setting everything up from scratch. It provides a structured foundation with essential tools and libraries for building modern, reactive UIs within a Rails ecosystem.
+Splitsub is a modern subscription splitting application that helps you share and manage recurring subscriptions with friends, family, or colleagues. Built with Ruby on Rails and Svelte for a seamless user experience.
 
 ![localhost_3100_login (1)](https://github.com/user-attachments/assets/e3d98e5c-6e4b-4d64-a5d3-e31209459f07)
 
@@ -8,42 +8,46 @@ This is a starter template for Rails developers who want to integrate Svelte int
 
 ## Features
 
-- **[Svelte](https://svelte.dev/)** - A modern JavaScript framework for building user interfaces.
-- **[Ruby on Rails](https://rubyonrails.org/)** - A powerful web application framework for building server-side applications.
-- **[Inertia.js](https://inertiajs.com/)** - Enables single-page applications using classic Rails routing and controllers.
-- **[ShadcnUI](https://ui.shadcn.com/)** - A collection of UI components for Svelte.
-- **[Tailwind CSS](https://tailwindcss.com/)** - A utility-first CSS framework for building custom designs.
-- **[Phosphor Icons](https://phosphoricons.com/)** - A versatile icon library for user interfaces.
-- **[JS Routes](https://github.com/railsware/js-routes)** - A library for generating JavaScript routes in Rails applications.
-- **Rails Authentication** - Built-in authentication using the default Rails 8 authentication system.
-- **[Vite](https://vitejs.dev/)** - A fast and modern frontend bundler.
+- **Subscription Management** - Create and manage shared subscriptions with detailed billing cycles
+- **Smart Splitting** - Automatically calculate and split costs among group members
+- **Payment Tracking** - Track payments and send automated reminders
+- **Invitation System** - Easily invite friends and family to join subscriptions
+- **Evidence Upload** - Upload payment receipts and proof of subscription costs
+- **Email Notifications** - Automated reminders and payment notifications
+- **Modern UI** - Built with Svelte and ShadcnUI for a smooth user experience
+- **Secure Authentication** - Magic link authentication for easy and secure access
 
 ## Installation
 
-1. Use this repository as a template.
-2. Clone your new repository:
+1. Clone the repository:
    ```sh
-   git clone git@github.com:georgekettle/rails_svelte.git <your-repo-name>
-   cd <your-repo-name>
+   git clone <repository-url> splitsub
+   cd splitsub
    ```
-3. Install dependencies:
+2. Install dependencies:
    ```sh
    bundle install
    npm install
    ```
-4. Setup the database:
+3. Setup the database:
    ```sh
    rails db:setup
    ```
-5. Start the development server:
+4. Start the development server:
    ```sh
    bin/dev
    ```
-6. Open in browser at localhost:3100
+5. Open in browser at localhost:3100
 
 ## Usage
 
-This template integrates Svelte with Rails using Inertia.js to manage front-end routing while keeping Rails' backend structure. It uses Vite for asset bundling, and all frontend code is located in the `app/frontend` directory. Place assets such as images and fonts inside the `app/frontend/assets` folder.
+Splitsub makes it easy to share subscription costs:
+
+1. **Create a Project** - Set up a new subscription (Netflix, Spotify, etc.)
+2. **Invite Members** - Send invitations to friends or family
+3. **Track Payments** - Upload receipts and track who has paid
+4. **Get Reminders** - Automated email reminders for upcoming payments
+5. **Split Costs** - Automatically calculate each person's share
 
 ## Contributing
 
