@@ -2,7 +2,7 @@ class InvitationsController < ApplicationController
   allow_unauthenticated_access only: [ :show, :accept, :confirm, :decline ]
   before_action :set_project, only: [ :index, :create, :destroy ]
   before_action :set_invitation, only: [ :show, :accept, :confirm, :decline, :destroy ]
-  before_action :ensure_project_owner_or_admin, only: [ :index, :create, :destroy ]
+  before_action :authorize_invitation_management, only: [ :index, :create, :destroy ]
 
   # GET /projects/:project_id/invitations
   def index
@@ -243,11 +243,8 @@ class InvitationsController < ApplicationController
     @invitation = Invitation.includes(:invited_by).find_by(token: params[:token] || params[:id])
   end
 
-  def ensure_project_owner_or_admin
-    unless @project.is_owner?(Current.user) ||
-           @project.project_memberships.where(user: Current.user, role: "admin").exists?
-      redirect_to project_path(@project), alert: "You don't have permission to manage invitations"
-    end
+  def authorize_invitation_management
+    ensure_project_owner!(@project)
   end
 
   def invitation_params

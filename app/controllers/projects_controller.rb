@@ -1,6 +1,7 @@
 class ProjectsController < ApplicationController
   before_action :set_project, only: [ :show, :edit, :update, :destroy, :preview_reminder, :reminder_settings ]
-  before_action :ensure_owner, only: [ :edit, :update, :destroy, :preview_reminder, :reminder_settings ]
+  before_action :authorize_project_access, only: [ :show ]
+  before_action :authorize_project_management, only: [ :edit, :update, :destroy, :preview_reminder, :reminder_settings ]
 
   def index
     @projects = Current.user.projects.includes(:project_memberships, :members)
@@ -13,11 +14,6 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    unless @project.has_access?(Current.user)
-      redirect_to projects_path, alert: "You don't have access to this project."
-      return
-    end
-
     render inertia: "projects/show", props: {
       project: detailed_project_json(@project)
     }
@@ -131,10 +127,12 @@ class ProjectsController < ApplicationController
     redirect_to projects_path, alert: "Project not found."
   end
 
-  def ensure_owner
-    unless @project.is_owner?(Current.user)
-      redirect_to projects_path, alert: "You can only edit projects you own."
-    end
+  def authorize_project_access
+    ensure_project_access!(@project)
+  end
+
+  def authorize_project_management
+    ensure_project_owner!(@project)
   end
 
   def project_params

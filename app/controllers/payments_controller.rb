@@ -1,7 +1,8 @@
 class PaymentsController < ApplicationController
   before_action :set_payment, only: [ :show, :update, :destroy ]
   before_action :set_billing_cycle, only: [ :new, :create ]
-  before_action :ensure_user_can_access_payment, only: [ :show, :update, :destroy ]
+  before_action :authorize_payment_access, only: [ :show ]
+  before_action :authorize_payment_modification, only: [ :update, :destroy ]
 
   def index
     @payments = Current.user.payments.includes(:billing_cycle, :evidence_attachment)
@@ -63,21 +64,7 @@ class PaymentsController < ApplicationController
     redirect_to payments_path, notice: "Payment evidence deleted successfully!"
   end
 
-  def download_evidence
-    @payment = Payment.find(params[:id])
 
-    unless can_access_payment?(@payment)
-      redirect_to root_path, alert: "You don't have permission to access this payment."
-      return
-    end
-
-    unless @payment.evidence.attached?
-      redirect_back(fallback_location: @payment, alert: "No evidence file attached.")
-      return
-    end
-
-    redirect_to rails_blob_path(@payment.evidence, disposition: "attachment")
-  end
 
   private
 
@@ -89,15 +76,13 @@ class PaymentsController < ApplicationController
     @billing_cycle = BillingCycle.find(params[:billing_cycle_id])
   end
 
-  def ensure_user_can_access_payment
-    unless can_access_payment?(@payment)
-      redirect_to root_path, alert: "You don't have permission to access this payment."
-    end
+  def authorize_payment_access
+    ensure_payment_access!(@payment)
   end
 
-  def can_access_payment?(payment)
-    # User can access their own payments or if they're a project creator
-    payment.user == Current.user || (payment.project&.user == Current.user)
+  def authorize_payment_modification
+    authorize!(:update, @payment) if action_name == "update"
+    authorize!(:destroy, @payment) if action_name == "destroy"
   end
 
   def payment_params
@@ -118,7 +103,7 @@ class PaymentsController < ApplicationController
       created_at: payment.created_at,
       updated_at: payment.updated_at,
       has_evidence: payment.has_evidence?,
-      evidence_url: payment.evidence.attached? ? rails_blob_path(payment.evidence) : nil,
+      evidence_url: payment.evidence.attached? ? secure_payment_evidence_path(payment) : nil,
       evidence_filename: payment.evidence.attached? ? payment.evidence.filename.to_s : nil,
       evidence_content_type: payment.evidence.attached? ? payment.evidence.content_type : nil,
       evidence_byte_size: payment.evidence.attached? ? payment.evidence.byte_size : nil,

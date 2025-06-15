@@ -30,6 +30,14 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
+  # Configure secure session settings for production
+  config.session_store :cookie_store,
+    key: "_splitsub_session",
+    secure: true,
+    httponly: true,
+    same_site: :strict,
+    expire_after: 24.hours
+
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 

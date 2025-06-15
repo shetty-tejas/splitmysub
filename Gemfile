@@ -71,3 +71,6 @@ gem "js-routes", "~> 2.3"
 gem "kaminari", "~> 1.2"
 
 gem "csv", "~> 3.3"
+
+# Rate limiting and attack protection
+gem "rack-attack", "~> 6.7"

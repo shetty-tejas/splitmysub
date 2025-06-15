@@ -52,11 +52,11 @@ Rails.application.routes.draw do
   end
 
   # Payment routes
-  resources :payments, only: [ :index, :show, :update, :destroy ] do
-    member do
-      get :download_evidence
-    end
-  end
+  resources :payments, only: [ :index, :show, :update, :destroy ]
+
+  # Secure file downloads
+  get "secure_files/payment_evidence/:payment_id" => "secure_files#payment_evidence", as: :secure_payment_evidence
+  get "secure_files/download/:token" => "secure_files#download_with_token", as: :secure_file_download
 
   # Nested payment routes under billing cycles
   resources :billing_cycles, only: [] do
@@ -72,6 +72,9 @@ Rails.application.routes.draw do
   # Unsubscribe routes (public, no authentication required)
   get "unsubscribe/:token" => "unsubscribe#show", as: :unsubscribe
   post "unsubscribe/:token" => "unsubscribe#create", as: :process_unsubscribe
+
+  # CSP violation reporting
+  post "csp-violation-report-endpoint" => "csp_reports#create"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

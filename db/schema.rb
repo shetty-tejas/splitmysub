@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_203245) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_210925) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -57,6 +57,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_203245) do
     t.index ["due_date"], name: "index_billing_cycles_on_due_date"
     t.index ["project_id", "due_date"], name: "index_billing_cycles_on_project_id_and_due_date"
     t.index ["project_id"], name: "index_billing_cycles_on_project_id"
+  end
+
+  create_table "file_access_logs", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "resource_type"
+    t.integer "resource_id"
+    t.string "action"
+    t.string "ip_address"
+    t.text "user_agent"
+    t.text "details"
+    t.datetime "accessed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_file_access_logs_on_user_id"
   end
 
   create_table "invitations", force: :cascade do |t|
@@ -180,6 +194,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_203245) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "billing_cycles", "projects"
+  add_foreign_key "file_access_logs", "users"
   add_foreign_key "invitations", "projects"
   add_foreign_key "invitations", "users", column: "invited_by_id"
   add_foreign_key "magic_links", "users"
