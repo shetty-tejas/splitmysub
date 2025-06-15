@@ -2,33 +2,12 @@ require "csv"
 
 class DashboardController < ApplicationController
   def index
-    @user_projects = Current.user.projects.includes(:billing_cycles, :project_memberships)
-    @member_projects = Current.user.member_projects.includes(:billing_cycles, :project_memberships, :user)
-    @all_projects = (@user_projects + @member_projects).uniq
-
-    # Get recent payments for the user
-    @recent_payments = Current.user.payments
-                                  .includes(billing_cycle: :project)
-                                  .order(created_at: :desc)
-                                  .limit(10)
-
-    # Get upcoming billing cycles for projects the user is involved in
-    @upcoming_cycles = BillingCycle.joins(:project)
-                                  .where(project: @all_projects)
-                                  .upcoming
-                                  .order(:due_date)
-                                  .limit(10)
-                                  .includes(:project, :payments)
-
-    # Calculate dashboard statistics
-    @stats = calculate_dashboard_stats
+    @projects = Current.user.projects.includes(:project_memberships, :members)
+    @member_projects = Current.user.member_projects.includes(:user, :project_memberships, :members)
 
     render inertia: "dashboard/Index", props: {
-      user_projects: @user_projects.map { |p| project_with_stats(p) },
-      member_projects: @member_projects.map { |p| project_with_stats(p) },
-      recent_payments: @recent_payments.map { |p| payment_props(p) },
-      upcoming_cycles: @upcoming_cycles.map { |c| billing_cycle_props(c) },
-      stats: @stats
+      owned_projects: @projects.map { |project| project_json(project) },
+      member_projects: @member_projects.map { |project| project_json(project) }
     }
   end
 
@@ -128,6 +107,26 @@ class DashboardController < ApplicationController
   end
 
   private
+
+  def project_json(project)
+    {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      cost: project.cost,
+      billing_cycle: project.billing_cycle,
+      renewal_date: project.renewal_date,
+      reminder_days: project.reminder_days,
+      total_members: project.total_members,
+      cost_per_member: project.cost_per_member,
+      days_until_renewal: project.days_until_renewal,
+      active: project.active?,
+      expiring_soon: project.expiring_soon?,
+      is_owner: project.is_owner?(Current.user),
+      created_at: project.created_at,
+      updated_at: project.updated_at
+    }
+  end
 
   def calculate_dashboard_stats
     # Get project IDs for both owned and member projects

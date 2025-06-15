@@ -97,12 +97,13 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, @project.name
   end
 
-  test "should calculate dashboard stats correctly" do
+  test "should show projects in dashboard" do
     get dashboard_url
     assert_response :success
 
-    # The response should include stats data
-    assert_includes response.body, "stats"
+    # The response should include project data
+    assert_includes response.body, "owned_projects"
+    assert_includes response.body, "member_projects"
   end
 
   test "should handle pagination in payment history" do

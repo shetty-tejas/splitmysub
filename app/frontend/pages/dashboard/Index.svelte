@@ -1,29 +1,26 @@
 <script>
+  import { page } from "@inertiajs/svelte";
+  import { router } from "@inertiajs/svelte";
   import Layout from "../../layouts/layout.svelte";
-  import * as Card from "$lib/components/ui/card/index.js";
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Badge } from "$lib/components/ui/badge/index.js";
-  import { Link } from "@inertiajs/svelte";
   import {
-    DollarSign,
-    CreditCard,
-    AlertTriangle,
-    CheckCircle,
-    Clock,
-    Calendar,
-    Users,
-    ArrowRight,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+  } from "$lib/components/ui/card";
+  import { Button } from "$lib/components/ui/button";
+  import { Badge } from "$lib/components/ui/badge";
+  import {
     Plus,
-    Eye,
-    Download,
-    BarChart3,
+    Calendar,
+    DollarSign,
+    Users,
+    AlertTriangle,
   } from "lucide-svelte";
 
-  export let user_projects = [];
+  export let owned_projects = [];
   export let member_projects = [];
-  export let recent_payments = [];
-  export let upcoming_cycles = [];
-  export let stats = {};
 
   function formatCurrency(amount) {
     return new Intl.NumberFormat("en-US", {
@@ -40,26 +37,30 @@
     });
   }
 
-  function getStatusColor(status) {
-    switch (status) {
-      case "confirmed":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
-      case "overdue":
-        return "bg-red-100 text-red-800";
+  function getBillingCycleBadgeVariant(cycle) {
+    switch (cycle) {
+      case "monthly":
+        return "default";
+      case "quarterly":
+        return "secondary";
+      case "yearly":
+        return "outline";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "default";
     }
   }
 
-  function getDaysUntilDueColor(days) {
-    if (days < 0) return "text-red-600";
-    if (days <= 3) return "text-orange-600";
-    if (days <= 7) return "text-yellow-600";
-    return "text-green-600";
+  function getStatusBadgeVariant(project) {
+    if (!project.active) return "destructive";
+    if (project.expiring_soon) return "warning";
+    return "success";
+  }
+
+  function getStatusText(project) {
+    if (!project.active) return "Expired";
+    if (project.expiring_soon)
+      return `Expires in ${project.days_until_renewal} days`;
+    return "Active";
   }
 </script>
 
@@ -68,455 +69,204 @@
 </svelte:head>
 
 <Layout>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-    <!-- Header -->
-    <div class="mb-6 sm:mb-8">
-      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
-      <p class="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">
-        Overview of your subscriptions and payments
-      </p>
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p class="text-muted-foreground">
+          Manage your subscription projects and memberships
+        </p>
+      </div>
+      <Button href="/projects/new" class="flex items-center gap-2">
+        <Plus class="h-4 w-4" />
+        New Project
+      </Button>
     </div>
 
-    <!-- Stats Cards -->
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
-    >
-      <Card.Root>
-        <Card.Content class="p-4 sm:p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <Users class="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-            </div>
-            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
-              <p class="text-xs sm:text-sm font-medium text-gray-500 truncate">
-                Total Projects
-              </p>
-              <p class="text-xl sm:text-2xl font-bold text-gray-900">
-                {stats.total_projects || 0}
-              </p>
-              <p class="text-xs text-gray-500 truncate">
-                {stats.owned_projects || 0} owned, {stats.member_projects || 0} member
-              </p>
-            </div>
-          </div>
-        </Card.Content>
-      </Card.Root>
-
-      <Card.Root>
-        <Card.Content class="p-4 sm:p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <DollarSign class="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
-            </div>
-            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
-              <p class="text-xs sm:text-sm font-medium text-gray-500 truncate">
-                Monthly Cost
-              </p>
-              <p class="text-xl sm:text-2xl font-bold text-gray-900">
-                {formatCurrency(stats.total_monthly_cost || 0)}
-              </p>
-              <p class="text-xs text-gray-500 truncate">
-                Total monthly subscriptions
-              </p>
-            </div>
-          </div>
-        </Card.Content>
-      </Card.Root>
-
-      <Card.Root>
-        <Card.Content class="p-4 sm:p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <CheckCircle class="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
-            </div>
-            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
-              <p class="text-xs sm:text-sm font-medium text-gray-500 truncate">
-                Payments Made
-              </p>
-              <p class="text-xl sm:text-2xl font-bold text-gray-900">
-                {stats.total_payments_made || 0}
-              </p>
-              <p class="text-xs text-gray-500 truncate">
-                {formatCurrency(stats.total_amount_paid || 0)} total
-              </p>
-            </div>
-          </div>
-        </Card.Content>
-      </Card.Root>
-
-      <Card.Root>
-        <Card.Content class="p-4 sm:p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <AlertTriangle class="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
-            </div>
-            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
-              <p class="text-xs sm:text-sm font-medium text-gray-500 truncate">
-                Pending/Overdue
-              </p>
-              <p class="text-xl sm:text-2xl font-bold text-gray-900">
-                {(stats.pending_payments || 0) + (stats.overdue_payments || 0)}
-              </p>
-              <p class="text-xs text-gray-500 truncate">
-                {stats.pending_payments || 0} pending, {stats.overdue_payments ||
-                  0} overdue
-              </p>
-            </div>
-          </div>
-        </Card.Content>
-      </Card.Root>
-    </div>
-
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
-      <!-- Recent Payments -->
-      <Card.Root>
-        <Card.Header class="pb-3 sm:pb-4">
-          <div class="flex items-center justify-between">
-            <Card.Title class="flex items-center gap-2 text-lg sm:text-xl">
-              <CreditCard class="h-4 w-4 sm:h-5 sm:w-5" />
-              Recent Payments
-            </Card.Title>
-            <Link href="/dashboard/payment_history">
-              <Button
-                variant="outline"
-                size="sm"
-                class="text-xs sm:text-sm h-8 sm:h-9"
-              >
-                <span class="hidden sm:inline">View All</span>
-                <span class="sm:hidden">All</span>
-                <ArrowRight class="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
-        </Card.Header>
-        <Card.Content class="pt-0">
-          {#if recent_payments.length > 0}
-            <div class="space-y-3 sm:space-y-4">
-              {#each recent_payments as payment}
-                <div
-                  class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div class="flex items-center space-x-3 min-w-0 flex-1">
-                    <div class="flex-shrink-0">
-                      {#if payment.status === "confirmed"}
-                        <CheckCircle
-                          class="h-4 w-4 sm:h-5 sm:w-5 text-green-600"
-                        />
-                      {:else if payment.status === "pending"}
-                        <Clock class="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
-                      {:else}
-                        <AlertTriangle
-                          class="h-4 w-4 sm:h-5 sm:w-5 text-red-600"
-                        />
-                      {/if}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                      <p class="text-sm font-medium text-gray-900 truncate">
-                        {payment.project.name}
-                      </p>
-                      <p class="text-xs text-gray-500 truncate">
-                        {formatDate(payment.created_at)} • Due: {formatDate(
-                          payment.billing_cycle.due_date,
-                        )}
-                      </p>
-                    </div>
+    <!-- Owned Projects -->
+    {#if owned_projects.length > 0}
+      <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Your Projects</h2>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {#each owned_projects as project}
+            <div
+              class="bg-card text-card-foreground rounded-xl border shadow cursor-pointer hover:shadow-md transition-shadow"
+              on:click={() => {
+                router.get(`/projects/${project.id}`);
+              }}
+              role="button"
+              tabindex="0"
+              on:keydown={(e) =>
+                e.key === "Enter" && router.get(`/projects/${project.id}`)}
+            >
+              <CardHeader class="pb-3">
+                <div class="flex justify-between items-start">
+                  <div class="flex-1">
+                    <CardTitle class="text-lg">{project.name}</CardTitle>
+                    {#if project.description}
+                      <CardDescription class="mt-1"
+                        >{project.description}</CardDescription
+                      >
+                    {/if}
                   </div>
-                  <div class="text-right flex-shrink-0">
-                    <p class="text-sm font-medium text-gray-900">
-                      {formatCurrency(payment.amount)}
-                    </p>
-                    <Badge class={getStatusColor(payment.status)}>
-                      {payment.status}
-                    </Badge>
-                  </div>
+                  <Badge variant={getStatusBadgeVariant(project)} class="ml-2">
+                    {getStatusText(project)}
+                  </Badge>
                 </div>
-              {/each}
-            </div>
-          {:else}
-            <div class="text-center py-6 sm:py-8">
-              <CreditCard
-                class="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4"
-              />
-              <p class="text-sm sm:text-base text-gray-500">
-                No recent payments
-              </p>
-            </div>
-          {/if}
-        </Card.Content>
-      </Card.Root>
-
-      <!-- Upcoming Payments -->
-      <Card.Root>
-        <Card.Header class="pb-3 sm:pb-4">
-          <div class="flex items-center justify-between">
-            <Card.Title class="flex items-center gap-2 text-lg sm:text-xl">
-              <Calendar class="h-4 w-4 sm:h-5 sm:w-5" />
-              Upcoming Payments
-            </Card.Title>
-            <Link href="/dashboard/upcoming_payments">
-              <Button
-                variant="outline"
-                size="sm"
-                class="text-xs sm:text-sm h-8 sm:h-9"
-              >
-                <span class="hidden sm:inline">View Calendar</span>
-                <span class="sm:hidden">Calendar</span>
-                <ArrowRight class="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
-        </Card.Header>
-        <Card.Content class="pt-0">
-          {#if upcoming_cycles.length > 0}
-            <div class="space-y-3 sm:space-y-4">
-              {#each upcoming_cycles as cycle}
-                <div
-                  class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div class="flex items-center space-x-3 min-w-0 flex-1">
-                    <div class="flex-shrink-0">
-                      <Calendar class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-                    </div>
-                    <div class="min-w-0 flex-1">
-                      <p class="text-sm font-medium text-gray-900 truncate">
-                        {cycle.project.name}
-                      </p>
-                      <p class="text-xs text-gray-500 truncate">
-                        Due: {formatDate(cycle.due_date)}
-                      </p>
-                    </div>
+              </CardHeader>
+              <CardContent class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <div
+                    class="flex items-center gap-2 text-sm text-muted-foreground"
+                  >
+                    <DollarSign class="h-4 w-4" />
+                    <span>{formatCurrency(project.cost)}</span>
                   </div>
-                  <div class="text-right flex-shrink-0">
-                    <p class="text-sm font-medium text-gray-900">
-                      {formatCurrency(cycle.expected_payment)}
-                    </p>
-                    <p
-                      class="text-xs {getDaysUntilDueColor(
-                        cycle.days_until_due,
-                      )}"
+                  <Badge
+                    variant={getBillingCycleBadgeVariant(project.billing_cycle)}
+                  >
+                    {project.billing_cycle}
+                  </Badge>
+                </div>
+
+                <div
+                  class="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                  <Calendar class="h-4 w-4" />
+                  <span>Renews {formatDate(project.renewal_date)}</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <div
+                    class="flex items-center gap-2 text-sm text-muted-foreground"
+                  >
+                    <Users class="h-4 w-4" />
+                    <span
+                      >{project.total_members} member{project.total_members !==
+                      1
+                        ? "s"
+                        : ""}</span
                     >
-                      {#if cycle.days_until_due < 0}
-                        {Math.abs(cycle.days_until_due)} days overdue
-                      {:else if cycle.days_until_due === 0}
-                        Due today
-                      {:else}
-                        {cycle.days_until_due} days left
-                      {/if}
-                    </p>
+                  </div>
+                  <div class="text-sm font-medium">
+                    {formatCurrency(project.cost_per_member)}/person
                   </div>
                 </div>
-              {/each}
-            </div>
-          {:else}
-            <div class="text-center py-6 sm:py-8">
-              <Calendar
-                class="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4"
-              />
-              <p class="text-sm sm:text-base text-gray-500">
-                No upcoming payments
-              </p>
-            </div>
-          {/if}
-        </Card.Content>
-      </Card.Root>
-    </div>
 
-    <!-- Projects Overview -->
-    <div class="mt-6 sm:mt-8">
-      <Card.Root>
-        <Card.Header class="pb-3 sm:pb-4">
-          <div
-            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0"
-          >
-            <Card.Title class="flex items-center gap-2 text-lg sm:text-xl">
-              <Users class="h-4 w-4 sm:h-5 sm:w-5" />
-              Your Projects
-            </Card.Title>
-            <div class="flex gap-2">
-              <Link href="/dashboard/analytics">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  class="text-xs sm:text-sm h-8 sm:h-9"
+                {#if project.expiring_soon}
+                  <div
+                    class="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-2 rounded"
+                  >
+                    <AlertTriangle class="h-4 w-4" />
+                    <span>Renewal reminder in {project.reminder_days} days</span
+                    >
+                  </div>
+                {/if}
+              </CardContent>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {:else}
+      <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Your Projects</h2>
+        <Card class="text-center py-8">
+          <CardContent>
+            <div class="flex flex-col items-center gap-4">
+              <div class="rounded-full bg-muted p-4">
+                <Plus class="h-8 w-8 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">No projects yet</h3>
+                <p class="text-muted-foreground">
+                  Create your first subscription project to get started
+                </p>
+              </div>
+              <Button href="/projects/new" class="flex items-center gap-2">
+                <Plus class="h-4 w-4" />
+                Create Project
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    {/if}
+
+    <!-- Member Projects -->
+    {#if member_projects.length > 0}
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Projects You're In</h2>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {#each member_projects as project}
+            <Card
+              class="cursor-pointer hover:shadow-md transition-shadow"
+              on:click={() => {
+                router.get(`/projects/${project.id}`);
+              }}
+            >
+              <CardHeader class="pb-3">
+                <div class="flex justify-between items-start">
+                  <div class="flex-1">
+                    <CardTitle class="text-lg">{project.name}</CardTitle>
+                    {#if project.description}
+                      <CardDescription class="mt-1"
+                        >{project.description}</CardDescription
+                      >
+                    {/if}
+                  </div>
+                  <Badge variant={getStatusBadgeVariant(project)} class="ml-2">
+                    {getStatusText(project)}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <div
+                    class="flex items-center gap-2 text-sm text-muted-foreground"
+                  >
+                    <DollarSign class="h-4 w-4" />
+                    <span>{formatCurrency(project.cost_per_member)}/person</span
+                    >
+                  </div>
+                  <Badge
+                    variant={getBillingCycleBadgeVariant(project.billing_cycle)}
+                  >
+                    {project.billing_cycle}
+                  </Badge>
+                </div>
+
+                <div
+                  class="flex items-center gap-2 text-sm text-muted-foreground"
                 >
-                  <BarChart3 class="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                  <span class="hidden sm:inline">Analytics</span>
-                  <span class="sm:hidden">Stats</span>
-                </Button>
-              </Link>
-              <Link href="/projects/new">
-                <Button size="sm" class="text-xs sm:text-sm h-8 sm:h-9">
-                  <Plus class="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                  <span class="hidden sm:inline">New Project</span>
-                  <span class="sm:hidden">New</span>
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </Card.Header>
-        <Card.Content class="pt-0">
-          {#if user_projects.length > 0 || member_projects.length > 0}
-            <div class="space-y-6">
-              {#if user_projects.length > 0}
-                <div>
-                  <h3
-                    class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4"
-                  >
-                    Owned Projects
-                  </h3>
-                  <div
-                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
-                  >
-                    {#each user_projects as project}
-                      <div
-                        class="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
-                      >
-                        <div class="flex items-start justify-between mb-2">
-                          <h4
-                            class="font-medium text-gray-900 text-sm sm:text-base truncate pr-2"
-                          >
-                            {project.name}
-                          </h4>
-                          <Badge
-                            class="{getStatusColor(
-                              project.payment_status,
-                            )} text-xs flex-shrink-0"
-                          >
-                            {project.payment_status}
-                          </Badge>
-                        </div>
-                        <p class="text-xs sm:text-sm text-gray-600 mb-2">
-                          {formatCurrency(project.cost)} / {project.billing_cycle}
-                        </p>
-                        <p class="text-xs text-gray-500 mb-3">
-                          {project.total_members} members
-                        </p>
-                        <div class="flex gap-2">
-                          <Link href="/projects/{project.id}">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              class="text-xs h-8"
-                            >
-                              <Eye class="h-3 w-3 mr-1" />
-                              View
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    {/each}
-                  </div>
+                  <Calendar class="h-4 w-4" />
+                  <span>Renews {formatDate(project.renewal_date)}</span>
                 </div>
-              {/if}
 
-              {#if member_projects.length > 0}
-                <div>
-                  <h3
-                    class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4"
+                <div
+                  class="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                  <Users class="h-4 w-4" />
+                  <span
+                    >{project.total_members} member{project.total_members !== 1
+                      ? "s"
+                      : ""}</span
                   >
-                    Member Projects
-                  </h3>
-                  <div
-                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
-                  >
-                    {#each member_projects as project}
-                      <div
-                        class="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
-                      >
-                        <div class="flex items-start justify-between mb-2">
-                          <h4
-                            class="font-medium text-gray-900 text-sm sm:text-base truncate pr-2"
-                          >
-                            {project.name}
-                          </h4>
-                          <Badge
-                            class="{getStatusColor(
-                              project.payment_status,
-                            )} text-xs flex-shrink-0"
-                          >
-                            {project.payment_status}
-                          </Badge>
-                        </div>
-                        <p class="text-xs sm:text-sm text-gray-600 mb-2">
-                          {formatCurrency(project.cost_per_member)} / {project.billing_cycle}
-                        </p>
-                        <p class="text-xs text-gray-500 mb-3">
-                          {project.total_members} members
-                        </p>
-                        <div class="flex gap-2">
-                          <Link href="/projects/{project.id}">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              class="text-xs h-8"
-                            >
-                              <Eye class="h-3 w-3 mr-1" />
-                              View
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    {/each}
-                  </div>
                 </div>
-              {/if}
-            </div>
-          {:else}
-            <div class="text-center py-12">
-              <Users class="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 class="text-lg font-medium text-gray-900 mb-2">
-                No projects yet
-              </h3>
-              <p class="text-gray-500 mb-6">
-                Create your first project to start splitting subscription costs
-              </p>
-              <Link href="/projects/new">
-                <Button>
-                  <Plus class="h-4 w-4 mr-2" />
-                  Create Project
-                </Button>
-              </Link>
-            </div>
-          {/if}
-        </Card.Content>
-      </Card.Root>
-    </div>
 
-    <!-- Quick Actions -->
-    <div class="mt-8">
-      <Card.Root>
-        <Card.Header>
-          <Card.Title>Quick Actions</Card.Title>
-        </Card.Header>
-        <Card.Content>
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Link href="/dashboard/payment_history">
-              <Button variant="outline" class="w-full justify-start">
-                <CreditCard class="h-4 w-4 mr-2" />
-                Payment History
-              </Button>
-            </Link>
-            <Link href="/dashboard/upcoming_payments">
-              <Button variant="outline" class="w-full justify-start">
-                <Calendar class="h-4 w-4 mr-2" />
-                Upcoming Payments
-              </Button>
-            </Link>
-            <Link href="/dashboard/analytics">
-              <Button variant="outline" class="w-full justify-start">
-                <BarChart3 class="h-4 w-4 mr-2" />
-                Analytics
-              </Button>
-            </Link>
-            <Link href="/dashboard/export_payments">
-              <Button variant="outline" class="w-full justify-start">
-                <Download class="h-4 w-4 mr-2" />
-                Export Data
-              </Button>
-            </Link>
-          </div>
-        </Card.Content>
-      </Card.Root>
-    </div>
+                {#if project.expiring_soon}
+                  <div
+                    class="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-2 rounded"
+                  >
+                    <AlertTriangle class="h-4 w-4" />
+                    <span>Renewal reminder in {project.reminder_days} days</span
+                    >
+                  </div>
+                {/if}
+              </CardContent>
+            </Card>
+          {/each}
+        </div>
+      </div>
+    {/if}
   </div>
 </Layout>

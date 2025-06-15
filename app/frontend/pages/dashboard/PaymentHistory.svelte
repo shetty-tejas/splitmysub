@@ -371,7 +371,7 @@
                 Clear Filters
               </Button>
             {:else}
-              <Link href="/projects">
+              <Link href="/dashboard">
                 <Button>Browse Projects</Button>
               </Link>
             {/if}

@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   get "dashboard/analytics" => "dashboard#analytics", as: :dashboard_analytics
   get "dashboard/export_payments" => "dashboard#export_payments", as: :dashboard_export_payments
 
-  resources :projects do
+  resources :projects, except: [ :index ] do
     resources :invitations, only: [ :index, :create, :destroy ]
     # Payment confirmation routes for project creators
     resources :payment_confirmations, only: [ :index, :show, :update ] do

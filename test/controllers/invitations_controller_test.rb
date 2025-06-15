@@ -31,7 +31,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
     other_project = projects(:spotify) # member_user has no access to spotify
 
     get project_invitations_path(other_project)
-    assert_redirected_to projects_path
+    assert_redirected_to dashboard_path
   end
 
   # Create tests
@@ -321,7 +321,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       delete project_invitation_path(@project, @invitation)
     end
 
-    assert_redirected_to projects_path
+    assert_redirected_to dashboard_path
   end
 
   test "should not destroy invitation when not authenticated" do

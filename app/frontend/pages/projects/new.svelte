@@ -50,7 +50,7 @@
   }
 
   function goBack() {
-    router.get("/projects");
+    router.get("/dashboard");
   }
 
   // Set default renewal date to 1 month from now

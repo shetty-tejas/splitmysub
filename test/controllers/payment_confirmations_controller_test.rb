@@ -224,7 +224,7 @@ class PaymentConfirmationsControllerTest < ActionDispatch::IntegrationTest
 
   test "should handle project not found" do
     get project_payment_confirmations_url(project_id: 99999)
-    assert_redirected_to projects_url
+    assert_redirected_to dashboard_url
     assert_equal "Project not found.", flash[:alert]
   end
 

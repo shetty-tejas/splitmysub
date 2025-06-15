@@ -18,11 +18,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
     get verify_magic_link_url(token: magic_link.token)
   end
 
-  test "should get index" do
-    get projects_url
-    assert_response :success
-    assert_includes response.body, "projects/index"
-  end
+
 
   test "should get new" do
     get new_project_url
@@ -90,7 +86,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       user: @other_user
     )
     get project_url(no_access_project)
-    assert_redirected_to projects_url
+    assert_redirected_to dashboard_url
     assert_equal "You don't have access to this project.", flash[:alert]
   end
 
@@ -110,7 +106,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       user: @other_user
     )
     get edit_project_url(no_access_project)
-    assert_redirected_to projects_url
+    assert_redirected_to dashboard_url
     assert_equal "You can only edit projects you own.", flash[:alert]
   end
 
@@ -144,7 +140,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
 
     no_access_project.reload
     assert_equal original_name, no_access_project.name
-    assert_redirected_to projects_url
+    assert_redirected_to dashboard_url
     assert_equal "You can only edit projects you own.", flash[:alert]
   end
 
@@ -167,7 +163,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       delete project_url(@project)
     end
 
-    assert_redirected_to projects_url
+    assert_redirected_to dashboard_url
     assert_equal "Project deleted successfully!", flash[:notice]
   end
 
@@ -184,27 +180,17 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       delete project_url(no_access_project)
     end
 
-    assert_redirected_to projects_url
+    assert_redirected_to dashboard_url
     assert_equal "You can only edit projects you own.", flash[:alert]
   end
 
   test "should handle project not found" do
     get project_url(id: 99999)
-    assert_redirected_to projects_url
+    assert_redirected_to dashboard_url
     assert_equal "Project not found.", flash[:alert]
   end
 
-  test "index should include owned and member projects" do
-    # Use existing membership from fixtures - test_user is member of adobe project
 
-    get projects_url
-    assert_response :success
-
-    # Check that both owned and member projects are included in the response
-    response_body = response.body
-    assert_includes response_body, @project.name # netflix (owned)
-    assert_includes response_body, projects(:adobe).name # adobe (member)
-  end
 
   test "project json should include correct data" do
     get project_url(@project)
@@ -233,7 +219,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
 
     protected_actions.each do |method, action|
       send(method, url_for(controller: :projects, action: action, id: no_access_project))
-      assert_redirected_to projects_url
+      assert_redirected_to dashboard_url
       assert_equal "You can only edit projects you own.", flash[:alert]
     end
   end

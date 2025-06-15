@@ -396,7 +396,7 @@
             <p class="text-gray-500 mb-6">
               You're all caught up! No payments are due in the near future.
             </p>
-            <Link href="/projects">
+            <Link href="/dashboard">
               <Button>Browse Projects</Button>
             </Link>
           </div>

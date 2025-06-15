@@ -431,7 +431,7 @@
               Join shared subscription projects to start saving money on your
               monthly bills.
             </p>
-            <Link href="/projects">
+            <Link href="/dashboard">
               <Button>Browse Projects</Button>
             </Link>
           </div>

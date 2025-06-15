@@ -82,7 +82,7 @@
   }
 
   function goBack() {
-    router.get("/projects");
+    router.get("/dashboard");
   }
 
   function editProject() {

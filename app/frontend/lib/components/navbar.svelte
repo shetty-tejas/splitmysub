@@ -11,7 +11,6 @@
     loginPath,
     signupPath,
     logoutPath,
-    projectsPath,
     dashboardPath,
   } from "@/routes";
 
@@ -106,9 +105,7 @@
                     <BarChart3 class="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    onclick={() => router.visit(projectsPath())}
-                  >
+                  <DropdownMenu.Item onclick={() => router.visit("/dashboard")}>
                     <FolderOpen class="mr-2 h-4 w-4" />
                     <span>Projects</span>
                   </DropdownMenu.Item>
@@ -196,7 +193,7 @@
               <span>Dashboard</span>
             </Link>
             <Link
-              href={projectsPath()}
+              href="/dashboard"
               onclick={closeMobileMenu}
               class="flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
             >

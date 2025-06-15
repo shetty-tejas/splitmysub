@@ -3,15 +3,9 @@ class ProjectsController < ApplicationController
   before_action :authorize_project_access, only: [ :show ]
   before_action :authorize_project_management, only: [ :edit, :update, :destroy, :preview_reminder, :reminder_settings ]
 
-  def index
-    @projects = Current.user.projects.includes(:project_memberships, :members)
-    @member_projects = Current.user.member_projects.includes(:user, :project_memberships, :members)
+  rescue_from Authorization::AuthorizationError, with: :handle_project_authorization_error
 
-    render inertia: "projects/index", props: {
-      owned_projects: @projects.map { |project| project_json(project) },
-      member_projects: @member_projects.map { |project| project_json(project) }
-    }
-  end
+
 
   def show
     render inertia: "projects/show", props: {
@@ -54,7 +48,7 @@ class ProjectsController < ApplicationController
 
   def destroy
     @project.destroy
-    redirect_to projects_path, notice: "Project deleted successfully!"
+    redirect_to dashboard_path, notice: "Project deleted successfully!"
   end
 
   def preview_reminder
@@ -124,7 +118,7 @@ class ProjectsController < ApplicationController
   def set_project
     @project = Project.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to projects_path, alert: "Project not found."
+    redirect_to dashboard_path, alert: "Project not found."
   end
 
   def authorize_project_access
@@ -133,6 +127,32 @@ class ProjectsController < ApplicationController
 
   def authorize_project_management
     ensure_project_owner!(@project)
+  end
+
+  def handle_project_authorization_error(exception)
+    Rails.logger.warn "Project Authorization Error: #{exception.message} for user #{Current.user&.id}"
+
+    respond_to do |format|
+      format.html do
+        # Determine the appropriate error message based on the action
+        message = case action_name
+        when "show"
+          "You don't have access to this project."
+        when "edit", "update", "destroy"
+          "You can only edit projects you own."
+        else
+          "You don't have permission to perform this action."
+        end
+
+        redirect_to dashboard_path, alert: message
+      end
+      format.json do
+        render json: {
+          error: "Unauthorized",
+          message: "You don't have permission to perform this action."
+        }, status: :forbidden
+      end
+    end
   end
 
   def project_params

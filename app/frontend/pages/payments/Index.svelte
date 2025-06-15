@@ -77,7 +77,7 @@
   }
 
   function goBack() {
-    router.get("/projects");
+    router.get("/dashboard");
   }
 
   function viewPayment(paymentId) {
@@ -223,7 +223,7 @@
               <p class="text-gray-600 mb-4">
                 You haven't submitted any payment evidence yet.
               </p>
-              <Button on:click={() => router.visit("/projects")}>
+              <Button on:click={() => router.visit("/dashboard")}>
                 View Projects
               </Button>
             {:else}
