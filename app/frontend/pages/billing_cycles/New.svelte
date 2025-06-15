@@ -68,7 +68,7 @@
 </script>
 
 <svelte:head>
-  <title>New Billing Cycle - {project.name}</title>
+  <title>New Billing Cycle - {project.name} - SplitSub</title>
 </svelte:head>
 
 <Layout>

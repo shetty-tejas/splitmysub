@@ -103,7 +103,7 @@
 
 <svelte:head>
   <title
-    >Billing Cycle - {formatDate(billing_cycle.due_date)} - {project.name}</title
+    >Billing Cycle - {formatDate(billing_cycle.due_date)} - {project.name} - SplitSub</title
   >
 </svelte:head>
 

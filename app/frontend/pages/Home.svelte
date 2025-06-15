@@ -84,7 +84,7 @@
 </script>
 
 <svelte:head>
-  <title>Splitsub - Split Subscription Costs with Friends</title>
+  <title>SplitSub - Split Subscription Costs with Friends</title>
   <meta
     name="description"
     content="Share and manage recurring subscriptions with friends and family. Split costs automatically and never miss a payment with Splitsub."
