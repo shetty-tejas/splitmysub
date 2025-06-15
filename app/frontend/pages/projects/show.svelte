@@ -115,7 +115,7 @@
 </svelte:head>
 
 <Layout>
-  <div class="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
+  <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
     <!-- Header -->
     <div
       class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-0"

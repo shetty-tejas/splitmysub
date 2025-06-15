@@ -17,6 +17,9 @@ Rails.application.routes.draw do
 
   resources :passwords, param: :token, only: %i[new create edit update]
 
+  # Profile routes
+  resource :profile, only: [ :show, :edit, :update ], controller: "profiles"
+
   # Dashboard routes
   get "dashboard" => "dashboard#index", as: :dashboard
   get "dashboard/payment_history" => "dashboard#payment_history", as: :dashboard_payment_history

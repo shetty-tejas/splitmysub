@@ -1,14 +1,23 @@
 <script>
-  let props = $props();
+  import { cn } from "$lib/utils.js";
+
+  let { class: className = "", ...props } = $props();
 </script>
 
-<div class="flex items-center gap-2 font-bold text-xl" {...props}>
+<div
+  class={cn(
+    "flex items-center gap-2 font-bold text-lg whitespace-nowrap",
+    className,
+  )}
+  {...props}
+>
   <svg
-    width="32"
-    height="32"
+    width="28"
+    height="28"
     viewBox="0 0 32 32"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    class="flex-shrink-0"
   >
     <!-- Split icon representing subscription sharing -->
     <rect
@@ -55,5 +64,5 @@
     <circle cx="9" cy="16" r="1.5" fill="currentColor" />
     <circle cx="23" cy="16" r="1.5" fill="currentColor" />
   </svg>
-  <span>Splitsub</span>
+  <span class="flex-shrink-0">Splitsub</span>
 </div>

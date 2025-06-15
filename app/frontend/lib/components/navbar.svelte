@@ -2,23 +2,17 @@
   // grab page props from inertia
   import { page, Link, router } from "@inertiajs/svelte";
   import Logo from "$lib/components/logo.svelte";
-  import {
-    UserCircle,
-    Menu,
-    LogOut,
-    FolderOpen,
-    BarChart3,
-    X,
-  } from "lucide-svelte";
+  import { Menu, LogOut, FolderOpen, BarChart3, X, User } from "lucide-svelte";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-  import { Button, buttonVariants } from "$lib/components/ui/button/index.js";
-  import { cn } from "$lib/utils.js";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Separator } from "$lib/components/ui/separator/index.js";
   import {
     rootPath,
     loginPath,
     signupPath,
     logoutPath,
     projectsPath,
+    dashboardPath,
   } from "@/routes";
 
   function handleLogout(event) {
@@ -42,197 +36,222 @@
   function closeMobileMenu() {
     mobileMenuOpen = false;
   }
+
+  // Get user initials for avatar
+  const getUserInitials = (user) => {
+    if (!user?.email_address) return "U";
+    return user.email_address
+      .split("@")[0]
+      .split(".")
+      .map((part) => part.charAt(0).toUpperCase())
+      .join("")
+      .slice(0, 2);
+  };
 </script>
 
-<nav class="sticky top-0 z-50 bg-white border-b shadow-sm">
-  <div class="flex items-center justify-between p-4 lg:px-10">
-    <div class="flex items-center gap-4 lg:gap-8">
-      <Link href="/" onclick={closeMobileMenu}>
-        <Logo class="h-8 w-32 lg:h-10 lg:w-42 text-primary" />
-      </Link>
+<nav
+  class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <Link
+          href={currentUser ? dashboardPath() : rootPath()}
+          class="flex items-center space-x-2"
+        >
+          <Logo class="text-primary" />
+        </Link>
+      </div>
 
       <!-- Desktop Navigation -->
-      <div class="hidden lg:flex items-center">
-        {#if currentUser}
-          <Link
-            href="/dashboard"
-            class={cn(
-              buttonVariants({ variant: "ghost" }),
-              "rounded-full text-muted-foreground hover:text-foreground",
-            )}>Dashboard</Link
-          >
-          <Link
-            href="/projects"
-            class={cn(
-              buttonVariants({ variant: "ghost" }),
-              "rounded-full text-muted-foreground hover:text-foreground",
-            )}>Projects</Link
-          >
-        {:else}
+      <nav class="hidden items-center space-x-6 md:flex">
+        {#if !currentUser}
           {#each links as link}
             <Link
               href={link.href}
-              class={cn(
-                buttonVariants({ variant: "ghost" }),
-                "rounded-full text-muted-foreground hover:text-foreground",
-              )}>{link.label}</Link
+              class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
+              {link.label}
+            </Link>
           {/each}
         {/if}
-      </div>
-    </div>
+      </nav>
 
-    <!-- Desktop User Menu -->
-    <div class="hidden lg:block">
-      {#if currentUser}
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger
-            class={cn(
-              buttonVariants({ variant: "outline" }),
-              "rounded-full px-2.5 gap-1 h-10",
-            )}
-          >
-            <Menu class="h-4 w-4" />
-            <UserCircle class="h-4 w-4" />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content class="w-56" align="end">
-            <DropdownMenu.Group>
-              <DropdownMenu.GroupHeading>
-                <div class="text-xs font-normal text-muted-foreground">
-                  Logged in as
-                </div>
-                <div class="text-sm font-semibold truncate">
-                  {$page.props.user.email_address}
-                </div>
-              </DropdownMenu.GroupHeading>
-              <DropdownMenu.Separator />
-              <DropdownMenu.Item onclick={() => router.visit("/dashboard")}>
-                <BarChart3 class="mr-2 size-4" />
-                <span>Dashboard</span>
-              </DropdownMenu.Item>
-              <DropdownMenu.Item onclick={() => router.visit(projectsPath())}>
-                <FolderOpen class="mr-2 size-4" />
-                <span>Projects</span>
-              </DropdownMenu.Item>
-              <DropdownMenu.Item onclick={handleLogout}>
-                <LogOut class="mr-2 size-4" />
-                <span>Log out</span>
-              </DropdownMenu.Item>
-            </DropdownMenu.Group>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      {:else}
-        <div class="flex items-center gap-2">
-          <Link
-            href={loginPath()}
-            class={cn(buttonVariants({ variant: "ghost" }), "rounded-full")}
-            >Log in</Link
-          >
-          <Link
-            href={signupPath()}
-            class={cn(buttonVariants({ variant: "default" }), "rounded-full")}
-            >Sign up</Link
-          >
+      <div class="flex items-center space-x-4">
+        <!-- User Menu -->
+        <div class="hidden md:flex">
+          {#if currentUser}
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-medium transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              >
+                {getUserInitials(currentUser)}
+                <span class="sr-only">Open user menu</span>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content class="w-64" align="end">
+                <DropdownMenu.Label class="font-normal">
+                  <div class="flex flex-col space-y-1">
+                    <p class="text-sm font-medium leading-none">
+                      {currentUser.email_address.split("@")[0]}
+                    </p>
+                    <p class="text-xs leading-none text-muted-foreground">
+                      {currentUser.email_address}
+                    </p>
+                  </div>
+                </DropdownMenu.Label>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Group>
+                  <DropdownMenu.Item onclick={() => router.visit("/dashboard")}>
+                    <BarChart3 class="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    onclick={() => router.visit(projectsPath())}
+                  >
+                    <FolderOpen class="mr-2 h-4 w-4" />
+                    <span>Projects</span>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onclick={() => router.visit("/profile")}>
+                    <User class="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenu.Item>
+                </DropdownMenu.Group>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Item
+                  onclick={handleLogout}
+                  class="text-red-600 focus:text-red-600"
+                >
+                  <LogOut class="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          {:else}
+            <div class="flex items-center space-x-2">
+              <Link href={loginPath()}>
+                <Button variant="ghost" size="sm" class="text-sm font-medium">
+                  Log in
+                </Button>
+              </Link>
+              <Link href={signupPath()}>
+                <Button size="sm" class="text-sm font-medium">Sign up</Button>
+              </Link>
+            </div>
+          {/if}
         </div>
-      {/if}
-    </div>
 
-    <!-- Mobile Menu Button -->
-    <div class="lg:hidden">
-      <button
-        type="button"
-        onclick={toggleMobileMenu}
-        class={cn(
-          buttonVariants({ variant: "outline" }),
-          "rounded-full p-2 h-10 w-10",
-        )}
-        aria-label="Toggle mobile menu"
-      >
-        {#if mobileMenuOpen}
-          <X class="h-5 w-5" />
-        {:else}
-          <Menu class="h-5 w-5" />
-        {/if}
-      </button>
+        <!-- Mobile Menu Button -->
+        <div class="flex md:hidden">
+          <Button
+            variant="ghost"
+            size="sm"
+            class="h-9 w-9 px-0"
+            onclick={toggleMobileMenu}
+          >
+            {#if mobileMenuOpen}
+              <X class="h-5 w-5" />
+            {:else}
+              <Menu class="h-5 w-5" />
+            {/if}
+            <span class="sr-only">Toggle menu</span>
+          </Button>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Mobile Menu -->
   {#if mobileMenuOpen}
-    <div class="lg:hidden border-t bg-white">
-      <div class="px-4 py-4 space-y-2">
+    <div class="border-t bg-background md:hidden">
+      <div class="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
         {#if currentUser}
           <!-- User Info -->
-          <div class="px-3 py-2 border-b border-gray-100 mb-2">
-            <div class="text-xs font-normal text-muted-foreground">
-              Logged in as
-            </div>
-            <div class="text-sm font-semibold truncate">
-              {$page.props.user.email_address}
+          <div class="mb-4 rounded-lg border bg-card p-4">
+            <div class="flex items-center space-x-3">
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-medium"
+              >
+                {getUserInitials(currentUser)}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium truncate">
+                  {currentUser.email_address.split("@")[0]}
+                </p>
+                <p class="text-xs text-muted-foreground truncate">
+                  {currentUser.email_address}
+                </p>
+              </div>
             </div>
           </div>
 
           <!-- Navigation Links -->
-          <Link
-            href="/dashboard"
-            onclick={closeMobileMenu}
-            class="flex items-center gap-3 px-3 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-          >
-            <BarChart3 class="h-5 w-5 text-gray-500" />
-            Dashboard
-          </Link>
-          <Link
-            href="/projects"
-            onclick={closeMobileMenu}
-            class="flex items-center gap-3 px-3 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-          >
-            <FolderOpen class="h-5 w-5 text-gray-500" />
-            Projects
-          </Link>
+          <nav class="space-y-1">
+            <Link
+              href="/dashboard"
+              onclick={closeMobileMenu}
+              class="flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <BarChart3 class="h-5 w-5" />
+              <span>Dashboard</span>
+            </Link>
+            <Link
+              href={projectsPath()}
+              onclick={closeMobileMenu}
+              class="flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <FolderOpen class="h-5 w-5" />
+              <span>Projects</span>
+            </Link>
+            <Link
+              href="/profile"
+              onclick={closeMobileMenu}
+              class="flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <User class="h-5 w-5" />
+              <span>Profile</span>
+            </Link>
+          </nav>
+
+          <Separator />
+
+          <!-- Logout Button -->
           <button
             type="button"
             onclick={() => {
               handleLogout(event);
               closeMobileMenu();
             }}
-            class="flex items-center gap-3 px-3 py-3 text-base font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full text-left"
+            class="flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
           >
             <LogOut class="h-5 w-5" />
-            Log out
+            <span>Log out</span>
           </button>
         {:else}
           <!-- Guest Navigation -->
-          {#each links as link}
-            <Link
-              href={link.href}
-              onclick={closeMobileMenu}
-              class="block px-3 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              {link.label}
-            </Link>
-          {/each}
+          <nav class="space-y-1">
+            {#each links as link}
+              <Link
+                href={link.href}
+                onclick={closeMobileMenu}
+                class="block rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                {link.label}
+              </Link>
+            {/each}
+          </nav>
+
+          <Separator />
 
           <!-- Auth Buttons -->
-          <div class="pt-4 border-t border-gray-100 space-y-2">
-            <Link
-              href={loginPath()}
-              onclick={closeMobileMenu}
-              class={cn(
-                buttonVariants({ variant: "outline" }),
-                "w-full justify-center h-12 text-base",
-              )}
-            >
-              Log in
+          <div class="space-y-2">
+            <Link href={loginPath()} onclick={closeMobileMenu} class="block">
+              <Button variant="outline" class="w-full justify-center">
+                Log in
+              </Button>
             </Link>
-            <Link
-              href={signupPath()}
-              onclick={closeMobileMenu}
-              class={cn(
-                buttonVariants({ variant: "default" }),
-                "w-full justify-center h-12 text-base",
-              )}
-            >
-              Sign up
+            <Link href={signupPath()} onclick={closeMobileMenu} class="block">
+              <Button class="w-full justify-center">Sign up</Button>
             </Link>
           </div>
         {/if}

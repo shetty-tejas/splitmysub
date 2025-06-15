@@ -69,7 +69,7 @@
 </svelte:head>
 
 <Layout>
-  <div class="container mx-auto px-4 py-8">
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center mb-8">
       <div>
         <h1 class="text-3xl font-bold tracking-tight">Projects</h1>
