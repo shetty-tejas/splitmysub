@@ -54,9 +54,10 @@ Rails.application.configure do
     request.env["HTTP_USER_AGENT"]&.include?("Email")
   end
 
-  # Generate session nonces for permitted importmap, inline scripts, and inline styles.
+  # Generate session nonces for permitted importmap and inline scripts only.
+  # Note: Nonces are not used for style-src to allow unsafe-inline for email templates
   config.content_security_policy_nonce_generator = ->(request) { SecureRandom.base64(16) }
-  config.content_security_policy_nonce_directives = %w[script-src style-src]
+  config.content_security_policy_nonce_directives = %w[script-src]
 
   # Report violations without enforcing the policy in development
   config.content_security_policy_report_only = Rails.env.development?
