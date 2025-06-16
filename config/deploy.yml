@@ -58,6 +58,9 @@ env:
     # Log everything from Rails
     # RAILS_LOG_LEVEL: debug
     
+    APP_HOST: splitsub.sabha.app
+    APP_PROTOCOL: https
+    
     # Vite configuration for production
     VITE_RUBY_HOST: 0.0.0.0
     VITE_RUBY_PORT: 3036

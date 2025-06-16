@@ -21,6 +21,8 @@ Rails.application.configure do
     policy.style_src :self, :https
     # Allow @vite/client to hot reload style changes in development
     policy.style_src *policy.style_src, :unsafe_inline if Rails.env.development?
+    # Allow inline styles for email templates in production (required for email client compatibility)
+    policy.style_src *policy.style_src, :unsafe_inline if Rails.env.production?
 
     # Allow connections to self and HTTPS
     policy.connect_src :self, :https
@@ -42,6 +44,14 @@ Rails.application.configure do
 
     # Specify URI for violation reports
     policy.report_uri "/csp-violation-report-endpoint" if Rails.env.production?
+  end
+
+  # Skip CSP for email templates (they need inline styles to work across email clients)
+  config.content_security_policy_skip_if = lambda do |request|
+    # Skip CSP for mailer previews and when rendering emails
+    request.path.include?("rails/mailers") ||
+    request.env["action_mailer.rendering"] == true ||
+    request.env["HTTP_USER_AGENT"]&.include?("Email")
   end
 
   # Generate session nonces for permitted importmap, inline scripts, and inline styles.
