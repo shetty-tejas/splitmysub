@@ -35,6 +35,8 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
+    - SMTP_USERNAME
+    - SMTP_PASSWORD
   clear:
     # Rails environment
     RAILS_ENV: production
@@ -62,6 +64,13 @@ env:
     
     # Asset host for CDN (optional)
     # ASSET_HOST: https://cdn.splitsub.example.com
+    
+    # SMTP Configuration (non-sensitive settings)
+    # Flexible defaults - can be overridden by environment variables
+    SMTP_ADDRESS: smtp.gmail.com  # Default: Gmail
+    SMTP_PORT: 587
+    SMTP_AUTHENTICATION: plain
+    SMTP_ENABLE_STARTTLS_AUTO: true
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
