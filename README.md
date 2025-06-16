@@ -19,6 +19,8 @@ Splitsub is a modern subscription splitting application that helps you share and
 
 ## Installation
 
+### Local Development
+
 1. Clone the repository:
    ```sh
    git clone <repository-url> splitsub
@@ -38,6 +40,50 @@ Splitsub is a modern subscription splitting application that helps you share and
    bin/dev
    ```
 5. Open in browser at localhost:3100
+
+### Docker Development
+
+1. Clone the repository:
+   ```sh
+   git clone <repository-url> splitsub
+   cd splitsub
+   ```
+2. Start with docker-compose:
+   ```sh
+   # For development (with live code reloading)
+   docker-compose -f docker-compose.dev.yml up --build
+   
+   # For production-like environment
+   docker-compose up --build
+   ```
+3. Open in browser at localhost:3000
+
+### Docker Production
+
+1. Build the production image:
+   ```sh
+   docker build -t splitsub .
+   ```
+2. Run the container:
+   ```sh
+   docker run -d -p 80:80 \
+     -e RAILS_MASTER_KEY=<your-master-key> \
+     -v splitsub_storage:/rails/storage \
+     -v splitsub_db:/rails/db \
+     --name splitsub splitsub
+   ```
+
+### Deployment with Kamal
+
+This application is configured for deployment with [Kamal](https://kamal-deploy.org/):
+
+1. Configure your servers in `config/deploy.yml`
+2. Set up your secrets in `.kamal/secrets`
+3. Deploy:
+   ```sh
+   kamal setup
+   kamal deploy
+   ```
 
 ## Usage
 

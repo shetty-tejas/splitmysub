@@ -36,6 +36,9 @@
 !/app/assets/builds/.keep
 /public/assets
 
+# Ignore npm artifacts (using yarn)
+/package-lock.json
+
 # Ignore CI service files.
 /.github
 

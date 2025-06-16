@@ -198,11 +198,15 @@
         <h2 class="text-2xl font-semibold mb-4">Projects You're In</h2>
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {#each member_projects as project}
-            <Card
-              class="cursor-pointer hover:shadow-md transition-shadow"
+            <div
+              class="bg-card text-card-foreground rounded-xl border shadow cursor-pointer hover:shadow-md transition-shadow"
               on:click={() => {
                 router.get(`/projects/${project.id}`);
               }}
+              role="button"
+              tabindex="0"
+              on:keydown={(e) =>
+                e.key === "Enter" && router.get(`/projects/${project.id}`)}
             >
               <CardHeader class="pb-3">
                 <div class="flex justify-between items-start">
@@ -263,7 +267,7 @@
                   </div>
                 {/if}
               </CardContent>
-            </Card>
+            </div>
           {/each}
         </div>
       </div>
