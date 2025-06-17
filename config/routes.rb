@@ -40,8 +40,10 @@ Rails.application.routes.draw do
     end
     # Billing cycle management routes
     resources :billing_cycles do
-      member do
+      collection do
         post :generate_upcoming
+      end
+      member do
         patch :archive
         patch :unarchive
         get :adjust

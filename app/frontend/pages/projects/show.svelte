@@ -99,12 +99,6 @@
     }
   }
 
-  function openSubscriptionUrl() {
-    if (project.subscription_url) {
-      window.open(project.subscription_url, "_blank");
-    }
-  }
-
   function manageInvitations() {
     router.get(`/projects/${project.id}/invitations`);
   }
@@ -178,18 +172,6 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
-        {#if project.subscription_url}
-          <button
-            type="button"
-            on:click={openSubscriptionUrl}
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
-          >
-            <ExternalLink class="h-4 w-4" />
-            <span class="hidden sm:inline">Open Subscription</span>
-            <span class="sm:hidden">Open</span>
-          </button>
-        {/if}
-
         {#if project.is_owner}
           <InviteForm {project} />
           <button
@@ -366,6 +348,24 @@
               <span class="text-muted-foreground text-sm">Last Updated</span>
               <p class="font-medium">{formatDateTime(project.updated_at)}</p>
             </div>
+            {#if project.subscription_url}
+              <div class="md:col-span-2">
+                <span class="text-muted-foreground text-sm"
+                  >Subscription URL</span
+                >
+                <p class="font-medium">
+                  <a
+                    href={project.subscription_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors underline decoration-dotted underline-offset-4 hover:decoration-solid"
+                  >
+                    {project.subscription_url}
+                    <ExternalLink class="h-4 w-4 flex-shrink-0" />
+                  </a>
+                </p>
+              </div>
+            {/if}
           </div>
         </CardContent>
       </Card>
