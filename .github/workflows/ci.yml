@@ -1,4 +1,7 @@
-name: CI
+name: Deploy
+concurrency:
+  group: production
+  cancel-in-progress: true
 
 on:
   pull_request:
@@ -8,6 +11,12 @@ on:
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 1
+      RAILS_ENV: production
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
+      KAMAL_REGISTRY_USERNAME: ${{ secrets.KAMAL_REGISTRY_USERNAME }}
 
     steps:
       - name: Checkout code

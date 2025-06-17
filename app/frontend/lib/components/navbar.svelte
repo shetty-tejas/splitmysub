@@ -2,7 +2,7 @@
   // grab page props from inertia
   import { page, Link, router } from "@inertiajs/svelte";
   import Logo from "$lib/components/logo.svelte";
-  import { Menu, LogOut, FolderOpen, BarChart3, X, User } from "lucide-svelte";
+  import { Menu, LogOut, BarChart3, X, User } from "lucide-svelte";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import { Separator } from "$lib/components/ui/separator/index.js";
@@ -83,7 +83,7 @@
           {#if currentUser}
             <DropdownMenu.Root>
               <DropdownMenu.Trigger
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-medium transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-medium transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
               >
                 {getUserInitials(currentUser)}
                 <span class="sr-only">Open user menu</span>
@@ -101,15 +101,17 @@
                 </DropdownMenu.Label>
                 <DropdownMenu.Separator />
                 <DropdownMenu.Group>
-                  <DropdownMenu.Item onclick={() => router.visit("/dashboard")}>
+                  <DropdownMenu.Item
+                    onclick={() => router.visit("/dashboard")}
+                    class="cursor-pointer"
+                  >
                     <BarChart3 class="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item onclick={() => router.visit("/dashboard")}>
-                    <FolderOpen class="mr-2 h-4 w-4" />
-                    <span>Projects</span>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item onclick={() => router.visit("/profile")}>
+                  <DropdownMenu.Item
+                    onclick={() => router.visit("/profile")}
+                    class="cursor-pointer"
+                  >
                     <User class="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenu.Item>
@@ -117,7 +119,7 @@
                 <DropdownMenu.Separator />
                 <DropdownMenu.Item
                   onclick={handleLogout}
-                  class="text-red-600 focus:text-red-600"
+                  class="text-red-600 focus:text-red-600 cursor-pointer"
                 >
                   <LogOut class="mr-2 h-4 w-4" />
                   <span>Log out</span>
@@ -164,23 +166,27 @@
       <div class="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
         {#if currentUser}
           <!-- User Info -->
-          <div class="mb-4 rounded-lg border bg-card p-4">
-            <div class="flex items-center space-x-3">
-              <div
-                class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-medium"
-              >
-                {getUserInitials(currentUser)}
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium truncate">
-                  {currentUser.email_address.split("@")[0]}
-                </p>
-                <p class="text-xs text-muted-foreground truncate">
-                  {currentUser.email_address}
-                </p>
+          <Link href="/profile" onclick={closeMobileMenu}>
+            <div
+              class="mb-4 rounded-lg border bg-card p-4 transition-colors hover:bg-accent cursor-pointer"
+            >
+              <div class="flex items-center space-x-3">
+                <div
+                  class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-medium"
+                >
+                  {getUserInitials(currentUser)}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium truncate">
+                    {currentUser.email_address.split("@")[0]}
+                  </p>
+                  <p class="text-xs text-muted-foreground truncate">
+                    {currentUser.email_address}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
 
           <!-- Navigation Links -->
           <nav class="space-y-1">
@@ -191,14 +197,6 @@
             >
               <BarChart3 class="h-5 w-5" />
               <span>Dashboard</span>
-            </Link>
-            <Link
-              href="/dashboard"
-              onclick={closeMobileMenu}
-              class="flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-            >
-              <FolderOpen class="h-5 w-5" />
-              <span>Projects</span>
             </Link>
             <Link
               href="/profile"

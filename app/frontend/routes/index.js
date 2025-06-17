@@ -733,6 +733,48 @@ export const invitationPath = /*#__PURE__*/ __jsr.r({"token":{"r":true},"format"
 
 /**
  * Generates rails route to
+ * /letter_opener
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const letterOpenerWebPath = /*#__PURE__*/ __jsr.r({}, [2,[7,"/"],[6,"letter_opener"]]);
+
+/**
+ * Generates rails route to
+ * /letter_opener/clear(.:format)
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const letterOpenerWebClearLettersPath = /*#__PURE__*/ __jsr.r({"format":{}}, [2,[2,[2,[7,"/"],[6,"letter_opener"]],[7,"/"]],[2,[6,"clear"],[1,[2,[8,"."],[3,"format"]]]]]);
+
+/**
+ * Generates rails route to
+ * /letter_opener/:id/delete(.:format)
+ * @param {any} id
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const letterOpenerWebDeleteLetterPath = /*#__PURE__*/ __jsr.r({"id":{"r":true},"format":{}}, [2,[2,[2,[7,"/"],[6,"letter_opener"]],[7,"/"]],[2,[3,"id"],[2,[7,"/"],[2,[6,"delete"],[1,[2,[8,"."],[3,"format"]]]]]]]);
+
+/**
+ * Generates rails route to
+ * /letter_opener/:id(/:style)(.:format)
+ * @param {any} id
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const letterOpenerWebLetterPath = /*#__PURE__*/ __jsr.r({"id":{"r":true},"style":{},"format":{}}, [2,[2,[2,[7,"/"],[6,"letter_opener"]],[7,"/"]],[2,[3,"id"],[2,[1,[2,[7,"/"],[3,"style"]]],[1,[2,[8,"."],[3,"format"]]]]]]);
+
+/**
+ * Generates rails route to
+ * /letter_opener/
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const letterOpenerWebLettersPath = /*#__PURE__*/ __jsr.r({}, [2,[2,[7,"/"],[6,"letter_opener"]],[7,"/"]]);
+
+/**
+ * Generates rails route to
  * /login(.:format)
  * @param {object | undefined} options
  * @returns {string} route path
@@ -1029,6 +1071,46 @@ export const railsDiskServicePath = /*#__PURE__*/ __jsr.r({"encoded_key":{"r":tr
  * @returns {string} route path
  */
 export const railsHealthCheckPath = /*#__PURE__*/ __jsr.r({"format":{}}, [2,[7,"/"],[2,[6,"up"],[1,[2,[8,"."],[3,"format"]]]]]);
+
+/**
+ * Generates rails route to
+ * /rails/info(.:format)
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const railsInfoPath = /*#__PURE__*/ __jsr.r({"format":{}}, [2,[7,"/"],[2,[6,"rails"],[2,[7,"/"],[2,[6,"info"],[1,[2,[8,"."],[3,"format"]]]]]]]);
+
+/**
+ * Generates rails route to
+ * /rails/info/notes(.:format)
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const railsInfoNotesPath = /*#__PURE__*/ __jsr.r({"format":{}}, [2,[7,"/"],[2,[6,"rails"],[2,[7,"/"],[2,[6,"info"],[2,[7,"/"],[2,[6,"notes"],[1,[2,[8,"."],[3,"format"]]]]]]]]]);
+
+/**
+ * Generates rails route to
+ * /rails/info/properties(.:format)
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const railsInfoPropertiesPath = /*#__PURE__*/ __jsr.r({"format":{}}, [2,[7,"/"],[2,[6,"rails"],[2,[7,"/"],[2,[6,"info"],[2,[7,"/"],[2,[6,"properties"],[1,[2,[8,"."],[3,"format"]]]]]]]]]);
+
+/**
+ * Generates rails route to
+ * /rails/info/routes(.:format)
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const railsInfoRoutesPath = /*#__PURE__*/ __jsr.r({"format":{}}, [2,[7,"/"],[2,[6,"rails"],[2,[7,"/"],[2,[6,"info"],[2,[7,"/"],[2,[6,"routes"],[1,[2,[8,"."],[3,"format"]]]]]]]]]);
+
+/**
+ * Generates rails route to
+ * /rails/mailers(.:format)
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const railsMailersPath = /*#__PURE__*/ __jsr.r({"format":{}}, [2,[7,"/"],[2,[6,"rails"],[2,[7,"/"],[2,[6,"mailers"],[1,[2,[8,"."],[3,"format"]]]]]]]);
 
 /**
  * Generates rails route to
