@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_203245) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_17_115908) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -37,6 +37,35 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_203245) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "billing_configs", force: :cascade do |t|
+    t.integer "generation_months_ahead", default: 3, null: false
+    t.integer "archiving_months_threshold", default: 6, null: false
+    t.integer "due_soon_days", default: 7, null: false
+    t.boolean "auto_archiving_enabled", default: true, null: false
+    t.boolean "auto_generation_enabled", default: true, null: false
+    t.text "default_billing_frequencies", default: "[\"monthly\"]"
+    t.text "supported_billing_frequencies", default: "[\"monthly\", \"quarterly\", \"yearly\"]"
+    t.text "reminder_schedule", default: "[7, 3, 1]"
+    t.integer "payment_grace_period_days", default: 5, null: false
+    t.boolean "reminders_enabled", default: true, null: false
+    t.integer "gentle_reminder_days_before", default: 3, null: false
+    t.integer "standard_reminder_days_overdue", default: 1, null: false
+    t.integer "urgent_reminder_days_overdue", default: 7, null: false
+    t.integer "final_notice_days_overdue", default: 14, null: false
+    t.string "default_frequency", default: "monthly", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.check_constraint "archiving_months_threshold > 0 AND archiving_months_threshold <= 24", name: "archiving_months_threshold_range"
+    t.check_constraint "default_frequency IN ('daily', 'weekly', 'monthly', 'quarterly', 'yearly')", name: "default_frequency_valid"
+    t.check_constraint "due_soon_days > 0 AND due_soon_days <= 30", name: "due_soon_days_range"
+    t.check_constraint "final_notice_days_overdue >= 0 AND final_notice_days_overdue <= 90", name: "final_notice_days_range"
+    t.check_constraint "generation_months_ahead > 0 AND generation_months_ahead <= 12", name: "generation_months_ahead_range"
+    t.check_constraint "gentle_reminder_days_before > 0 AND gentle_reminder_days_before <= 30", name: "gentle_reminder_days_range"
+    t.check_constraint "payment_grace_period_days >= 0 AND payment_grace_period_days <= 30", name: "payment_grace_period_range"
+    t.check_constraint "standard_reminder_days_overdue >= 0 AND standard_reminder_days_overdue <= 30", name: "standard_reminder_days_range"
+    t.check_constraint "urgent_reminder_days_overdue >= 0 AND urgent_reminder_days_overdue <= 60", name: "urgent_reminder_days_range"
   end
 
   create_table "billing_cycles", force: :cascade do |t|

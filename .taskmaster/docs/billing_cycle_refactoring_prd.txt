@@ -1,0 +1,102 @@
+# Billing Cycle System Refactoring - Product Requirements Document
+
+## Project Overview
+Simplify and make the SplitSub billing cycle system more configurable by reducing complexity, creating a centralized configuration system, and improving maintainability.
+
+## Current State Analysis
+The current billing cycle implementation has several issues:
+- Hardcoded values throughout the codebase (3 months generation, 6 months archiving, 7-day "due soon")
+- Complex 140+ line BillingCycle model with mixed concerns
+- Multiple services doing overlapping work
+- Limited configurability requiring code changes for policy adjustments
+- Frontend complexity with duplicated business logic
+
+## Success Criteria
+1. Centralized configuration system for all billing rules
+2. Simplified, modular codebase with clear separation of concerns  
+3. Admin UI for configuring billing policies without code changes
+4. Improved maintainability and testability
+5. Plugin-like architecture for different billing cycle types
+
+## Technical Requirements
+
+### Phase 1: Configuration Foundation
+- Create BillingConfig model for storing system-wide settings
+- Implement configuration validation and sensible defaults
+- Support configurable billing frequencies, archiving rules, and generation policies
+- Add database migrations for configuration storage
+
+### Phase 2: Service Layer Redesign
+- Create unified BillingCycleManager as main orchestrator
+- Extract policy objects for archiving, generation, and reminder rules
+- Consolidate BillingCycleGeneratorService and BillingCycleArchiverService
+- Implement pluggable billing frequency handlers (weekly, monthly, quarterly, yearly, custom)
+
+### Phase 3: Model Simplification
+- Extract business logic from BillingCycle model into service objects
+- Create value objects for payment status and cycle state
+- Maintain only essential attributes and relationships in model
+- Improve data encapsulation and reduce model complexity
+
+### Phase 4: Frontend Modernization
+- Create reusable Svelte components for billing cycle operations
+- Simplify the Index page with better state management
+- Add admin configuration management interface
+- Implement improved filtering, searching, and bulk operations
+
+### Phase 5: Enhanced Configurability
+- Support for dynamic billing frequencies with custom intervals
+- Configurable archiving policies (time-based, status-based)
+- Flexible reminder schedules per project or globally
+- Project-specific billing rule overrides
+- Bulk operations for cycle management and adjustments
+
+## Configuration Examples
+
+### Global Configuration
+```ruby
+BillingConfig.create!(
+  default_generation_months: 3,
+  archiving_months: 6, 
+  due_soon_days: 7,
+  supported_frequencies: ['weekly', 'monthly', 'quarterly', 'yearly', 'custom'],
+  auto_archiving_enabled: true,
+  payment_grace_period: 5,
+  reminder_schedule: [14, 7, 3, 1] # days before due
+)
+```
+
+### Project-Specific Overrides
+```ruby
+project.billing_config.update!(
+  custom_frequency: '2.months',
+  reminder_schedule: [7, 3, 1],
+  auto_generate: false,
+  archiving_policy: 'manual'
+)
+```
+
+## Implementation Priorities
+1. **High Priority**: Configuration system and service consolidation
+2. **Medium Priority**: Model refactoring and frontend improvements  
+3. **Low Priority**: Advanced configurability features and custom frequencies
+
+## Success Metrics
+- Reduce BillingCycle model from 140+ lines to <50 lines
+- Eliminate hardcoded values throughout the system
+- Enable configuration changes without code deployments
+- Improve test coverage for billing logic
+- Reduce frontend component complexity by 50%
+
+## Technical Constraints
+- Maintain backward compatibility with existing billing cycles
+- Ensure zero-downtime migration for configuration system
+- Preserve all existing functionality during refactoring
+- Follow Rails conventions and SplitSub code patterns
+
+## Acceptance Criteria
+- All billing rules configurable via admin interface
+- Simplified, testable service layer architecture
+- Clean separation between models, services, and controllers
+- Comprehensive test coverage for new configuration system
+- Documentation for configuration options and extension points 
