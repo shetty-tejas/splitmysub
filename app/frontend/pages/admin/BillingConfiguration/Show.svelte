@@ -10,31 +10,12 @@
   import { Badge } from "../../../lib/components/ui/badge";
   import { Separator } from "../../../lib/components/ui/separator";
   import { router } from "@inertiajs/svelte";
-  import { onMount } from "svelte";
 
   export let config;
   export let supported_frequencies;
   export let frequency_descriptions;
   export let validation_errors = [];
-
-  let preview_data = null;
-  let loading_preview = false;
-
-  const loadPreview = async () => {
-    loading_preview = true;
-    try {
-      const response = await fetch("/admin/billing_configuration/preview");
-      preview_data = await response.json();
-    } catch (error) {
-      console.error("Failed to load preview:", error);
-    } finally {
-      loading_preview = false;
-    }
-  };
-
-  onMount(() => {
-    loadPreview();
-  });
+  export let preview_data;
 
   const resetToDefaults = () => {
     if (
@@ -154,7 +135,7 @@
             </div>
           </div>
 
-          {#if preview_data && !loading_preview}
+          {#if preview_data}
             <div class="bg-blue-50 p-3 rounded-lg">
               <p class="text-sm font-medium text-blue-800">Current Impact</p>
               <p class="text-sm text-blue-700">

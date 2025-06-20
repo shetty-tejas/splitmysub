@@ -19,6 +19,13 @@
     Clock,
     ArrowLeft,
   } from "lucide-svelte";
+  import {
+    formatCurrency,
+    formatDate,
+    getPaymentStatusBadgeVariant,
+    getBillingCycleStatusColor,
+  } from "$lib/billing-utils";
+  import { FILTER_OPTIONS, SORT_OPTIONS } from "$lib/billing-constants";
 
   export let project;
   export let billing_cycles;
@@ -26,8 +33,8 @@
   export let filters;
 
   let searchTerm = filters.search || "";
-  let selectedFilter = filters.filter || "all";
-  let selectedSort = filters.sort || "due_date_desc";
+  let selectedFilter = filters.filter || FILTER_OPTIONS.ALL;
+  let selectedSort = filters.sort || SORT_OPTIONS.DUE_DATE_DESC;
 
   function handleSearch() {
     router.get(
@@ -69,44 +76,10 @@
     );
   }
 
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
-
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
-  function getStatusBadgeVariant(status) {
-    switch (status) {
-      case "paid":
-        return "default";
-      case "partial":
-        return "secondary";
-      case "unpaid":
-        return "destructive";
-      default:
-        return "outline";
-    }
-  }
-
   function getStatusIcon(cycle) {
     if (cycle.fully_paid) return CheckCircle;
     if (cycle.overdue) return AlertCircle;
     return Clock;
-  }
-
-  function getStatusColor(cycle) {
-    if (cycle.fully_paid) return "text-green-600";
-    if (cycle.overdue) return "text-red-600";
-    return "text-yellow-600";
   }
 
   function goBack() {
@@ -248,10 +221,10 @@
             on:change={handleFilterChange}
             class="flex h-9 w-full sm:w-48 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
-            <option value="all">All Cycles</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="overdue">Overdue</option>
-            <option value="due_soon">Due Soon</option>
+            <option value={FILTER_OPTIONS.ALL}>All Cycles</option>
+            <option value={FILTER_OPTIONS.UPCOMING}>Upcoming</option>
+            <option value={FILTER_OPTIONS.OVERDUE}>Overdue</option>
+            <option value={FILTER_OPTIONS.DUE_SOON}>Due Soon</option>
           </select>
 
           <!-- Sort -->
@@ -260,10 +233,14 @@
             on:change={handleFilterChange}
             class="flex h-9 w-full sm:w-48 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
-            <option value="due_date_desc">Due Date (Newest)</option>
-            <option value="due_date_asc">Due Date (Oldest)</option>
-            <option value="amount_desc">Amount (High to Low)</option>
-            <option value="amount_asc">Amount (Low to High)</option>
+            <option value={SORT_OPTIONS.DUE_DATE_DESC}>Due Date (Newest)</option
+            >
+            <option value={SORT_OPTIONS.DUE_DATE_ASC}>Due Date (Oldest)</option>
+            <option value={SORT_OPTIONS.AMOUNT_DESC}
+              >Amount (High to Low)</option
+            >
+            <option value={SORT_OPTIONS.AMOUNT_ASC}>Amount (Low to High)</option
+            >
           </select>
 
           <Button on:click={handleSearch} variant="outline">
@@ -284,13 +261,13 @@
               No billing cycles found
             </h3>
             <p class="text-gray-600 mb-4">
-              {#if filters.search || filters.filter !== "all"}
+              {#if filters.search || filters.filter !== FILTER_OPTIONS.ALL}
                 Try adjusting your search or filter criteria.
               {:else}
                 Get started by creating your first billing cycle.
               {/if}
             </p>
-            {#if !filters.search && filters.filter === "all"}
+            {#if !filters.search && filters.filter === FILTER_OPTIONS.ALL}
               <Button href="/projects/{project.id}/billing_cycles/new">
                 <Plus class="w-4 h-4 mr-2" />
                 Create Billing Cycle
@@ -311,13 +288,15 @@
                   <div class="flex items-center gap-3 mb-2">
                     <svelte:component
                       this={getStatusIcon(cycle)}
-                      class="w-5 h-5 {getStatusColor(cycle)}"
+                      class="w-5 h-5 {getBillingCycleStatusColor(cycle)}"
                     />
                     <h3 class="text-lg font-semibold">
                       Due {formatDate(cycle.due_date)}
                     </h3>
                     <Badge
-                      variant={getStatusBadgeVariant(cycle.payment_status)}
+                      variant={getPaymentStatusBadgeVariant(
+                        cycle.payment_status,
+                      )}
                     >
                       {cycle.payment_status}
                     </Badge>

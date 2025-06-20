@@ -107,9 +107,7 @@ class BillingConfig < ApplicationRecord
     supported_billing_frequencies.include?(frequency.to_s)
   end
 
-  def default_frequency
-    default_billing_frequencies.first
-  end
+
 
   # Configuration update methods
   def update_generation_settings!(months_ahead:, auto_enabled: nil)
@@ -200,8 +198,8 @@ class BillingConfig < ApplicationRecord
 
     return if default_freqs.blank? || supported_freqs.blank?
 
-    # Validate frequency values
-    valid_frequencies = %w[weekly monthly quarterly yearly]
+    # Validate frequency values - now includes daily
+    valid_frequencies = %w[daily weekly monthly quarterly yearly]
     invalid_supported = supported_freqs - valid_frequencies
     if invalid_supported.any?
       errors.add(:supported_billing_frequencies, "contains invalid frequencies: #{invalid_supported.join(', ')}")

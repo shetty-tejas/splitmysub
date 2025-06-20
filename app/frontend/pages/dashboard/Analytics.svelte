@@ -14,15 +14,9 @@
     Calendar,
     Percent,
   } from "lucide-svelte";
+  import { formatCurrency } from "$lib/billing-utils";
 
   export let analytics = {};
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
 
   function getMaxAmount(data) {
     return Math.max(...data.map((item) => item.amount));

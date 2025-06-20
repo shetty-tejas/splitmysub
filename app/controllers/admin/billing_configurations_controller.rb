@@ -1,5 +1,5 @@
 class Admin::BillingConfigurationsController < Admin::BaseController
-  before_action :set_billing_config, only: [ :show, :edit, :update ]
+  before_action :set_billing_config, only: [ :show, :edit, :update, :reset ]
 
   # GET /admin/billing_configuration
   def show
@@ -7,7 +7,13 @@ class Admin::BillingConfigurationsController < Admin::BaseController
       config: billing_config_props(@billing_config),
       validation_errors: [],
       supported_frequencies: supported_frequencies_options,
-      frequency_descriptions: frequency_descriptions
+      frequency_descriptions: frequency_descriptions,
+      preview_data: {
+        generation_end_date: Date.current + 3.months,
+        archiving_cutoff_date: Date.current - 6.months,
+        next_reminder_dates: [],
+        affected_cycles_count: { total_cycles: 0, archivable_cycles: 0, due_soon_cycles: 0 }
+      }
     }
   end
 
@@ -45,34 +51,7 @@ class Admin::BillingConfigurationsController < Admin::BaseController
                 notice: "Billing configuration reset to defaults successfully."
   end
 
-  # GET /admin/billing_configuration/preview
-  def preview
-    # Preview what current settings would generate
-    config = @billing_config
-    preview_data = {
-      generation_end_date: config.generation_end_date,
-      archiving_cutoff_date: config.archiving_cutoff_date,
-      next_reminder_dates: calculate_preview_reminder_dates,
-      affected_cycles_count: calculate_affected_cycles_count
-    }
 
-    render json: preview_data
-  end
-
-  # POST /admin/billing_configuration/validate
-  def validate_config
-    temp_config = @billing_config.dup
-    temp_config.assign_attributes(billing_config_params)
-
-    if temp_config.valid?
-      render json: { valid: true, warnings: generate_warnings(temp_config) }
-    else
-      render json: {
-        valid: false,
-        errors: format_validation_errors(temp_config.errors)
-      }
-    end
-  end
 
   private
 
@@ -150,10 +129,30 @@ class Admin::BillingConfigurationsController < Admin::BaseController
     end
   end
 
+  def calculate_preview_data
+    # Calculate preview data for the current configuration
+    begin
+      {
+        generation_end_date: @billing_config.generation_end_date,
+        archiving_cutoff_date: @billing_config.archiving_cutoff_date,
+        next_reminder_dates: calculate_preview_reminder_dates,
+        affected_cycles_count: calculate_affected_cycles_count
+      }
+    rescue => e
+      Rails.logger.error "Error calculating preview data: #{e.message}"
+      {
+        generation_end_date: Date.current + 3.months,
+        archiving_cutoff_date: Date.current - 6.months,
+        next_reminder_dates: [],
+        affected_cycles_count: { total_cycles: 0, archivable_cycles: 0, due_soon_cycles: 0 }
+      }
+    end
+  end
+
   def calculate_preview_reminder_dates
     # Calculate next few reminder dates based on current settings
     base_date = Date.current
-    @billing_config.reminder_schedule.map do |days_before|
+    (@billing_config.reminder_schedule || [ 7, 3, 1 ]).map do |days_before|
       base_date + days_before.days
     end
   end

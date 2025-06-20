@@ -70,9 +70,12 @@ class BillingCycleManager
   end
 
   def calculate_next_due_date(from_date = Date.current, frequency = nil)
-    frequency ||= config.default_frequency
+    # Use project's frequency if not specified, fall back to config default
+    frequency ||= project.billing_cycle || config.default_frequency
 
     case frequency.to_s
+    when "daily"
+      from_date + 1.day
     when "weekly"
       from_date + 1.week
     when "monthly"
@@ -180,11 +183,41 @@ class BillingCycleManager
     project.update(billing_cycle: frequency)
   end
 
+  # New method to get the project's billing frequency
+  def project_billing_frequency
+    project.billing_cycle || config.default_frequency
+  end
+
+  # Enhanced method to validate frequency compatibility
+  def can_use_frequency?(frequency)
+    config.supports_frequency?(frequency) && project.can_use_frequency?(frequency)
+  end
+
+  # Method to update project frequency through the manager
+  def update_project_frequency!(frequency)
+    return false unless can_use_frequency?(frequency)
+
+    project.update_billing_frequency!(frequency)
+  end
+
+  # Get frequency-specific generation settings
+  def frequency_generation_settings
+    frequency = project_billing_frequency
+
+    {
+      frequency: frequency,
+      period_days: project.billing_period_days,
+      cycles_per_generation_period: calculate_cycles_per_generation_period(frequency),
+      max_cycles_to_generate: calculate_max_cycles_for_frequency(frequency)
+    }
+  end
+
   private
 
   def calculate_missing_cycles(end_date, existing_cycles)
     cycles_to_generate = []
     existing_due_dates = existing_cycles.pluck(:due_date).to_set
+    frequency = project_billing_frequency
 
     # Start from the latest existing cycle or current date
     start_date = existing_cycles.maximum(:due_date) || Date.current
@@ -192,7 +225,7 @@ class BillingCycleManager
 
     # Generate cycles until we reach the end_date
     while current_date <= end_date
-      next_due_date = calculate_next_due_date(current_date)
+      next_due_date = calculate_next_due_date(current_date, frequency)
 
       # Only add if this due date doesn't already exist
       unless existing_due_dates.include?(next_due_date)
@@ -205,8 +238,9 @@ class BillingCycleManager
 
       current_date = next_due_date
 
-      # Safety break to prevent infinite loops
-      break if cycles_to_generate.length > 100
+      # Safety break to prevent infinite loops (especially for daily/weekly cycles)
+      max_cycles = calculate_max_cycles_for_frequency(frequency)
+      break if cycles_to_generate.length > max_cycles
     end
 
     cycles_to_generate
@@ -227,5 +261,43 @@ class BillingCycleManager
   rescue
     # If reminder_schedules relationship doesn't exist, assume we should send
     true
+  end
+
+  # Calculate how many cycles we should generate based on frequency
+  def calculate_cycles_per_generation_period(frequency)
+    generation_months = config.generation_months_ahead
+
+    case frequency.to_s
+    when "daily"
+      generation_months * 30 # Approximate days per month
+    when "weekly"
+      generation_months * 4 # Approximate weeks per month
+    when "monthly"
+      generation_months
+    when "quarterly"
+      (generation_months / 3.0).ceil
+    when "yearly"
+      (generation_months / 12.0).ceil
+    else
+      generation_months # Default to monthly
+    end
+  end
+
+  # Safety limit for cycle generation based on frequency
+  def calculate_max_cycles_for_frequency(frequency)
+    case frequency.to_s
+    when "daily"
+      200 # Max 200 daily cycles
+    when "weekly"
+      52 # Max 52 weekly cycles (1 year)
+    when "monthly"
+      24 # Max 24 monthly cycles (2 years)
+    when "quarterly"
+      12 # Max 12 quarterly cycles (3 years)
+    when "yearly"
+      5 # Max 5 yearly cycles
+    else
+      24 # Default to monthly limit
+    end
   end
 end

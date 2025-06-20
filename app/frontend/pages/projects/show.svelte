@@ -27,59 +27,16 @@
     Settings,
   } from "lucide-svelte";
   import InviteForm from "../../components/invitations/InviteForm.svelte";
+  import {
+    formatCurrency,
+    formatDate,
+    formatDateTime,
+    getBillingCycleBadgeVariant,
+    getProjectStatusBadgeVariant,
+    getProjectStatusText,
+  } from "$lib/billing-utils";
 
   export let project;
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
-
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
-  function formatDateTime(dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
-  function getBillingCycleBadgeVariant(cycle) {
-    switch (cycle) {
-      case "monthly":
-        return "default";
-      case "quarterly":
-        return "secondary";
-      case "yearly":
-        return "outline";
-      default:
-        return "default";
-    }
-  }
-
-  function getStatusBadgeVariant(project) {
-    if (!project.active) return "destructive";
-    if (project.expiring_soon) return "warning";
-    return "success";
-  }
-
-  function getStatusText(project) {
-    if (!project.active) return "Expired";
-    if (project.expiring_soon)
-      return `Expires in ${project.days_until_renewal} days`;
-    return "Active";
-  }
 
   function goBack() {
     router.get("/dashboard");
@@ -164,10 +121,10 @@
           {/if}
         </div>
         <Badge
-          variant={getStatusBadgeVariant(project)}
+          variant={getProjectStatusBadgeVariant(project)}
           class="text-sm self-start"
         >
-          {getStatusText(project)}
+          {getProjectStatusText(project)}
         </Badge>
       </div>
 

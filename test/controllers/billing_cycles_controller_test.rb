@@ -159,7 +159,7 @@ class BillingCyclesControllerTest < ActionDispatch::IntegrationTest
 
     # For a monthly project, the service generates 3 months ahead = 3 cycles
     assert_difference("BillingCycle.count", 3) do
-      post generate_upcoming_project_billing_cycle_path(@project, @billing_cycle)
+      post generate_upcoming_project_billing_cycles_path(@project)
     end
 
     assert_redirected_to project_billing_cycles_path(@project)

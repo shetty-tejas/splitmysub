@@ -83,11 +83,11 @@ Rails.application.routes.draw do
     resource :billing_configuration, only: [ :show, :edit, :update ] do
       member do
         post :reset
-        get :preview
-        post :validate_config
       end
     end
   end
+
+
 
   # CSP violation reporting
   post "csp-violation-report-endpoint" => "csp_reports#create"

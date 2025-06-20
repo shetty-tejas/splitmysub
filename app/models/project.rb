@@ -10,15 +10,15 @@ class Project < ApplicationRecord
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
   validates :cost, presence: true, numericality: { greater_than: 0 }
-  validates :billing_cycle, presence: true, inclusion: {
-    in: %w[monthly quarterly yearly],
-    message: "%{value} is not a valid billing cycle"
-  }
+  validates :billing_cycle, presence: true
   validates :renewal_date, presence: true
   validates :reminder_days, presence: true, numericality: {
     greater_than_or_equal_to: 1,
     less_than_or_equal_to: 30
   }
+
+  # Dynamic validation for billing_cycle based on BillingConfig
+  validate :validate_billing_cycle_frequency
 
   # Scopes for common queries
   scope :active, -> { where("renewal_date >= ?", Date.current) }
@@ -51,14 +51,82 @@ class Project < ApplicationRecord
     cost / total_members
   end
 
+  # Updated to use configurable frequencies
   def next_billing_cycle
-    case billing_cycle
+    calculate_next_billing_date(renewal_date)
+  end
+
+  # New method to calculate next billing date from any date
+  def calculate_next_billing_date(from_date = Date.current)
+    case billing_cycle.to_s
+    when "daily"
+      from_date + 1.day
+    when "weekly"
+      from_date + 1.week
     when "monthly"
-      renewal_date + 1.month
+      from_date + 1.month
     when "quarterly"
-      renewal_date + 3.months
+      from_date + 3.months
     when "yearly"
-      renewal_date + 1.year
+      from_date + 1.year
+    else
+      # Fallback to monthly if frequency is not recognized
+      from_date + 1.month
+    end
+  end
+
+  # Frequency management methods
+  def supported_frequencies
+    BillingConfig.current.supported_billing_frequencies
+  end
+
+  def can_use_frequency?(frequency)
+    supported_frequencies.include?(frequency.to_s)
+  end
+
+  def update_billing_frequency!(new_frequency)
+    return false unless can_use_frequency?(new_frequency)
+
+    update!(billing_cycle: new_frequency.to_s)
+  end
+
+  def billing_frequency_display
+    billing_cycle.humanize
+  end
+
+  # Calculate billing period duration in days (for statistics and calculations)
+  def billing_period_days
+    case billing_cycle.to_s
+    when "daily"
+      1
+    when "weekly"
+      7
+    when "monthly"
+      30 # Approximate
+    when "quarterly"
+      90 # Approximate
+    when "yearly"
+      365 # Approximate
+    else
+      30 # Default to monthly
+    end
+  end
+
+  # Calculate annual cost based on frequency
+  def annual_cost
+    case billing_cycle.to_s
+    when "daily"
+      cost * 365
+    when "weekly"
+      cost * 52
+    when "monthly"
+      cost * 12
+    when "quarterly"
+      cost * 4
+    when "yearly"
+      cost
+    else
+      cost * 12 # Default to monthly
     end
   end
 
@@ -76,5 +144,22 @@ class Project < ApplicationRecord
 
   def has_access?(user)
     is_owner?(user) || is_member?(user)
+  end
+
+  private
+
+  def validate_billing_cycle_frequency
+    return if billing_cycle.blank? # Let presence validation handle this
+
+    config = BillingConfig.current
+    unless config.supports_frequency?(billing_cycle)
+      errors.add(:billing_cycle, "#{billing_cycle} is not a supported billing frequency. Supported frequencies: #{config.supported_billing_frequencies.join(', ')}")
+    end
+  rescue => e
+    # If BillingConfig is not available (e.g., during tests), fall back to basic validation
+    Rails.logger.warn "BillingConfig not available for validation: #{e.message}"
+    unless %w[daily weekly monthly quarterly yearly].include?(billing_cycle.to_s)
+      errors.add(:billing_cycle, "is not a valid billing cycle")
+    end
   end
 end

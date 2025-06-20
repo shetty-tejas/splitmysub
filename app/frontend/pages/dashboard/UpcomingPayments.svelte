@@ -14,24 +14,10 @@
     Eye,
     CreditCard,
   } from "lucide-svelte";
+  import { formatCurrency, formatDate } from "$lib/billing-utils";
 
   export let upcoming_cycles = [];
   export let calendar_data = {};
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
-
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  }
 
   function formatMonthYear(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {

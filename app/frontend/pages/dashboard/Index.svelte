@@ -18,50 +18,16 @@
     Users,
     AlertTriangle,
   } from "lucide-svelte";
+  import {
+    formatCurrency,
+    formatDate,
+    getBillingCycleBadgeVariant,
+    getProjectStatusBadgeVariant,
+    getProjectStatusText,
+  } from "$lib/billing-utils";
 
   export let owned_projects = [];
   export let member_projects = [];
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
-
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  }
-
-  function getBillingCycleBadgeVariant(cycle) {
-    switch (cycle) {
-      case "monthly":
-        return "default";
-      case "quarterly":
-        return "secondary";
-      case "yearly":
-        return "outline";
-      default:
-        return "default";
-    }
-  }
-
-  function getStatusBadgeVariant(project) {
-    if (!project.active) return "destructive";
-    if (project.expiring_soon) return "warning";
-    return "success";
-  }
-
-  function getStatusText(project) {
-    if (!project.active) return "Expired";
-    if (project.expiring_soon)
-      return `Expires in ${project.days_until_renewal} days`;
-    return "Active";
-  }
 </script>
 
 <svelte:head>
@@ -109,8 +75,11 @@
                       >
                     {/if}
                   </div>
-                  <Badge variant={getStatusBadgeVariant(project)} class="ml-2">
-                    {getStatusText(project)}
+                  <Badge
+                    variant={getProjectStatusBadgeVariant(project)}
+                    class="ml-2"
+                  >
+                    {getProjectStatusText(project)}
                   </Badge>
                 </div>
               </CardHeader>
@@ -218,8 +187,11 @@
                       >
                     {/if}
                   </div>
-                  <Badge variant={getStatusBadgeVariant(project)} class="ml-2">
-                    {getStatusText(project)}
+                  <Badge
+                    variant={getProjectStatusBadgeVariant(project)}
+                    class="ml-2"
+                  >
+                    {getProjectStatusText(project)}
                   </Badge>
                 </div>
               </CardHeader>
