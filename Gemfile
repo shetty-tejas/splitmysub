@@ -74,3 +74,6 @@ gem "csv", "~> 3.3"
 
 # Rate limiting and attack protection
 gem "rack-attack", "~> 6.7"
+
+# Load environment variables from .env files
+gem "dotenv-rails", groups: [ :development, :test ]
