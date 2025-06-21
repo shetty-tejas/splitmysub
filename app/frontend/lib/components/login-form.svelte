@@ -8,7 +8,7 @@
   import { magicLinkPath, signupPath } from "@/routes";
 
   const form = useForm({
-    email_address: null,
+    email_address: "",
   });
 
   function sendMagicLink(e) {
@@ -16,7 +16,7 @@
     $form.post(magicLinkPath(), {
       onSuccess: () => {
         // Reset the form field after successful submission
-        $form.reset();
+        $form.email_address = "";
       },
     });
   }

@@ -8,14 +8,21 @@
   import { signupPath, loginPath } from "@/routes";
 
   const form = useForm({
-    email_address: null,
-    first_name: null,
-    last_name: null,
+    email_address: "",
+    first_name: "",
+    last_name: "",
   });
 
   function submit(e) {
     e.preventDefault();
-    $form.post(signupPath());
+    $form.post(signupPath(), {
+      onSuccess: () => {
+        // Reset all form fields after successful submission
+        $form.email_address = "";
+        $form.first_name = "";
+        $form.last_name = "";
+      },
+    });
   }
 </script>
 

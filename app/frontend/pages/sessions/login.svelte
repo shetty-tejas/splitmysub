@@ -5,6 +5,10 @@
   import AuthLayout from "../../layouts/auth-layout.svelte";
 </script>
 
+<svelte:head>
+  <title>Sign In - SplitSub</title>
+</svelte:head>
+
 <AuthLayout>
   <div class="flex flex-col h-screen w-full items-center justify-center px-4">
     <Link href="/" class="mb-8">
