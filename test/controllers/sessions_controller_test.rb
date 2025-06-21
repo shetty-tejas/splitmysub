@@ -80,4 +80,23 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
     assert_equal "You have been signed out.", flash[:notice]
   end
+
+  test "should not create user when sending magic link for non-existent email" do
+    non_existent_email = "definitely_does_not_exist@example.com"
+
+    # Ensure the user doesn't exist before the test
+    assert_nil User.find_by(email_address: non_existent_email)
+
+    # Attempt to send magic link
+    assert_emails 0 do
+      post magic_link_url, params: { email_address: non_existent_email }
+    end
+
+    # Verify user was NOT created
+    assert_nil User.find_by(email_address: non_existent_email)
+
+    # Should still show generic message for security
+    assert_redirected_to login_url
+    assert_equal "If an account with that email exists, a magic link has been sent.", flash[:notice]
+  end
 end

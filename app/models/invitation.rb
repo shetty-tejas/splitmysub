@@ -50,19 +50,11 @@ class Invitation < ApplicationRecord
     active?
   end
 
-  def accept!(user = nil)
+  def accept!(user)
     return false unless can_accept?
+    return false unless user.present?
 
     transaction do
-      # Create user if they don't exist
-      if user.nil?
-        user = User.find_or_create_by(email_address: email) do |u|
-          name_parts = email.split("@").first.split(/[._-]/)
-          u.first_name = name_parts.first&.humanize || "User"
-          u.last_name = name_parts.length > 1 ? name_parts.last.humanize : ""
-        end
-      end
-
       # Create project membership
       project.project_memberships.create!(
         user: user,
