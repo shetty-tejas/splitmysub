@@ -13,7 +13,12 @@
 
   function sendMagicLink(e) {
     e.preventDefault();
-    $form.post(magicLinkPath());
+    $form.post(magicLinkPath(), {
+      onSuccess: () => {
+        // Reset the form field after successful submission
+        $form.reset();
+      },
+    });
   }
 </script>
 
