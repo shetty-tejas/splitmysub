@@ -87,10 +87,10 @@ module Authorization
       # User can create payments for projects they're a member of
       payment.billing_cycle&.project&.has_access?(Current.user)
     when :update, :edit
-      # Only the payment creator can update their payment
+      # Only the payment owner can update their payment
       payment.user == Current.user
     when :destroy, :delete
-      # Payment creator or project owner can delete
+      # Payment owner or project owner can delete
       payment.user == Current.user ||
         (payment.project&.is_owner?(Current.user))
     when :confirm

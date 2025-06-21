@@ -36,7 +36,9 @@
     getProjectStatusText,
   } from "$lib/billing-utils";
 
-  export let project;
+  let { project } = $props();
+
+  const currentUser = $derived($page.props?.user);
 
   function goBack() {
     router.get("/dashboard");
@@ -236,20 +238,28 @@
         <CardContent class="space-y-4">
           <!-- Owner -->
           <div
-            class="flex items-center justify-between p-3 bg-muted rounded-lg"
+            class={`flex items-center justify-between p-3 rounded-lg ${
+              currentUser && project.owner.id === currentUser.id
+                ? "bg-muted"
+                : "border"
+            }`}
           >
             <div>
               <p class="font-medium">{project.owner.name}</p>
               <p class="text-sm text-muted-foreground">{project.owner.email}</p>
             </div>
-            <Badge variant="secondary">Owner</Badge>
+            <Badge variant="primary">Owner</Badge>
           </div>
 
           <!-- Members -->
           {#if project.members.length > 0}
             {#each project.members as member}
               <div
-                class="flex items-center justify-between p-3 border rounded-lg"
+                class={`flex items-center justify-between p-3 rounded-lg ${
+                  currentUser && member.id === currentUser.id
+                    ? "bg-muted"
+                    : "border"
+                }`}
               >
                 <div>
                   <p class="font-medium">{member.name}</p>

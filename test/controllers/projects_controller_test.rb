@@ -70,7 +70,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
   test "should show project when member" do
     # Use the existing membership from fixtures
     sign_in_as(@other_user)
-    get project_url(@project) # netflix project where other_user is admin
+    get project_url(@project) # netflix project where other_user is a member
     assert_response :success
     assert_includes response.body, "projects/show"
   end

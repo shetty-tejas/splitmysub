@@ -14,55 +14,19 @@
   <svg
     width="28"
     height="28"
-    viewBox="0 0 32 32"
+    viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
     class="flex-shrink-0"
   >
-    <!-- Split icon representing subscription sharing -->
-    <rect
-      x="4"
-      y="6"
-      width="24"
-      height="4"
-      rx="2"
-      fill="currentColor"
-      opacity="0.8"
-    />
-    <rect x="4" y="14" width="10" height="4" rx="2" fill="currentColor" />
-    <rect x="18" y="14" width="10" height="4" rx="2" fill="currentColor" />
-    <rect
-      x="4"
-      y="22"
-      width="7"
-      height="4"
-      rx="2"
-      fill="currentColor"
-      opacity="0.6"
-    />
-    <rect
-      x="13"
-      y="22"
-      width="7"
-      height="4"
-      rx="2"
-      fill="currentColor"
-      opacity="0.6"
-    />
-    <rect
-      x="22"
-      y="22"
-      width="6"
-      height="4"
-      rx="2"
-      fill="currentColor"
-      opacity="0.6"
-    />
-
-    <!-- Connection dots -->
-    <circle cx="16" cy="8" r="1.5" fill="currentColor" />
-    <circle cx="9" cy="16" r="1.5" fill="currentColor" />
-    <circle cx="23" cy="16" r="1.5" fill="currentColor" />
+    <path d="M16 3h5v5" />
+    <path d="M8 3H3v5" />
+    <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3" />
+    <path d="m15 9 6-6" />
   </svg>
   <span class="flex-shrink-0">Splitsub</span>
 </div>

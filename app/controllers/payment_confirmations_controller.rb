@@ -1,6 +1,6 @@
 class PaymentConfirmationsController < ApplicationController
   before_action :set_project
-  before_action :ensure_project_creator_or_admin
+  before_action :ensure_project_owner
   before_action :set_payment, only: [ :show, :update, :add_note ]
 
   def index
@@ -169,7 +169,7 @@ class PaymentConfirmationsController < ApplicationController
     redirect_to project_payment_confirmations_path(@project), alert: "Payment not found."
   end
 
-  def ensure_project_creator_or_admin
+  def ensure_project_owner
     unless @project.is_owner?(Current.user)
       redirect_to project_path(@project),
                  alert: "You don't have permission to manage payment confirmations."

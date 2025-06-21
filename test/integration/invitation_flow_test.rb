@@ -287,7 +287,7 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
   end
 
     test "cannot invite existing member" do
-    # other_user is already an admin of netflix project (from fixtures)
+    # other_user is already a member of netflix project (from fixtures)
     member = users(:other_user)
 
     sign_in @owner
