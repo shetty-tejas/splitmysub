@@ -167,34 +167,6 @@
             Sign In
           </Link>
         </div>
-
-        <!-- Hero stats -->
-        <div class="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8">
-          <div
-            class="flex flex-col items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm"
-          >
-            <div class="text-3xl font-bold text-blue-600 mb-2">$200+</div>
-            <div class="text-sm text-slate-600 text-center">
-              Average yearly savings per user
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm"
-          >
-            <div class="text-3xl font-bold text-blue-600 mb-2">15+</div>
-            <div class="text-sm text-slate-600 text-center">
-              Popular services supported
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm"
-          >
-            <div class="text-3xl font-bold text-blue-600 mb-2">0</div>
-            <div class="text-sm text-slate-600 text-center">
-              Hidden fees or charges
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -263,7 +235,7 @@
   </div>
 
   <!-- Features Section -->
-  <div class="py-20 sm:py-24 lg:py-28 bg-slate-50">
+  <div id="features" class="py-20 sm:py-24 lg:py-28 bg-slate-50">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2
@@ -307,7 +279,7 @@
   </div>
 
   <!-- How It Works Section -->
-  <div class="py-20 sm:py-24 lg:py-28 bg-white">
+  <div id="how-it-works" class="py-20 sm:py-24 lg:py-28 bg-white">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2
@@ -346,7 +318,7 @@
   </div>
 
   <!-- Pricing Section -->
-  <div class="py-20 sm:py-24 lg:py-28 bg-slate-50">
+  <div id="pricing" class="py-20 sm:py-24 lg:py-28 bg-slate-50">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2

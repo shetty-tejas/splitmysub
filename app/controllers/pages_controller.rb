@@ -2,7 +2,11 @@ class PagesController < ApplicationController
   allow_unauthenticated_access
 
   def home
-    render inertia: "Home"
+    if authenticated?
+      redirect_to dashboard_path
+    else
+      render inertia: "Home"
+    end
   end
 
   def create_flash
