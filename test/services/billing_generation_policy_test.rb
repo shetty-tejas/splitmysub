@@ -58,12 +58,12 @@ class BillingGenerationPolicyTest < ActiveSupport::TestCase
   end
 
   test "should not generate cycles when project has invalid frequency" do
-    @project.update!(billing_cycle: "unsupported")
+    @project.update_attribute(:billing_cycle, "unsupported")
     refute @policy.should_generate_cycles?
   end
 
   test "should not generate cycles when project has no cost" do
-    @project.update!(cost: nil)
+    @project.update_attribute(:cost, nil)
     refute @policy.should_generate_cycles?
   end
 
@@ -131,7 +131,7 @@ class BillingGenerationPolicyTest < ActiveSupport::TestCase
   end
 
   test "should use config default frequency as fallback" do
-    @project.update!(billing_cycle: nil)
+    @project.update_attribute(:billing_cycle, nil)
     start_date = Date.current
     next_date = @policy.next_due_date(start_date)
     assert_equal start_date + 1.month, next_date
@@ -202,13 +202,13 @@ class BillingGenerationPolicyTest < ActiveSupport::TestCase
   end
 
   test "should validate and report invalid project frequency" do
-    @project.update!(billing_cycle: "invalid")
+    @project.update_attribute(:billing_cycle, "invalid")
     errors = @policy.validate_generation_rules
     assert_includes errors, "Project has invalid billing frequency"
   end
 
   test "should validate and report missing project cost" do
-    @project.update!(cost: nil)
+    @project.update_attribute(:cost, nil)
     errors = @policy.validate_generation_rules
     assert_includes errors, "Project cost must be positive"
   end
@@ -297,12 +297,12 @@ class BillingGenerationPolicyTest < ActiveSupport::TestCase
   end
 
   test "should handle zero cost projects" do
-    @project.update!(cost: 0)
+    @project.update_attribute(:cost, 0)
     refute @policy.should_generate_cycles?
   end
 
   test "should handle negative cost projects" do
-    @project.update!(cost: -10)
+    @project.update_attribute(:cost, -10)
     refute @policy.should_generate_cycles?
   end
 end

@@ -207,21 +207,19 @@ class ReminderPolicyTest < ActiveSupport::TestCase
   end
 
   test "should validate reminder timing configuration" do
-    @config.update!(
-      gentle_reminder_days_before: 0,
-      standard_reminder_days_overdue: -1
-    )
+    # Mock the config to return invalid values for testing
+    @config.define_singleton_method(:gentle_reminder_days_before) { 0 }
+    @config.define_singleton_method(:standard_reminder_days_overdue) { -1 }
     errors = @policy.validate_reminder_rules
     assert_includes errors, "Gentle reminder days must be positive"
     assert_includes errors, "Standard reminder days must be positive"
   end
 
   test "should validate logical order of reminders" do
-    @config.update!(
-      standard_reminder_days_overdue: 10,
-      urgent_reminder_days_overdue: 5, # Should be after standard
-      final_notice_days_overdue: 3    # Should be after urgent
-    )
+    # Mock the config to return values that violate logical order
+    @config.define_singleton_method(:standard_reminder_days_overdue) { 10 }
+    @config.define_singleton_method(:urgent_reminder_days_overdue) { 5 } # Should be after standard
+    @config.define_singleton_method(:final_notice_days_overdue) { 3 }    # Should be after urgent
     errors = @policy.validate_reminder_rules
     assert_includes errors, "Standard reminder should come before urgent reminder"
     assert_includes errors, "Urgent reminder should come before final notice"
@@ -357,16 +355,17 @@ class ReminderPolicyTest < ActiveSupport::TestCase
   private
 
   def create_test_cycle(due_date, archived: false)
-    cycle = BillingCycle.create!(
+    cycle = BillingCycle.new(
       project: @project,
       due_date: due_date,
       total_amount: 15.99,
       archived: archived
     )
+    cycle.save!(validate: false)
 
     # Mock required methods for testing
     cycle.define_singleton_method(:fully_paid?) { false }
-    cycle.define_singleton_method(:active_members) { [ @project ] } # Mock with project as member
+    cycle.define_singleton_method(:members_who_havent_paid) { [ @user ] } # Mock with user as member who hasn't paid
     cycle.define_singleton_method(:last_reminder_of_type) { |type| nil } # No previous reminders
 
     cycle

@@ -75,30 +75,81 @@
       });
   }
 
-  // Real-time validation
-  const validateForm = async () => {
+  // Client-side validation (replaces fetch-based validation)
+  const validateForm = () => {
     if (is_validating) return;
 
     is_validating = true;
-    try {
-      const response = await fetch(
-        "/admin/billing_configuration/validate_config",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": document
-              .querySelector('meta[name="csrf-token"]')
-              ?.getAttribute("content"),
-          },
-          body: JSON.stringify({ billing_config: form_data }),
-        },
-      );
+    validation_warnings = [];
 
-      const result = await response.json();
-      validation_warnings = result.warnings || [];
+    try {
+      // Validate generation months ahead
+      if (
+        form_data.generation_months_ahead < 1 ||
+        form_data.generation_months_ahead > 12
+      ) {
+        validation_warnings.push(
+          "Generation months ahead should be between 1 and 12",
+        );
+      }
+
+      // Validate due soon days
+      if (form_data.due_soon_days < 1 || form_data.due_soon_days > 30) {
+        validation_warnings.push(
+          "Due soon threshold should be between 1 and 30 days",
+        );
+      }
+
+      // Validate archiving threshold
+      if (
+        form_data.archiving_months_threshold < 1 ||
+        form_data.archiving_months_threshold > 24
+      ) {
+        validation_warnings.push(
+          "Archiving threshold should be between 1 and 24 months",
+        );
+      }
+
+      // Validate reminder schedule
+      if (form_data.reminder_schedule.length === 0) {
+        validation_warnings.push("At least one reminder day is required");
+      }
+
+      // Check for duplicate reminder days
+      const uniqueReminderDays = [...new Set(form_data.reminder_schedule)];
+      if (uniqueReminderDays.length !== form_data.reminder_schedule.length) {
+        validation_warnings.push("Duplicate reminder days are not allowed");
+      }
+
+      // Validate reminder days are positive
+      if (form_data.reminder_schedule.some((day) => day <= 0)) {
+        validation_warnings.push("All reminder days must be positive numbers");
+      }
+
+      // Validate frequencies array
+      if (form_data.supported_billing_frequencies.length === 0) {
+        validation_warnings.push(
+          "At least one billing frequency must be enabled",
+        );
+      }
+
+      // Check for potential performance issues
+      if (form_data.generation_months_ahead > 6) {
+        validation_warnings.push(
+          "Warning: Generating more than 6 months ahead may impact performance",
+        );
+      }
+
+      if (form_data.reminder_schedule.length > 5) {
+        validation_warnings.push(
+          "Warning: More than 5 reminder days may overwhelm users",
+        );
+      }
     } catch (error) {
       console.error("Validation failed:", error);
+      validation_warnings.push(
+        "Validation error occurred. Please check your input.",
+      );
     } finally {
       is_validating = false;
     }
