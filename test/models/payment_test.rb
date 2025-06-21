@@ -150,20 +150,13 @@ class PaymentTest < ActiveSupport::TestCase
     assert_includes payment.confirmation_notes, "Second note"
   end
 
-    test "should check if user can confirm payment" do
+  test "should check if user can confirm payment" do
     payment = payments(:netflix_member_payment)
     project_owner = payment.project.user
     regular_user = users(:member_user)  # Use member_user who is just a member
 
     assert payment.can_be_confirmed_by?(project_owner)
     assert_not payment.can_be_confirmed_by?(regular_user)
-  end
-
-  test "should allow admin to confirm payment" do
-    payment = payments(:netflix_member_payment)
-    admin_user = users(:other_user)  # other_user is already admin in fixtures
-
-    assert payment.can_be_confirmed_by?(admin_user)
   end
 
   test "should have status helper methods" do

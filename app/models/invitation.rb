@@ -13,7 +13,7 @@ class Invitation < ApplicationRecord
     message: "%{value} is not a valid status"
   }
   validates :role, presence: true, inclusion: {
-    in: %w[member admin],
+    in: %w[member],
     message: "%{value} is not a valid role"
   }
   validates :expires_at, presence: true

@@ -22,7 +22,7 @@ declined_invitation:
   email: "declined@example.com"
   project: netflix
   invited_by: test_user
-  role: "admin"
+  role: "member"
   status: "declined"
   expires_at: <%= Time.current %>
   token: "declined_invitation_token_123456789"
@@ -45,11 +45,56 @@ old_pending_invitation:
   expires_at: <%= 1.day.ago %>
   token: "old_pending_invitation_token_123456789"
 
+newuser_invitation:
+  email: "newuser@example.com"
+  project: netflix
+  invited_by: test_user
+  role: "member"
+  status: "pending"
+  expires_at: <%= 7.days.from_now %>
+  token: "netflix_token_123"
+
 admin_invitation:
   email: "admin@example.com"
   project: adobe
   invited_by: other_user
-  role: "admin"
+  role: "member"
   status: "pending"
   expires_at: <%= 7.days.from_now %>
-  token: "admin_invitation_token_123456789" 
+  token: "admin_invitation_token_123456789"
+
+admin_pending_invitation:
+  email: "admin_pending@example.com"
+  project: adobe
+  invited_by: test_user
+  role: "member"
+  status: "pending"
+  expires_at: <%= 7.days.from_now %>
+  token: "adobe_admin_pending_789"
+
+spotify_accepted_invitation:
+  email: "spotify_accepted@example.com"
+  project: spotify
+  invited_by: other_user
+  role: "member"
+  status: "accepted"
+  expires_at: <%= 7.days.from_now %>
+  token: "spotify_token_456"
+
+spotify_declined_invitation:
+  email: "spotify_declined@example.com"
+  project: spotify
+  invited_by: other_user
+  role: "member"
+  status: "declined"
+  expires_at: <%= 7.days.from_now %>
+  token: "declined_token_456"
+
+spotify_member_invitation:
+  email: "spotify_member@example.com"
+  project: spotify
+  invited_by: other_user
+  role: "member"
+  status: "pending"
+  expires_at: <%= 7.days.from_now %>
+  token: "spotify_member_token_456" 

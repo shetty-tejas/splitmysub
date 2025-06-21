@@ -2,10 +2,14 @@ require "test_helper"
 
 class ReminderPolicyTest < ActiveSupport::TestCase
   def setup
-    # Clean up existing data
+    # Use existing fixtures instead of creating new records
+    @user = users(:test_user)
+    @project = projects(:netflix)
+
+    # Clean up existing billing configs and cycles to avoid interference
     BillingConfig.destroy_all
-    User.destroy_all
-    Project.destroy_all
+    BillingCycle.destroy_all
+
     @config = BillingConfig.create!(
       auto_generation_enabled: true,
       generation_months_ahead: 3,
@@ -18,22 +22,11 @@ class ReminderPolicyTest < ActiveSupport::TestCase
       final_notice_days_overdue: 14,
       payment_grace_period_days: 5,
       supported_billing_frequencies: [ "monthly", "quarterly" ],
+      default_billing_frequencies: [ "monthly" ],
+      reminder_schedule: [ 7, 3, 1 ],
+      due_soon_days: 7,
       default_frequency: "monthly"
     )
-
-    # Create test user and project - skip validation for tests
-    @user = User.new(email_address: "test@example.com", first_name: "Test", last_name: "User")
-    @user.save!(validate: false)
-
-    @project = Project.new(
-      name: "Test Subscription",
-      cost: 15.99,
-      billing_cycle: "monthly",
-      renewal_date: Date.current + 1.month,
-      reminder_days: 7,
-      user: @user
-    )
-    @project.save!(validate: false)
 
     @policy = ReminderPolicy.new(@config, @project)
   end

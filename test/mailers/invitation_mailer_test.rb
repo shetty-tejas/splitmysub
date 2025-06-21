@@ -83,13 +83,6 @@ class InvitationMailerTest < ActionMailer::TestCase
     assert_match "invitations/", text_part.body.encoded
   end
 
-  test "invite email for admin role" do
-    @invitation.update!(role: "admin")
-    email = InvitationMailer.invite(@invitation)
-
-    assert_match "Admin", email.body.encoded
-  end
-
   test "invite email for member role" do
     @invitation.update!(role: "member")
     email = InvitationMailer.invite(@invitation)
@@ -130,5 +123,16 @@ class InvitationMailerTest < ActionMailer::TestCase
     email = InvitationMailer.invite(@invitation)
 
     assert_equal [ @invitation.invited_by.email_address ], email.reply_to
+  end
+
+  test "invite email includes project information" do
+    email = InvitationMailer.invite(@invitation)
+
+    assert_match @project.name, email.body.encoded
+    # Only check description if it's present
+    if @project.description.present?
+      assert_match @project.description, email.body.encoded
+    end
+    assert_match @project.cost.to_s, email.body.encoded
   end
 end

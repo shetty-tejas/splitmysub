@@ -132,7 +132,7 @@ class Payment < ApplicationRecord
   end
 
   def can_be_confirmed_by?(user)
-    project.is_owner?(user) || project.project_memberships.where(user: user, role: "admin").exists?
+    project.is_owner?(user)
   end
 
   def status_changes

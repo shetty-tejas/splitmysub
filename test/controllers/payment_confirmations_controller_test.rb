@@ -228,17 +228,6 @@ class PaymentConfirmationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Project not found.", flash[:alert]
   end
 
-  test "should allow admin to access payment confirmations" do
-    # Clear existing memberships to avoid conflicts
-    @project.project_memberships.where(user: @other_user).destroy_all
-    # Create an admin membership for other_user
-    @project.project_memberships.create!(user: @other_user, role: "admin")
-    sign_in_as(@other_user)
-
-    get project_payment_confirmations_url(@project)
-    assert_response :success
-  end
-
   test "should not allow regular member to access payment confirmations" do
     # Clear existing memberships to avoid conflicts
     @project.project_memberships.where(user: @other_user).destroy_all

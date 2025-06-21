@@ -136,7 +136,8 @@
           {/each}
         </div>
       </div>
-    {:else}
+    {:else if member_projects.length === 0}
+      <!-- Only show "No projects yet" if user has no owned projects AND no member projects -->
       <div class="mb-8">
         <h2 class="text-2xl font-semibold mb-4">Your Projects</h2>
         <Card class="text-center py-8">

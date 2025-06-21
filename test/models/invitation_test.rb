@@ -5,7 +5,7 @@ class InvitationTest < ActiveSupport::TestCase
     @user = users(:test_user)
     @project = projects(:netflix)
     @invitation = Invitation.new(
-      email: "newuser@example.com",
+      email: "test_unique@example.com",
       project: @project,
       invited_by: @user,
       role: "member"
@@ -62,11 +62,6 @@ class InvitationTest < ActiveSupport::TestCase
 
   test "should allow member role" do
     @invitation.role = "member"
-    assert @invitation.valid?
-  end
-
-  test "should allow admin role" do
-    @invitation.role = "admin"
     assert @invitation.valid?
   end
 

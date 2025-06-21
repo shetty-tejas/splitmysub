@@ -39,14 +39,14 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
     assert_difference "Invitation.count", 1 do
       post project_invitations_path(@project), params: {
         invitation: {
-          email: "newuser@example.com",
+          email: "unique_test_user@example.com",
           role: "member"
         }
       }
     end
 
     invitation = Invitation.last
-    assert_equal "newuser@example.com", invitation.email
+    assert_equal "unique_test_user@example.com", invitation.email
     assert_equal "member", invitation.role
     assert_equal @user, invitation.invited_by
     assert_equal @project, invitation.project
@@ -368,26 +368,13 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-    # Role validation tests
-    test "should accept member role" do
+  # Role validation tests
+  test "should accept member role" do
     assert_difference "Invitation.count", 1 do
       post project_invitations_path(@project), params: {
         invitation: {
           email: "member_role_test@example.com",
           role: "member"
-        }
-      }
-    end
-
-    assert_redirected_to project_path(@project)
-  end
-
-    test "should accept admin role" do
-    assert_difference "Invitation.count", 1 do
-      post project_invitations_path(@project), params: {
-        invitation: {
-          email: "admin_role_test@example.com",
-          role: "admin"
         }
       }
     end

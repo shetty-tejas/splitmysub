@@ -4,7 +4,7 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
   def setup
     @owner = users(:test_user)
     @project = projects(:netflix)
-    @invitation_email = "newuser@example.com"
+    @invitation_email = "integration_test_user@example.com"
   end
 
   test "complete invitation flow for new user" do
@@ -334,40 +334,6 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
         }
       }
     end
-  end
-
-  test "admin role invitation flow" do
-    sign_in @owner
-
-    assert_difference "Invitation.count", 1 do
-      post project_invitations_path(@project), params: {
-        invitation: {
-          email: @invitation_email,
-          role: "admin"
-        }
-      }
-    end
-
-    invitation = Invitation.last
-    assert_equal "admin", invitation.role
-    sign_out
-
-    # Accept invitation as new user
-    post accept_invitation_path(invitation.token)
-
-    assert_difference "User.count", 1 do
-      assert_difference "@project.project_memberships.count", 1 do
-        post confirm_invitation_path(invitation.token), params: {
-          first_name: "Admin",
-          last_name: "User"
-        }
-      end
-    end
-
-    # Verify admin membership was created
-    new_user = User.find_by(email_address: @invitation_email)
-    membership = @project.project_memberships.find_by(user: new_user)
-    assert_equal "admin", membership.role
   end
 
   test "race condition handling in user creation" do

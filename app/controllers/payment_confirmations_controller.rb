@@ -170,8 +170,7 @@ class PaymentConfirmationsController < ApplicationController
   end
 
   def ensure_project_creator_or_admin
-    unless @project.is_owner?(Current.user) ||
-           @project.project_memberships.where(user: Current.user, role: "admin").exists?
+    unless @project.is_owner?(Current.user)
       redirect_to project_path(@project),
                  alert: "You don't have permission to manage payment confirmations."
     end
