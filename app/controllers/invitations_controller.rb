@@ -1,7 +1,7 @@
 class InvitationsController < ApplicationController
   allow_unauthenticated_access only: [ :show, :accept, :confirm, :decline ]
-  before_action :set_project, only: [ :index, :create, :destroy ]
-  before_action :set_invitation, only: [ :show, :accept, :confirm, :decline, :destroy ]
+  before_action :set_project, only: [ :index, :create, :update, :send_email, :destroy ]
+  before_action :set_invitation, only: [ :show, :accept, :confirm, :decline, :update, :send_email, :destroy ]
   before_action :authorize_invitation_management, only: [ :index, :create, :destroy ]
 
   # GET /projects/:project_id/invitations
@@ -17,8 +17,6 @@ class InvitationsController < ApplicationController
 
   # PATCH /projects/:project_id/invitations/:id
   def update
-    @invitation = @project.invitations.find(params[:id])
-
     if @invitation.update(invitation_params)
       respond_to do |format|
         format.json do
@@ -49,8 +47,6 @@ class InvitationsController < ApplicationController
 
   # POST /projects/:project_id/invitations/:id/send_email
   def send_email
-    @invitation = @project.invitations.find(params[:id])
-
     if @invitation.email.present?
       InvitationMailer.invite(@invitation).deliver_later
 
@@ -217,8 +213,17 @@ class InvitationsController < ApplicationController
       return
     end
 
+    # Determine email to use: invitation email or user-provided email for link-only invitations
+    user_email = @invitation.email.present? ? @invitation.email : params[:email]
+
+    if user_email.blank?
+      redirect_to invitation_path(@invitation.token),
+                 alert: "Email address is required to create your account."
+      return
+    end
+
     # Check if user already exists
-    if User.exists?(email_address: @invitation.email)
+    if User.exists?(email_address: user_email)
       redirect_to invitation_path(@invitation.token),
                  alert: "An account with this email already exists. Please sign in instead."
       return
@@ -227,14 +232,14 @@ class InvitationsController < ApplicationController
     # Create new user and accept invitation
     begin
       # Double-check if user exists right before creation to handle race conditions
-      if User.exists?(email_address: @invitation.email)
+      if User.exists?(email_address: user_email)
         redirect_to invitation_path(@invitation.token),
                    alert: "An account with this email already exists. Please sign in instead."
         return
       end
 
       user = User.create!(
-        email_address: @invitation.email,
+        email_address: user_email,
         first_name: params[:first_name],
         last_name: params[:last_name]
       )
@@ -308,7 +313,6 @@ class InvitationsController < ApplicationController
 
   # DELETE /projects/:project_id/invitations/:id
   def destroy
-    @invitation = @project.invitations.find(params[:id])
     @invitation.destroy
 
     redirect_back(fallback_location: project_invitations_path(@project),
@@ -324,7 +328,13 @@ class InvitationsController < ApplicationController
   end
 
   def set_invitation
-    @invitation = Invitation.includes(:invited_by).find_by(token: params[:token] || params[:id])
+    # For public routes that use :token parameter
+    if params[:token]
+      @invitation = Invitation.includes(:invited_by).find_by_invitation_token(params[:token])
+    else
+      # For project-scoped routes that use :id parameter (database ID)
+      @invitation = Invitation.includes(:invited_by).find_by(id: params[:id])
+    end
   end
 
   def authorize_invitation_management

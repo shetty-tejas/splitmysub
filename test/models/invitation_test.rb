@@ -16,10 +16,9 @@ class InvitationTest < ActiveSupport::TestCase
     assert @invitation.valid?
   end
 
-  test "should require email" do
+  test "should allow email to be blank" do
     @invitation.email = nil
-    assert_not @invitation.valid?
-    assert_includes @invitation.errors[:email], "can't be blank"
+    assert @invitation.valid?
   end
 
   test "should require valid email format" do
@@ -69,6 +68,32 @@ class InvitationTest < ActiveSupport::TestCase
     @invitation.save!
     assert_not_nil @invitation.token
     assert @invitation.token.length > 20
+  end
+
+  test "should generate secure invitation token" do
+    @invitation.save!
+    secure_token = @invitation.secure_invitation_token
+    assert_not_nil secure_token
+    assert secure_token != @invitation.token
+  end
+
+  test "should verify secure token" do
+    @invitation.save!
+    secure_token = @invitation.secure_invitation_token
+    assert @invitation.verify_secure_token(secure_token)
+  end
+
+  test "should find invitation by token using enhanced finder" do
+    @invitation.save!
+    found_invitation = Invitation.find_by_invitation_token(@invitation.token)
+    assert_equal @invitation, found_invitation
+  end
+
+  test "should find invitation by secure token using enhanced finder" do
+    @invitation.save!
+    secure_token = @invitation.secure_invitation_token
+    found_invitation = Invitation.find_by_invitation_token(secure_token)
+    assert_equal @invitation, found_invitation
   end
 
   test "should set expiration on creation" do

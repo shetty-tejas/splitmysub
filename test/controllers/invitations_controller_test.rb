@@ -165,7 +165,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     json_response = JSON.parse(response.body)
-    assert_includes json_response["errors"], "Email is not a valid email address"
+    assert_includes json_response["errors"], "Email must be a valid email address with a proper domain"
   end
 
     test "should send email for invitation with email address" do
