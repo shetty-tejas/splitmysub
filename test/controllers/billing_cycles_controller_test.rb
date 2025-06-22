@@ -58,7 +58,8 @@ class BillingCyclesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(@member)
 
     get new_project_billing_cycle_path(@project)
-    assert_response :success # Members can view but not create
+    assert_redirected_to root_path # Members cannot access the new form
+    assert_equal "Access denied.", flash[:alert]
   end
 
   test "should create billing cycle with valid params" do
@@ -253,6 +254,14 @@ class BillingCyclesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to root_path
     assert_not @billing_cycle.reload.archived?
+  end
+
+  test "should get project payments as project member" do
+    sign_in_as(@member)
+
+    get project_payments_path(@project)
+    assert_response :success
+    assert_includes response.body, "payments/ProjectIndex"
   end
 
   test "should get adjust form as project owner" do

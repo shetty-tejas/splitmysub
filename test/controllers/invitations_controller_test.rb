@@ -42,14 +42,20 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: "unique_test_user@example.com",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
 
+    assert_response :success
     invitation = Invitation.last
     assert_equal "unique_test_user@example.com", invitation.email
     assert_equal "member", invitation.role
     assert_equal @user, invitation.invited_by
     assert_equal @project, invitation.project
+
+    # Check JSON response
+    json_response = JSON.parse(response.body)
+    assert json_response["invitation"]["token"].present?
+    assert_equal "unique_test_user@example.com", json_response["invitation"]["email"]
   end
 
   test "should not create invitation with invalid email" do
@@ -59,8 +65,12 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: "invalid@local",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert json_response["errors"].present?
   end
 
   test "should not create duplicate invitation" do
@@ -70,8 +80,12 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: @invitation.email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert json_response["errors"].present?
   end
 
   test "should not allow inviting project owner" do
@@ -81,8 +95,12 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: @project.user.email_address,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert json_response["errors"].present?
   end
 
       test "should not allow inviting existing member" do
@@ -94,8 +112,86 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: member_user.email_address,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert json_response["errors"].present?
+  end
+
+  test "should create invitation with null email for link-only invitations" do
+    assert_difference "Invitation.count", 1 do
+      post project_invitations_path(@project), params: {
+        invitation: {
+          email: nil,
+          role: "member"
+        }
+      }, headers: { "Accept" => "application/json" }
+    end
+
+    assert_response :success
+    json_response = JSON.parse(response.body)
+    assert json_response["invitation"]["token"].present?
+    assert_nil json_response["invitation"]["email"]
+
+    invitation = Invitation.last
+    assert_nil invitation.email
+    assert_equal "member", invitation.role
+    assert_equal @user, invitation.invited_by
+    assert_equal @project, invitation.project
+  end
+
+      test "should update invitation with email address" do
+    @invitation.update!(email: nil) # Start with no email
+
+    patch project_invitation_path(@project, @invitation), params: {
+      invitation: { email: "newemail@example.com" }
+    }, headers: { "Accept" => "application/json" }
+
+    assert_response :success
+    @invitation.reload
+    assert_equal "newemail@example.com", @invitation.email
+
+    json_response = JSON.parse(response.body)
+    assert_equal "Invitation updated successfully", json_response["message"]
+    assert_equal @invitation.id, json_response["invitation"]["id"]
+  end
+
+  test "should not update invitation with invalid email" do
+    patch project_invitation_path(@project, @invitation), params: {
+      invitation: { email: "invalid-email" }
+    }, headers: { "Accept" => "application/json" }
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert_includes json_response["errors"], "Email is not a valid email address"
+  end
+
+    test "should send email for invitation with email address" do
+    @invitation.update!(email: "unique_test@example.com")
+
+    assert_enqueued_emails 1 do
+      post send_email_project_invitation_path(@project, @invitation),
+           headers: { "Accept" => "application/json" }
+    end
+
+    assert_response :success
+    json_response = JSON.parse(response.body)
+    assert_equal "Invitation email sent to unique_test@example.com", json_response["message"]
+  end
+
+  test "should not send email for invitation without email address" do
+    @invitation.update!(email: nil)
+
+    assert_no_enqueued_emails do
+      post send_email_project_invitation_path(@project, @invitation),
+           headers: { "Accept" => "application/json" }
+    end
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert_equal "Cannot send email: no email address provided", json_response["error"]
   end
 
   # Show tests
@@ -342,8 +438,12 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: "invalid-email",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert json_response["errors"].present?
   end
 
   test "should reject invitation with email missing domain" do
@@ -353,8 +453,12 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: "user@local",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert json_response["errors"].present?
   end
 
   test "should accept invitation with valid email format" do
@@ -364,8 +468,13 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: "valid@example.com",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :success
+    json_response = JSON.parse(response.body)
+    assert json_response["invitation"]["token"].present?
+    assert_equal "valid@example.com", json_response["invitation"]["email"]
   end
 
   # Role validation tests
@@ -376,10 +485,13 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: "member_role_test@example.com",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
 
-    assert_redirected_to project_path(@project)
+    assert_response :success
+    json_response = JSON.parse(response.body)
+    assert json_response["invitation"]["token"].present?
+    assert_equal "member_role_test@example.com", json_response["invitation"]["email"]
   end
 
   test "should reject invalid role" do
@@ -389,8 +501,12 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
           email: "user@example.com",
           role: "invalid"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert json_response["errors"].present?
   end
 
   private

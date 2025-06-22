@@ -1,8 +1,8 @@
 class BillingCyclesController < ApplicationController
   before_action :set_project, only: [ :index, :show, :new, :create, :edit, :update, :destroy, :generate_upcoming, :archive, :unarchive, :adjust ]
   before_action :set_billing_cycle, only: [ :show, :edit, :update, :destroy, :archive, :unarchive, :adjust ]
-  before_action :ensure_project_access, only: [ :index, :show, :new, :create, :edit, :update, :destroy, :generate_upcoming, :archive, :unarchive, :adjust ]
-  before_action :ensure_project_owner, only: [ :destroy, :generate_upcoming, :archive, :unarchive, :adjust ]
+  before_action :ensure_project_access, only: [ :index, :show ]
+  before_action :ensure_project_owner, only: [ :new, :create, :edit, :update, :destroy, :generate_upcoming, :archive, :unarchive, :adjust ]
 
   def index
     @billing_cycles = @project.billing_cycles.includes(:payments)
@@ -48,6 +48,11 @@ class BillingCyclesController < ApplicationController
         search: params[:search],
         sort: params[:sort],
         show_archived: params[:show_archived]
+      },
+      user_permissions: {
+        is_owner: @project.is_owner?(Current.user),
+        is_member: @project.is_member?(Current.user),
+        can_manage: @project.is_owner?(Current.user)
       }
     }
   end
@@ -60,7 +65,12 @@ class BillingCyclesController < ApplicationController
       project: project_props(@project),
       billing_cycle: detailed_billing_cycle_props(@billing_cycle),
       payments: @payments.map { |payment| payment_props(payment) },
-      payment_stats: cycle_payment_stats(@billing_cycle)
+      payment_stats: cycle_payment_stats(@billing_cycle),
+      user_permissions: {
+        is_owner: @project.is_owner?(Current.user),
+        is_member: @project.is_member?(Current.user),
+        can_manage: @project.is_owner?(Current.user)
+      }
     }
   end
 

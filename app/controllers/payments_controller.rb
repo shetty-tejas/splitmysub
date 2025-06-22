@@ -5,12 +5,35 @@ class PaymentsController < ApplicationController
   before_action :authorize_payment_modification, only: [ :update, :destroy ]
 
   def index
-    @payments = Current.user.payments.includes(:billing_cycle, :evidence_attachment)
-                           .order(created_at: :desc)
+    # Check if this is a project-specific payment view
+    if params[:project_id].present?
+      @project = Project.find(params[:project_id])
+      ensure_project_access!(@project)
 
-    render inertia: "payments/Index", props: {
-      payments: @payments.map { |payment| payment_props(payment) }
-    }
+      # Get all payments for this project's billing cycles
+      @payments = Payment.joins(billing_cycle: :project)
+                        .where(billing_cycles: { project_id: @project.id })
+                        .includes(:user, :billing_cycle, :evidence_attachment)
+                        .order(created_at: :desc)
+
+      render inertia: "payments/ProjectIndex", props: {
+        project: project_props(@project),
+        payments: @payments.map { |payment| payment_props(payment) },
+        user_permissions: {
+          is_owner: @project.is_owner?(Current.user),
+          is_member: @project.is_member?(Current.user),
+          can_manage: @project.is_owner?(Current.user)
+        }
+      }
+    else
+      # Original behavior - show user's own payments
+      @payments = Current.user.payments.includes(:billing_cycle, :evidence_attachment)
+                             .order(created_at: :desc)
+
+      render inertia: "payments/Index", props: {
+        payments: @payments.map { |payment| payment_props(payment) }
+      }
+    end
   end
 
   def show

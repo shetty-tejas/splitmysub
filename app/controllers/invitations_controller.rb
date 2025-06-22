@@ -15,20 +15,104 @@ class InvitationsController < ApplicationController
     }
   end
 
+  # PATCH /projects/:project_id/invitations/:id
+  def update
+    @invitation = @project.invitations.find(params[:id])
+
+    if @invitation.update(invitation_params)
+      respond_to do |format|
+        format.json do
+          render json: {
+            invitation: @invitation,
+            message: "Invitation updated successfully"
+          }
+        end
+        format.html do
+          redirect_back(fallback_location: project_path(@project),
+                       notice: "Invitation updated successfully")
+        end
+      end
+    else
+      respond_to do |format|
+        format.json do
+          render json: {
+            errors: @invitation.errors.full_messages
+          }, status: :unprocessable_entity
+        end
+        format.html do
+          redirect_back(fallback_location: project_path(@project),
+                       alert: @invitation.errors.full_messages.join(", "))
+        end
+      end
+    end
+  end
+
+  # POST /projects/:project_id/invitations/:id/send_email
+  def send_email
+    @invitation = @project.invitations.find(params[:id])
+
+    if @invitation.email.present?
+      InvitationMailer.invite(@invitation).deliver_later
+
+      respond_to do |format|
+        format.json do
+          render json: {
+            message: "Invitation email sent to #{@invitation.email}"
+          }
+        end
+        format.html do
+          redirect_back(fallback_location: project_path(@project),
+                       notice: "Invitation email sent to #{@invitation.email}")
+        end
+      end
+    else
+      respond_to do |format|
+        format.json do
+          render json: {
+            error: "Cannot send email: no email address provided"
+          }, status: :unprocessable_entity
+        end
+        format.html do
+          redirect_back(fallback_location: project_path(@project),
+                       alert: "Cannot send email: no email address provided")
+        end
+      end
+    end
+  end
+
   # POST /projects/:project_id/invitations
   def create
     @invitation = @project.invitations.build(invitation_params)
     @invitation.invited_by = Current.user
 
     if @invitation.save
-      # Send invitation email
-      InvitationMailer.invite(@invitation).deliver_later
+      # Don't send invitation email automatically anymore
+      # InvitationMailer.invite(@invitation).deliver_later
 
-      redirect_back(fallback_location: project_path(@project),
-                   notice: "Invitation sent to #{@invitation.email}")
+      respond_to do |format|
+        format.json do
+          render json: {
+            invitation: invitation_props(@invitation),
+            message: @invitation.email.present? ? "Invitation created for #{@invitation.email}" : "Invitation link created"
+          }
+        end
+        format.html do
+          redirect_back(fallback_location: project_path(@project),
+                       notice: @invitation.email.present? ? "Invitation sent to #{@invitation.email}" : "Invitation link created")
+        end
+      end
     else
-      redirect_back(fallback_location: project_path(@project),
-                   alert: @invitation.errors.full_messages.join(", "))
+      respond_to do |format|
+        format.json do
+          render json: {
+            errors: @invitation.errors.full_messages
+          }, status: :unprocessable_entity
+        end
+        format.html do
+          redirect_back(fallback_location: project_path(@project),
+                       alert: @invitation.errors.full_messages.join(", "))
+        end
+      end
     end
   end
 

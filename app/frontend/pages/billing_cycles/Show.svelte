@@ -33,6 +33,7 @@
   export let billing_cycle;
   export let payments;
   export let payment_stats;
+  export let user_permissions;
 
   function getStatusIcon(status) {
     const iconName = getPaymentStatusIcon(status);
@@ -91,7 +92,7 @@
           Back to Billing Cycles
         </a>
       </div>
-      {#if project.is_owner}
+      {#if user_permissions?.can_manage}
         <div class="flex gap-2">
           <Button
             href="/projects/{project.id}/billing_cycles/{billing_cycle.id}/edit"
@@ -117,6 +118,20 @@
         <strong>{project.name}</strong>
       </p>
     </div>
+
+    <!-- Member view notice -->
+    {#if user_permissions?.is_member && !user_permissions?.is_owner}
+      <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div class="flex items-center gap-2 text-blue-800">
+          <AlertCircle class="h-4 w-4" />
+          <span class="text-sm font-medium">Member View</span>
+        </div>
+        <p class="text-sm text-blue-700 mt-1">
+          You're viewing this billing cycle as a project member. Contact the
+          project owner to make changes.
+        </p>
+      </div>
+    {/if}
 
     <!-- Status Overview -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

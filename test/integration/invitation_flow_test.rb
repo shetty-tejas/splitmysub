@@ -17,9 +17,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @invitation_email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
 
+    assert_response :success
     invitation = Invitation.last
     assert_equal @invitation_email, invitation.email
     assert_equal "pending", invitation.status
@@ -87,9 +88,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @invitation_email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
 
+    assert_response :success
     invitation = Invitation.last
     sign_out
 
@@ -133,9 +135,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @invitation_email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
 
+    assert_response :success
     invitation = Invitation.last
     sign_out
 
@@ -173,9 +176,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @invitation_email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
 
+    assert_response :success
     invitation = Invitation.last
     sign_out
 
@@ -207,9 +211,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @invitation_email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
 
+    assert_response :success
     invitation = Invitation.last
     sign_out
 
@@ -259,8 +264,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @invitation_email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :success
 
     # Try to create duplicate invitation
     assert_no_difference "Invitation.count" do
@@ -269,8 +276,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @invitation_email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
   end
 
   test "cannot invite project owner" do
@@ -282,8 +291,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @owner.email_address,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
   end
 
     test "cannot invite existing member" do
@@ -298,8 +309,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: member.email_address,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+
+    assert_response :unprocessable_entity
   end
 
   test "email validation during invitation creation" do
@@ -312,8 +325,9 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: "invalid-email",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+    assert_response :unprocessable_entity
 
     # Test email without proper domain
     assert_no_difference "Invitation.count" do
@@ -322,8 +336,9 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: "user@local",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+    assert_response :unprocessable_entity
 
     # Test valid email
     assert_difference "Invitation.count", 1 do
@@ -332,8 +347,9 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: "valid@example.com",
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
+    assert_response :success
   end
 
   test "race condition handling in user creation" do
@@ -345,9 +361,10 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
           email: @invitation_email,
           role: "member"
         }
-      }
+      }, headers: { "Accept" => "application/json" }
     end
 
+    assert_response :success
     invitation = Invitation.last
     sign_out
 

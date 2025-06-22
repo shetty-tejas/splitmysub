@@ -79,11 +79,12 @@ module Authorization
     return false unless Current.user && payment
 
     case action
-    when :read, :show
-      # User can access their own payments or if they're the project owner
+    when :read, :show, :index
+      # User can access their own payments, if they're the project owner, or if they're a project member
       payment.user == Current.user ||
-        (payment.project&.is_owner?(Current.user))
-    when :create
+        (payment.project&.is_owner?(Current.user)) ||
+        (payment.project&.is_member?(Current.user))
+    when :create, :new
       # User can create payments for projects they're a member of
       payment.billing_cycle&.project&.has_access?(Current.user)
     when :update, :edit
@@ -97,9 +98,10 @@ module Authorization
       # Only project owner can confirm payments
       payment.project&.is_owner?(Current.user)
     when :download_evidence
-      # Same as read access
+      # Same as read access - members can view evidence
       payment.user == Current.user ||
-        (payment.project&.is_owner?(Current.user))
+        (payment.project&.is_owner?(Current.user)) ||
+        (payment.project&.is_member?(Current.user))
     else
       false
     end
@@ -109,9 +111,11 @@ module Authorization
     return false unless Current.user && billing_cycle
 
     case action
-    when :read, :show
+    when :read, :show, :index
+      # Members can read billing cycles but not modify them
       billing_cycle.project&.has_access?(Current.user)
-    when :create, :update, :edit, :destroy, :delete, :manage
+    when :create, :new, :update, :edit, :destroy, :delete, :manage, :generate_upcoming, :archive, :unarchive, :adjust
+      # Only owners can modify billing cycles
       billing_cycle.project&.is_owner?(Current.user)
     else
       false

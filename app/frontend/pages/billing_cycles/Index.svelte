@@ -31,6 +31,7 @@
   export let billing_cycles;
   export let stats;
   export let filters;
+  export let user_permissions;
 
   let searchTerm = filters.search || "";
   let selectedFilter = filters.filter || FILTER_OPTIONS.ALL;
@@ -115,17 +116,31 @@
       </p>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="flex flex-col sm:flex-row gap-2 mb-8">
-      <Button on:click={generateUpcomingCycles} variant="outline">
-        <Calendar class="w-4 h-4 mr-2" />
-        Generate Upcoming
-      </Button>
-      <Button href="/projects/{project.id}/billing_cycles/new">
-        <Plus class="w-4 h-4 mr-2" />
-        New Billing Cycle
-      </Button>
-    </div>
+    <!-- Action Buttons - Only for owners -->
+    {#if user_permissions?.can_manage}
+      <div class="flex flex-col sm:flex-row gap-2 mb-8">
+        <Button on:click={generateUpcomingCycles} variant="outline">
+          <Calendar class="w-4 h-4 mr-2" />
+          Generate Upcoming
+        </Button>
+        <Button href="/projects/{project.id}/billing_cycles/new">
+          <Plus class="w-4 h-4 mr-2" />
+          New Billing Cycle
+        </Button>
+      </div>
+    {:else if user_permissions?.is_member}
+      <!-- Member view notice -->
+      <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div class="flex items-center gap-2 text-blue-800">
+          <AlertCircle class="h-4 w-4" />
+          <span class="text-sm font-medium">Member View</span>
+        </div>
+        <p class="text-sm text-blue-700 mt-1">
+          You're viewing billing cycles as a project member. Contact the project
+          owner to make changes.
+        </p>
+      </div>
+    {/if}
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

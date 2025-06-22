@@ -12,55 +12,147 @@
     DialogTrigger,
     DialogClose,
   } from "$lib/components/ui/dialog";
-  import { UserPlus, Mail } from "lucide-svelte";
+  import { UserPlus, Mail, Copy, Check } from "lucide-svelte";
 
   export let project;
 
   let email = "";
-  let role = "member";
   let isSubmitting = false;
   let emailError = "";
+  let inviteUrl = "";
+  let copySuccess = false;
+  let isGeneratingUrl = false;
+  let invitationId = null;
 
   function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-  function handleSubmit() {
+  async function generateInviteUrl() {
+    if (isGeneratingUrl) return;
+
+    isGeneratingUrl = true;
+
+    try {
+      const response = await fetch(`/projects/${project.id}/invitations`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-CSRF-Token":
+            document
+              .querySelector('meta[name="csrf-token"]')
+              ?.getAttribute("content") || "",
+        },
+        body: JSON.stringify({
+          invitation: {
+            email: email.trim() || null, // Allow null email for link-only invitations
+            role: "member",
+          },
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.invitation && data.invitation.token) {
+          inviteUrl = `${window.location.origin}/invitations/${data.invitation.token}`;
+          invitationId = data.invitation.id;
+        }
+      } else {
+        console.error("Failed to generate invite URL:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Failed to generate invite URL:", error);
+    } finally {
+      isGeneratingUrl = false;
+    }
+  }
+
+  async function handleSubmit() {
     emailError = "";
 
-    if (!email.trim()) {
-      emailError = "Email is required";
-      return;
-    }
-
-    if (!validateEmail(email.trim())) {
+    if (email.trim() && !validateEmail(email.trim())) {
       emailError = "Please enter a valid email address";
       return;
     }
 
+    // If we don't have an invite URL yet, generate one
+    if (!inviteUrl) {
+      generateInviteUrl();
+      return;
+    }
+
+    // If we have both email and URL, send the invitation email
+    if (email.trim() && inviteUrl && invitationId) {
+      await sendInvitationEmail();
+    }
+  }
+
+  async function sendInvitationEmail() {
+    if (isSubmitting) return;
+
     isSubmitting = true;
 
-    router.post(
-      `/projects/${project.id}/invitations`,
-      {
-        invitation: {
-          email: email.trim(),
-          role: role,
+    try {
+      // First, update the invitation with the email address
+      const updateResponse = await fetch(
+        `/projects/${project.id}/invitations/${invitationId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "X-CSRF-Token":
+              document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content") || "",
+          },
+          body: JSON.stringify({
+            invitation: {
+              email: email.trim(),
+            },
+          }),
         },
-      },
-      {
-        onSuccess: () => {
+      );
+
+      if (updateResponse.ok) {
+        // Now send the email
+        const emailResponse = await fetch(
+          `/projects/${project.id}/invitations/${invitationId}/send_email`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              "X-CSRF-Token":
+                document
+                  .querySelector('meta[name="csrf-token"]')
+                  ?.getAttribute("content") || "",
+            },
+          },
+        );
+
+        if (emailResponse.ok) {
+          const data = await emailResponse.json();
+          // Show success message and clear email
           email = "";
-          role = "member";
-          isSubmitting = false;
-          // The dialog will close automatically on success
-        },
-        onError: () => {
-          isSubmitting = false;
-        },
-      },
-    );
+          emailError = "";
+          // You could show a success toast here
+          console.log("Email sent successfully:", data.message);
+        } else {
+          const errorData = await emailResponse.json();
+          emailError = errorData.error || "Failed to send email";
+        }
+      } else {
+        emailError = "Failed to update invitation with email address";
+      }
+    } catch (error) {
+      console.error("Failed to send invitation email:", error);
+      emailError = "Failed to send email. Please try again.";
+    } finally {
+      isSubmitting = false;
+    }
   }
 
   function handleKeydown(event) {
@@ -72,9 +164,12 @@
 
   function resetForm() {
     email = "";
-    role = "member";
     isSubmitting = false;
     emailError = "";
+    inviteUrl = "";
+    copySuccess = false;
+    isGeneratingUrl = false;
+    invitationId = null;
   }
 
   function handleEmailInput() {
@@ -82,9 +177,30 @@
       emailError = "";
     }
   }
+
+  async function copyInviteUrl() {
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      copySuccess = true;
+      setTimeout(() => {
+        copySuccess = false;
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  }
+
+  // Generate invite URL when modal opens
+  function handleOpenChange(open) {
+    if (open && !inviteUrl && !isGeneratingUrl) {
+      generateInviteUrl();
+    } else if (!open) {
+      resetForm();
+    }
+  }
 </script>
 
-<Dialog onOpenChange={resetForm}>
+<Dialog onOpenChange={handleOpenChange}>
   <DialogTrigger>
     <Button variant="outline" size="sm">
       <UserPlus class="h-4 w-4 mr-2" />
@@ -98,23 +214,21 @@
         Invite Member to {project.name}
       </DialogTitle>
       <DialogDescription>
-        Send an invitation to join this subscription project. They'll receive an
-        email with instructions.
+        Share this invitation link or enter an email address to send directly.
       </DialogDescription>
     </DialogHeader>
 
     <form on:submit|preventDefault={handleSubmit} class="space-y-4">
       <div class="space-y-2">
-        <Label for="email">Email Address</Label>
+        <Label for="email">Email Address (Optional)</Label>
         <Input
           id="email"
           type="email"
-          placeholder="Enter email address"
+          placeholder="Enter email address to send invitation"
           bind:value={email}
           on:keydown={handleKeydown}
           on:input={handleEmailInput}
-          required
-          disabled={isSubmitting}
+          disabled={isSubmitting || isGeneratingUrl}
           class={emailError ? "border-red-500" : ""}
         />
         {#if emailError}
@@ -123,34 +237,61 @@
       </div>
 
       <div class="space-y-2">
-        <Label for="role">Role</Label>
-        <select
-          id="role"
-          bind:value={role}
-          disabled={isSubmitting}
-          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <option value="member">Member</option>
-        </select>
+        <Label for="invite-url">Invitation Link</Label>
+        <div class="flex gap-2">
+          <Input
+            id="invite-url"
+            type="text"
+            value={inviteUrl}
+            readonly
+            placeholder={isGeneratingUrl
+              ? "Generating invitation link..."
+              : "Invitation link will appear here"}
+            class="bg-muted"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            on:click={copyInviteUrl}
+            disabled={!inviteUrl || isGeneratingUrl}
+            class="flex-shrink-0"
+          >
+            {#if copySuccess}
+              <Check class="h-4 w-4" />
+            {:else}
+              <Copy class="h-4 w-4" />
+            {/if}
+          </Button>
+        </div>
+        {#if copySuccess}
+          <p class="text-sm text-green-600">Link copied to clipboard!</p>
+        {/if}
         <p class="text-xs text-muted-foreground">
-          Members can view project details and make payments. Only project
-          owners can manage settings and invitations.
+          Share this link with anyone you want to invite to the project. They'll
+          be added as members.
         </p>
       </div>
 
       <div class="flex justify-end gap-2 pt-4">
         <DialogClose>
-          <Button type="button" variant="outline" disabled={isSubmitting}>
-            Cancel
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isSubmitting || isGeneratingUrl}
+          >
+            Done
           </Button>
         </DialogClose>
-        <Button type="submit" disabled={!email.trim() || isSubmitting}>
-          {#if isSubmitting}
-            Sending...
-          {:else}
-            Send Invitation
-          {/if}
-        </Button>
+        {#if email.trim() && inviteUrl}
+          <Button type="submit" disabled={isSubmitting || isGeneratingUrl}>
+            {#if isSubmitting}
+              Sending...
+            {:else}
+              Send Email
+            {/if}
+          </Button>
+        {/if}
       </div>
     </form>
   </DialogContent>

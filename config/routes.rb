@@ -28,7 +28,11 @@ Rails.application.routes.draw do
   get "dashboard/export_payments" => "dashboard#export_payments", as: :dashboard_export_payments
 
   resources :projects, except: [ :index ] do
-    resources :invitations, only: [ :index, :create, :destroy ]
+    resources :invitations, only: [ :index, :create, :update, :destroy ] do
+      member do
+        post :send_email
+      end
+    end
     # Payment confirmation routes for project creators
     resources :payment_confirmations, only: [ :index, :show, :update ] do
       collection do
@@ -50,6 +54,8 @@ Rails.application.routes.draw do
         post :adjust
       end
     end
+    # Project payments view (read-only for members)
+    resources :payments, only: [ :index ]
     member do
       get :preview_reminder
       get :reminder_settings

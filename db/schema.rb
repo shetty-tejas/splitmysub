@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_21_110749) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_22_104318) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -90,7 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_110749) do
 
   create_table "invitations", force: :cascade do |t|
     t.integer "project_id", null: false
-    t.string "email", null: false
+    t.string "email"
     t.string "token", null: false
     t.string "status", default: "pending", null: false
     t.integer "invited_by_id", null: false
@@ -101,7 +101,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_110749) do
     t.index ["email"], name: "index_invitations_on_email"
     t.index ["expires_at"], name: "index_invitations_on_expires_at"
     t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
-    t.index ["project_id", "email"], name: "index_invitations_on_project_id_and_email", unique: true
+    t.index ["project_id", "email"], name: "index_invitations_on_project_id_and_email", unique: true, where: "email IS NOT NULL"
     t.index ["project_id"], name: "index_invitations_on_project_id"
     t.index ["status"], name: "index_invitations_on_status"
     t.index ["token"], name: "index_invitations_on_token", unique: true

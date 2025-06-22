@@ -152,17 +152,29 @@
             <span class="hidden sm:inline">Payment Confirmations</span>
             <span class="sm:hidden">Payments</span>
           </button>
-          <button
-            type="button"
-            on:click={() =>
-              router.visit(`/projects/${project.id}/billing_cycles`)}
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
-          >
-            <Calendar class="h-4 w-4" />
-            <span class="hidden sm:inline">Billing Cycles</span>
-            <span class="sm:hidden">Cycles</span>
-          </button>
         {/if}
+
+        <!-- Billing and Payments - Available to all members -->
+        <button
+          type="button"
+          on:click={() =>
+            router.visit(`/projects/${project.id}/billing_cycles`)}
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
+        >
+          <Calendar class="h-4 w-4" />
+          <span class="hidden sm:inline">Billing Cycles</span>
+          <span class="sm:hidden">Cycles</span>
+        </button>
+
+        <button
+          type="button"
+          on:click={() => router.visit(`/projects/${project.id}/payments`)}
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
+        >
+          <DollarSign class="h-4 w-4" />
+          <span class="hidden sm:inline">View Payments</span>
+          <span class="sm:hidden">Payments</span>
+        </button>
       </div>
     </div>
 

@@ -3,10 +3,10 @@ class Invitation < ApplicationRecord
   belongs_to :invited_by, class_name: "User"
 
   # Validations
-  validates :email, presence: true, format: {
+  validates :email, format: {
     with: /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/,
     message: "must be a valid email address with a proper domain"
-  }
+  }, allow_blank: true
   validates :token, presence: true, uniqueness: true
   validates :status, presence: true, inclusion: {
     in: %w[pending accepted declined expired],
@@ -17,7 +17,7 @@ class Invitation < ApplicationRecord
     message: "%{value} is not a valid role"
   }
   validates :expires_at, presence: true
-  validates :email, uniqueness: { scope: :project_id, message: "has already been invited to this project" }
+  validates :email, uniqueness: { scope: :project_id, message: "has already been invited to this project" }, allow_blank: true
 
   # Prevent inviting existing members or owner
   validate :email_not_already_member
