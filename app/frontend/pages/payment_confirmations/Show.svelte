@@ -571,7 +571,7 @@
     <div
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onclick={closeActionModal}
-      onkeydown={(e) = role="button" tabindex="0"> e.key === "Escape" && closeActionModal()}
+      onkeydown={(e) => e.key === "Escape" && closeActionModal()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="action-modal-title"
@@ -652,7 +652,7 @@
     <div
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onclick={closeNoteModal}
-      onkeydown={(e) = role="button" tabindex="0"> e.key === "Escape" && closeNoteModal()}
+      onkeydown={(e) => e.key === "Escape" && closeNoteModal()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="note-modal-title"

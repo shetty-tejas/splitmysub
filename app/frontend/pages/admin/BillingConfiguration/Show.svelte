@@ -130,7 +130,7 @@
             </div>
             <div>
               <div class="text-sm font-medium text-gray-600"
-                >Auto Generation</label
+                >Auto Generation</div
               >
               <p class="text-lg font-semibold">
                 {config.auto_generation_enabled ? "Enabled" : "Disabled"}

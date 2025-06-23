@@ -239,7 +239,7 @@
                 onclick={() => {
                   filterStatus = "all";
                   searchTerm = "";
-                } onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => {
+                }\n                  onkeydown={(e) => (e.key === "Enter" || e.key === " ") && (() => {
                   filterStatus = "all";
                   searchTerm = "";
                 )}}
