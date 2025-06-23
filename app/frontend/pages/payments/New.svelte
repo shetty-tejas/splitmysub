@@ -104,7 +104,13 @@
     </div>
   {/if}
 
-  <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="payment-form">
+  <form
+    onsubmit={(e) => {
+      e.preventDefault();
+      handleSubmit(e);
+    }}
+    class="payment-form"
+  >
     <div class="form-section">
       <h3>Payment Details</h3>
 
@@ -183,7 +189,10 @@
       <button
         type="button"
         class="btn btn-secondary"
-        onclick={() => router.visit(`/projects/${project.slug} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit(`/projects/${project.slug)}`)}
+        onclick={() => router.visit(`/projects/${project.slug}`)}
+        onkeydown={(e) =>
+          (e.key === "Enter" || e.key === " ") &&
+          router.visit(`/projects/${project.slug}`)}
         disabled={submitting}
       >
         Cancel

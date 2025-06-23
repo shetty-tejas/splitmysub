@@ -76,7 +76,8 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
+          onclick={goBack}
+          onkeydown={(e) => (e.key === "Enter" || e.key === " ") && goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -89,7 +90,9 @@
         <div class="flex items-center gap-2 flex-wrap">
           <button
             type="button"
-            onclick={editProject} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (editProject)}
+            onclick={editProject}
+            onkeydown={(e) =>
+              (e.key === "Enter" || e.key === " ") && editProject}
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
           >
             <Edit class="h-4 w-4" />
@@ -97,7 +100,9 @@
           </button>
           <button
             type="button"
-            onclick={deleteProject} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (deleteProject)}
+            onclick={deleteProject}
+            onkeydown={(e) =>
+              (e.key === "Enter" || e.key === " ") && deleteProject}
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm h-8 px-3 cursor-pointer"
           >
             <Trash2 class="h-4 w-4" />
@@ -135,7 +140,9 @@
           <InviteForm {project} />
           <button
             type="button"
-            onclick={manageInvitations} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (manageInvitations)}
+            onclick={manageInvitations}
+            onkeydown={(e) =>
+              (e.key === "Enter" || e.key === " ") && manageInvitations}
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
           >
             <Settings class="h-4 w-4" />
@@ -145,8 +152,10 @@
           <button
             type="button"
             onclick={() =>
-              router.visit(`/projects/${project.slug} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() =>
-              router.visit(`/projects/${project.slug)}/payment_confirmations`)}
+              router.visit(`/projects/${project.slug}/payment_confirmations`)}
+            onkeydown={(e) =>
+              (e.key === "Enter" || e.key === " ") &&
+              router.visit(`/projects/${project.slug}/payment_confirmations`)}
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
           >
             <CreditCard class="h-4 w-4" />
@@ -159,8 +168,10 @@
         <button
           type="button"
           onclick={() =>
-            router.visit(`/projects/${project.slug} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() =>
-            router.visit(`/projects/${project.slug)}/billing_cycles`)}
+            router.visit(`/projects/${project.slug}/billing_cycles`)}
+          onkeydown={(e) =>
+            (e.key === "Enter" || e.key === " ") &&
+            router.visit(`/projects/${project.slug}/billing_cycles`)}
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
         >
           <Calendar class="h-4 w-4" />
@@ -170,7 +181,10 @@
 
         <button
           type="button"
-          onclick={() => router.visit(`/projects/${project.slug} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit(`/projects/${project.slug)}/payments`)}
+          onclick={() => router.visit(`/projects/${project.slug}/payments`)}
+          onkeydown={(e) =>
+            (e.key === "Enter" || e.key === " ") &&
+            router.visit(`/projects/${project.slug}/payments`)}
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-8 px-3 cursor-pointer"
         >
           <DollarSign class="h-4 w-4" />
