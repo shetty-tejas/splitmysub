@@ -129,9 +129,9 @@
               </p>
             </div>
             <div>
-              <div class="text-sm font-medium text-gray-600"
-                >Auto Generation</div
-              >
+              <div class="text-sm font-medium text-gray-600">
+                Auto Generation
+              </div>
               <p class="text-lg font-semibold">
                 {config.auto_generation_enabled ? "Enabled" : "Disabled"}
               </p>
@@ -386,7 +386,7 @@
       <CardContent>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
           <div>
-            <label class="font-medium text-gray-600">Configuration ID</div>
+            <label class="font-medium text-gray-600">Configuration ID</label>
             <p class="text-gray-900">#{config.id}</p>
           </div>
           <div>
