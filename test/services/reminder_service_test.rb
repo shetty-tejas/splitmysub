@@ -11,7 +11,8 @@ class ReminderServiceTest < ActiveJob::TestCase
       billing_cycle: "monthly",
       renewal_date: 1.month.from_now,
       reminder_days: 7,
-      user: @user
+      user: @user,
+      slug: "9999999999"
     )
     @service = ReminderService.new
   end

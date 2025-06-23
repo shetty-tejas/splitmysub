@@ -222,7 +222,7 @@ class BillingCycleManagerTest < ActiveSupport::TestCase
 
       test "should return zero when no project cost" do
     # Create a new project without cost validation for this test
-    project_without_cost = Project.new(name: "Test", cost: 0, billing_cycle: "monthly", renewal_date: Date.current, reminder_days: 7, user: @project.user)
+    project_without_cost = Project.new(name: "Test", cost: 0, billing_cycle: "monthly", renewal_date: Date.current, reminder_days: 7, user: @project.user, slug: "9876543210")
     project_without_cost.save!(validate: false)
 
     manager = BillingCycleManager.new(project_without_cost)

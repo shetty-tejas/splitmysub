@@ -49,7 +49,8 @@ class ProjectTest < ActiveSupport::TestCase
       renewal_date: 1.month.from_now,
       payment_instructions: "PayPal: test@example.com",
       reminder_days: 7,
-      user: users(:test_user)
+      user: users(:test_user),
+      slug: "1111111111"
     )
     assert project.valid?
   end
@@ -198,7 +199,8 @@ class ProjectTest < ActiveSupport::TestCase
       renewal_date: 1.month.from_now,
       payment_instructions: "PayPal: test@example.com",
       reminder_days: 7,
-      user: users(:test_user)
+      user: users(:test_user),
+      slug: "2222222222"
     )
 
     # Should still be valid due to fallback validation

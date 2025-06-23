@@ -83,7 +83,8 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       billing_cycle: "monthly",
       renewal_date: 1.month.from_now,
       reminder_days: 7,
-      user: @other_user
+      user: @other_user,
+      slug: "3333333333"
     )
     get project_url(no_access_project)
     assert_redirected_to dashboard_url
@@ -103,7 +104,8 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       billing_cycle: "monthly",
       renewal_date: 1.month.from_now,
       reminder_days: 7,
-      user: @other_user
+      user: @other_user,
+      slug: "4444444444"
     )
     get edit_project_url(no_access_project)
     assert_redirected_to dashboard_url
@@ -131,7 +133,8 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       billing_cycle: "monthly",
       renewal_date: 1.month.from_now,
       reminder_days: 7,
-      user: @other_user
+      user: @other_user,
+      slug: "5555555555"
     )
     original_name = no_access_project.name
     patch project_url(no_access_project), params: {
@@ -174,7 +177,8 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       billing_cycle: "monthly",
       renewal_date: 1.month.from_now,
       reminder_days: 7,
-      user: @other_user
+      user: @other_user,
+      slug: "6666666666"
     )
     assert_no_difference("Project.count") do
       delete project_url(no_access_project)
@@ -209,7 +213,8 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
       billing_cycle: "monthly",
       renewal_date: 1.month.from_now,
       reminder_days: 7,
-      user: @other_user
+      user: @other_user,
+      slug: "7777777777"
     )
     protected_actions = [
       [ :get, :edit ],

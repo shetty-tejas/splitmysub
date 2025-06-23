@@ -8,6 +8,7 @@ netflix:
   payment_instructions: "PayPal: test@example.com"
   reminder_days: 7
   user: test_user
+  slug: "1234567890"
 
 spotify:
   name: "Spotify Premium"
@@ -17,6 +18,7 @@ spotify:
   payment_instructions: "Credit Card ending in 1234"
   reminder_days: 5
   user: test_user
+  slug: "2345678901"
 
 adobe:
   name: "Adobe Creative Cloud"
@@ -25,4 +27,5 @@ adobe:
   renewal_date: <%= 3.weeks.from_now.to_date %>
   payment_instructions: "UPI: user@bank"
   reminder_days: 10
-  user: other_user 
+  user: other_user
+  slug: "3456789012" 

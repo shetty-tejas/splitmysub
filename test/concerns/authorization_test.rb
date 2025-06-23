@@ -32,7 +32,8 @@ class AuthorizationTest < ActiveSupport::TestCase
       cost: 100,
       billing_cycle: "monthly",
       renewal_date: 1.month.from_now,
-      reminder_days: 7
+      reminder_days: 7,
+      slug: "8888888888"
     )
     @billing_cycle = BillingCycle.create!(
       project: @project,

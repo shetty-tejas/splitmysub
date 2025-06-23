@@ -130,7 +130,8 @@ class BillingCycleGeneratorServiceTest < ActiveSupport::TestCase
       renewal_date: 1.week.from_now.to_date,
       payment_instructions: "Test instructions",
       reminder_days: 7,
-      user: users(:test_user)
+      user: users(:test_user),
+      slug: "0000000000"
     )
 
     # Clear existing cycles
