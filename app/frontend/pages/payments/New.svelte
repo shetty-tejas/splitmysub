@@ -183,7 +183,7 @@
       <button
         type="button"
         class="btn btn-secondary"
-        onclick={() => router.visit(`/projects/${project.slug}`)}
+        onclick={() => router.visit(`/projects/${project.slug} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit(`/projects/${project.slug)}`)}
         disabled={submitting}
       >
         Cancel

@@ -93,7 +93,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          onclick={goBack}
+          onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -169,14 +169,14 @@
                     <Button
                       variant="outline"
                       size="sm"
-                      onclick={() => copyInvitationLink(invitation.token)}
+                      onclick={() => copyInvitationLink(invitation.token)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => copyInvitationLink(invitation.token))}
                     >
                       Copy Link
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
-                      onclick={() => deleteInvitation(invitation.id)}
+                      onclick={() => deleteInvitation(invitation.id)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => deleteInvitation(invitation.id))}
                     >
                       <Trash2 class="h-4 w-4" />
                     </Button>

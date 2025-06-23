@@ -223,7 +223,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              onclick={downloadEvidence}
+              onclick={downloadEvidence} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (downloadEvidence)}
             >
               📥 Download Evidence
             </button>
@@ -248,7 +248,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            onclick={() => router.visit("/payments")}
+            onclick={() => router.visit("/payments")} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit("/payments"))}
           >
             ← Back to Payments
           </button>
@@ -256,7 +256,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            onclick={() => router.visit(`/projects/${project.slug}`)}
+            onclick={() => router.visit(`/projects/${project.slug} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit(`/projects/${project.slug)}`)}
           >
             View Project
           </button>
@@ -265,7 +265,7 @@
             <button
               type="button"
               class="btn btn-danger"
-              onclick={deletePayment}
+              onclick={deletePayment} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (deletePayment)}
             >
               🗑️ Delete Payment
             </button>

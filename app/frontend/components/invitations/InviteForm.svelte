@@ -253,7 +253,7 @@
             type="button"
             variant="outline"
             size="sm"
-            onclick={copyInviteUrl}
+            onclick={copyInviteUrl} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (copyInviteUrl)}
             disabled={!inviteUrl || isGeneratingUrl}
             class="flex-shrink-0"
           >

@@ -60,7 +60,7 @@
     <div class="flex items-center gap-4 mb-8">
       <button
         type="button"
-        onclick={goBack}
+        onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
         class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
       >
         <ArrowLeft class="h-4 w-4" />
@@ -153,7 +153,7 @@
               <Button
                 type="button"
                 variant="outline"
-                onclick={goBack}
+                onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
                 disabled={isSubmitting}
               >
                 Cancel

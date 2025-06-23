@@ -189,10 +189,10 @@
           </div>
 
           <div class="flex items-end gap-2">
-            <Button onclick={applyFilters} class="flex-1">
+            <Button onclick={applyFilters} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (applyFilters)} class="flex-1">
               Apply Filters
             </Button>
-            <Button variant="outline" onclick={clearFilters}>Clear</Button>
+            <Button variant="outline" onclick={clearFilters} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (clearFilters)}>Clear</Button>
           </div>
         </div>
       </Card.Content>
@@ -200,7 +200,7 @@
 
     <!-- Export Button -->
     <div class="flex justify-end mb-6">
-      <Button variant="outline" onclick={exportPayments}>
+      <Button variant="outline" onclick={exportPayments} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (exportPayments)}>
         <Download class="h-4 w-4 mr-2" />
         Export CSV
       </Button>
@@ -322,7 +322,7 @@
                   variant="outline"
                   size="sm"
                   disabled={pagination.current_page <= 1}
-                  onclick={() => goToPage(pagination.current_page - 1)}
+                  onclick={() => goToPage(pagination.current_page - 1)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => goToPage(pagination.current_page - 1))}
                 >
                   <ChevronLeft class="h-4 w-4" />
                   Previous
@@ -331,7 +331,7 @@
                   variant="outline"
                   size="sm"
                   disabled={pagination.current_page >= pagination.total_pages}
-                  onclick={() => goToPage(pagination.current_page + 1)}
+                  onclick={() => goToPage(pagination.current_page + 1)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => goToPage(pagination.current_page + 1))}
                 >
                   Next
                   <ChevronRight class="h-4 w-4" />
@@ -353,7 +353,7 @@
               {/if}
             </p>
             {#if searchTerm || statusFilter || dateFrom || dateTo}
-              <Button variant="outline" onclick={clearFilters}>
+              <Button variant="outline" onclick={clearFilters} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (clearFilters)}>
                 Clear Filters
               </Button>
             {:else}

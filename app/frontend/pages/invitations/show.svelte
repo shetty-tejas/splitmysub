@@ -203,7 +203,7 @@
         <div class="space-y-3">
           <button
             class="w-full h-10 px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow rounded-md text-sm font-medium transition-colors inline-flex items-center justify-center gap-2 cursor-pointer"
-            onclick={acceptInvitation}
+            onclick={acceptInvitation} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (acceptInvitation)}
           >
             <CheckCircle class="h-4 w-4 mr-2" />
             Accept Invitation
@@ -211,7 +211,7 @@
 
           <button
             class="w-full h-9 px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm rounded-md text-sm font-medium transition-colors inline-flex items-center justify-center gap-2 cursor-pointer"
-            onclick={declineInvitation}
+            onclick={declineInvitation} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (declineInvitation)}
           >
             <XCircle class="h-4 w-4 mr-2" />
             Decline Invitation

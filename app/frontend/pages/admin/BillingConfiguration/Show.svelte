@@ -70,7 +70,13 @@
         >
           ✏️ Edit Configuration
         </Button>
-        <Button onclick={resetToDefaults} variant="destructive" size="sm">
+        <Button
+          onclick={resetToDefaults}
+          onkeydown={(e) =>
+            (e.key === "Enter" || e.key === " ") && resetToDefaults}
+          variant="destructive"
+          size="sm"
+        >
           🔄 Reset to Defaults
         </Button>
       </div>
@@ -114,9 +120,7 @@
         <CardContent class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="text-sm font-medium text-gray-600"
-                >Months Ahead</label
-              >
+              <div class="text-sm font-medium text-gray-600">Months Ahead</div>
               <p class="text-lg font-semibold">
                 {config.generation_months_ahead}
               </p>
@@ -125,7 +129,7 @@
               </p>
             </div>
             <div>
-              <label class="text-sm font-medium text-gray-600"
+              <div class="text-sm font-medium text-gray-600"
                 >Auto Generation</label
               >
               <p class="text-lg font-semibold">
@@ -222,14 +226,14 @@
               <p class="text-xs text-gray-500">First reminder</p>
             </div>
             <div>
-              <label class="text-sm font-medium text-gray-600">Standard</label>
+              <div class="text-sm font-medium text-gray-600">Standard</div>
               <p class="text-lg font-semibold">
                 {config.standard_reminder_days_overdue} days overdue
               </p>
               <p class="text-xs text-gray-500">Follow-up reminder</p>
             </div>
             <div>
-              <label class="text-sm font-medium text-gray-600">Urgent</label>
+              <div class="text-sm font-medium text-gray-600">Urgent</div>
               <p class="text-lg font-semibold">
                 {config.urgent_reminder_days_overdue} days overdue
               </p>
@@ -382,7 +386,7 @@
       <CardContent>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
           <div>
-            <label class="font-medium text-gray-600">Configuration ID</label>
+            <label class="font-medium text-gray-600">Configuration ID</div>
             <p class="text-gray-900">#{config.id}</p>
           </div>
           <div>

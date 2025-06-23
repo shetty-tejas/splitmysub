@@ -99,7 +99,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          onclick={goBack}
+          onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -119,7 +119,7 @@
     <!-- Action Buttons - Only for owners -->
     {#if user_permissions?.can_manage}
       <div class="flex flex-col sm:flex-row gap-2 mb-8">
-        <Button onclick={generateUpcomingCycles} variant="outline">
+        <Button onclick={generateUpcomingCycles} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (generateUpcomingCycles)} variant="outline">
           <Calendar class="w-4 h-4 mr-2" />
           Generate Upcoming
         </Button>
@@ -258,7 +258,7 @@
             >
           </select>
 
-          <Button onclick={handleSearch} variant="outline">
+          <Button onclick={handleSearch} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (handleSearch)} variant="outline">
             <Search class="w-4 h-4 mr-2" />
             Search
           </Button>

@@ -235,7 +235,7 @@
           Cancel
         </Button>
         <Button
-          onclick={handleSubmit}
+          onclick={handleSubmit} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (handleSubmit)}
           variant="default"
           class="bg-blue-600 hover:bg-blue-700"
           disabled={!has_unsaved_changes}
@@ -531,7 +531,7 @@
                       type="button"
                       variant="outline"
                       size="sm"
-                      onclick={() => removeReminderDay(index)}
+                      onclick={() => removeReminderDay(index)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => removeReminderDay(index))}
                       class="text-red-600 hover:text-red-700 p-1"
                     >
                       ✕
@@ -542,7 +542,7 @@
                   type="button"
                   variant="outline"
                   size="sm"
-                  onclick={addReminderDay}
+                  onclick={addReminderDay} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (addReminderDay)}
                   class="text-blue-600 hover:text-blue-700"
                 >
                   + Add Day
@@ -691,7 +691,7 @@
             type="button"
             variant="secondary"
             disabled={!has_unsaved_changes || is_validating}
-            onclick={validateForm}
+            onclick={validateForm} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (validateForm)}
           >
             {is_validating ? "⏳ Validating..." : "🔍 Validate"}
           </Button>

@@ -106,7 +106,7 @@
 
           <!-- Actions -->
           <div class="pt-6">
-            <Button onclick={editProfile} class="w-full sm:w-auto">
+            <Button onclick={editProfile} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (editProfile)} class="w-full sm:w-auto">
               <Edit class="h-4 w-4 mr-2" />
               Edit Profile
             </Button>

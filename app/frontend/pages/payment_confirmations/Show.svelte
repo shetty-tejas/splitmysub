@@ -188,7 +188,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          onclick={goBack}
+          onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -449,7 +449,7 @@
                   {/if}
 
                   <Button
-                    onclick={downloadEvidence}
+                    onclick={downloadEvidence} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (downloadEvidence)}
                     variant="outline"
                     size="sm"
                     class="w-full"
@@ -483,14 +483,14 @@
           <CardContent class="space-y-3">
             {#if payment.status === "pending"}
               <Button
-                onclick={() => openActionModal("confirm")}
+                onclick={() => openActionModal("confirm")} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => openActionModal("confirm"))}
                 class="w-full bg-green-600 hover:bg-green-700"
               >
                 <Check class="h-4 w-4 mr-2" />
                 Confirm Payment
               </Button>
               <Button
-                onclick={() => openActionModal("reject")}
+                onclick={() => openActionModal("reject")} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => openActionModal("reject"))}
                 variant="destructive"
                 class="w-full"
               >
@@ -501,7 +501,7 @@
 
             {#if !payment.disputed}
               <Button
-                onclick={() => openActionModal("dispute")}
+                onclick={() => openActionModal("dispute")} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => openActionModal("dispute"))}
                 variant="outline"
                 class="w-full"
               >
@@ -510,7 +510,7 @@
               </Button>
             {:else}
               <Button
-                onclick={() => openActionModal("resolve_dispute")}
+                onclick={() => openActionModal("resolve_dispute")} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => openActionModal("resolve_dispute"))}
                 variant="outline"
                 class="w-full"
               >
@@ -519,7 +519,7 @@
               </Button>
             {/if}
 
-            <Button onclick={openNoteModal} variant="outline" class="w-full">
+            <Button onclick={openNoteModal} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (openNoteModal)} variant="outline" class="w-full">
               <MessageSquare class="h-4 w-4 mr-2" />
               Add Note
             </Button>
@@ -571,7 +571,7 @@
     <div
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onclick={closeActionModal}
-      onkeydown={(e) => e.key === "Escape" && closeActionModal()}
+      onkeydown={(e) = role="button" tabindex="0"> e.key === "Escape" && closeActionModal()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="action-modal-title"
@@ -579,7 +579,7 @@
     >
       <div
         class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-        onclick={(e) => { e.stopPropagation(); }}
+        onclick={(e) = role="button" tabindex="0"> { e.stopPropagation(); }}
         onkeydown={() => {}}
         role="document"
       >
@@ -627,9 +627,9 @@
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-          <Button onclick={closeActionModal} variant="outline">Cancel</Button>
+          <Button onclick={closeActionModal} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeActionModal)} variant="outline">Cancel</Button>
           <Button
-            onclick={submitAction}
+            onclick={submitAction} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (submitAction)}
             disabled={actionType === "dispute" && !disputeReason.trim()}
           >
             {#if actionType === "confirm"}
@@ -652,7 +652,7 @@
     <div
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onclick={closeNoteModal}
-      onkeydown={(e) => e.key === "Escape" && closeNoteModal()}
+      onkeydown={(e) = role="button" tabindex="0"> e.key === "Escape" && closeNoteModal()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="note-modal-title"
@@ -660,7 +660,7 @@
     >
       <div
         class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-        onclick={(e) => { e.stopPropagation(); }}
+        onclick={(e) = role="button" tabindex="0"> { e.stopPropagation(); }}
         onkeydown={() => {}}
         role="document"
       >
@@ -685,8 +685,8 @@
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-          <Button onclick={closeNoteModal} variant="outline">Cancel</Button>
-          <Button onclick={submitNote} disabled={!newNote.trim()}>
+          <Button onclick={closeNoteModal} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeNoteModal)} variant="outline">Cancel</Button>
+          <Button onclick={submitNote} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (submitNote)} disabled={!newNote.trim()}>
             Add Note
           </Button>
         </div>

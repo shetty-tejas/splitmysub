@@ -78,7 +78,7 @@
 <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
   <!-- Header -->
   <div class="flex items-center gap-4 mb-6">
-    <Button variant="ghost" size="sm" onclick={goBack}>
+    <Button variant="ghost" size="sm" onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}>
       <ArrowLeft class="w-4 h-4 mr-2" />
       Back to Billing Cycle
     </Button>
@@ -241,7 +241,7 @@
 
         <!-- Submit Button -->
         <div class="flex justify-end gap-3">
-          <Button variant="outline" type="button" onclick={goBack}>
+          <Button variant="outline" type="button" onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}>
             Cancel
           </Button>
           <Button type="submit" disabled={processing || !form.reason.trim()}>

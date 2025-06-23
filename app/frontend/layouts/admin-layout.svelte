@@ -59,14 +59,12 @@
           💰 Billing Configuration
         </a>
         <!-- Future admin sections can be added here -->
-        <a
-          href="#"
+        <span
           class="text-gray-400 px-3 py-2 text-sm font-medium border-b-2 border-transparent cursor-not-allowed"
         >
           📊 System Analytics (Coming Soon)
         </a>
-        <a
-          href="#"
+        <span
           class="text-gray-400 px-3 py-2 text-sm font-medium border-b-2 border-transparent cursor-not-allowed"
         >
           👥 User Management (Coming Soon)

@@ -57,7 +57,7 @@
           {#each owned_projects as project}
             <div
               class="bg-card text-card-foreground rounded-xl border shadow cursor-pointer hover:shadow-md transition-shadow"
-              onclick={() => {
+              onclick={() = role="button" tabindex="0"> {
                 router.get(`/projects/${project.slug}`);
               }}
               role="button"
@@ -170,7 +170,7 @@
           {#each member_projects as project}
             <div
               class="bg-card text-card-foreground rounded-xl border shadow cursor-pointer hover:shadow-md transition-shadow"
-              onclick={() => {
+              onclick={() = role="button" tabindex="0"> {
                 router.get(`/projects/${project.slug}`);
               }}
               role="button"

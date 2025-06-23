@@ -132,7 +132,7 @@
         <button
           type="button"
           class="remove-button"
-          onclick={removeFile}
+          onclick={removeFile} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (removeFile)}
           {disabled}
         >
           ✕

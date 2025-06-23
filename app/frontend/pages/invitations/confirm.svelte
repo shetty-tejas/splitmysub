@@ -190,7 +190,7 @@
           <button
             type="button"
             class="flex-1 h-9 px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm rounded-md text-sm font-medium transition-colors inline-flex items-center justify-center gap-2 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
-            onclick={goBack}
+            onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
             disabled={isSubmitting}
           >
             <ArrowLeft class="h-4 w-4 mr-2" />
@@ -199,7 +199,7 @@
           <button
             type="button"
             class="flex-1 h-9 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow rounded-md text-sm font-medium transition-colors inline-flex items-center justify-center gap-2 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
-            onclick={confirmAcceptance}
+            onclick={confirmAcceptance} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (confirmAcceptance)}
             disabled={isSubmitting || !isFormValid()}
           >
             <CheckCircle class="h-4 w-4 mr-2" />

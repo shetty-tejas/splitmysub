@@ -191,7 +191,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          onclick={goBack}
+          onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -351,11 +351,11 @@
 
           <!-- Filter Buttons -->
           <div class="flex gap-2">
-            <Button onclick={applyFilters} size="sm">
+            <Button onclick={applyFilters} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (applyFilters)} size="sm">
               <Filter class="h-4 w-4 mr-2" />
               Apply
             </Button>
-            <Button onclick={clearFilters} variant="outline" size="sm">
+            <Button onclick={clearFilters} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (clearFilters)} variant="outline" size="sm">
               Clear
             </Button>
           </div>
@@ -372,10 +372,10 @@
               <span class="text-sm font-medium">
                 {selectedPayments.length} payment(s) selected
               </span>
-              <Button onclick={openBatchModal} size="sm">Batch Actions</Button>
+              <Button onclick={openBatchModal} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (openBatchModal)} size="sm">Batch Actions</Button>
             </div>
             <Button
-              onclick={() => (selectedPayments = [])}
+              onclick={() => (selectedPayments = [])} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => (selectedPayments = []))}
               variant="outline"
               size="sm"
             >
@@ -488,7 +488,7 @@
                             {payment.evidence_filename}
                           </span>
                           <Button
-                            onclick={() => downloadEvidence(payment.id)}
+                            onclick={() => downloadEvidence(payment.id)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => downloadEvidence(payment.id))}
                             variant="ghost"
                             size="sm"
                           >
@@ -513,7 +513,7 @@
                     </td>
                     <td class="p-4">
                       <Button
-                        onclick={() => viewPayment(payment.id)}
+                        onclick={() => viewPayment(payment.id)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => viewPayment(payment.id))}
                         variant="outline"
                         size="sm"
                       >
@@ -536,7 +536,7 @@
     <div
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onclick={closeBatchModal}
-      onkeydown={(e) => e.key === "Escape" && closeBatchModal()}
+      onkeydown={(e) = role="button" tabindex="0"> e.key === "Escape" && closeBatchModal()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="batch-modal-title"
@@ -544,7 +544,7 @@
     >
       <div
         class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-        onclick={(e) => { e.stopPropagation(); }}
+        onclick={(e) = role="button" tabindex="0"> { e.stopPropagation(); }}
         onkeydown={() => {}}
         role="document"
       >
@@ -585,8 +585,8 @@
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-          <Button onclick={closeBatchModal} variant="outline">Cancel</Button>
-          <Button onclick={submitBatchAction}>Apply Action</Button>
+          <Button onclick={closeBatchModal} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeBatchModal)} variant="outline">Cancel</Button>
+          <Button onclick={submitBatchAction} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (submitBatchAction)}>Apply Action</Button>
         </div>
       </div>
     </div>
