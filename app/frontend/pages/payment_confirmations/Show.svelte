@@ -579,7 +579,7 @@
     >
       <div
         class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-        onclick={(e) = role="button" tabindex="0"> { e.stopPropagation(); }}
+        onclick={(e) => { e.stopPropagation(); }}
         onkeydown={() => {}}
         role="document"
       >
@@ -660,7 +660,7 @@
     >
       <div
         class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-        onclick={(e) = role="button" tabindex="0"> { e.stopPropagation(); }}
+        onclick={(e) => { e.stopPropagation(); }}
         onkeydown={() => {}}
         role="document"
       >

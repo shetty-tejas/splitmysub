@@ -61,9 +61,7 @@
         <!-- Future admin sections can be added here -->
         <span
           class="text-gray-400 px-3 py-2 text-sm font-medium border-b-2 border-transparent cursor-not-allowed"
-        >
-          📊 System Analytics (Coming Soon)
-        </a>
+        >📊 System Analytics (Coming Soon)</span>
         <span
           class="text-gray-400 px-3 py-2 text-sm font-medium border-b-2 border-transparent cursor-not-allowed"
         >

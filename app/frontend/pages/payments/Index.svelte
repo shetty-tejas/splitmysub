@@ -257,7 +257,7 @@
             <CardContent class="pt-6">
               <div
                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-                onclick={() = role="button" tabindex="0"> viewPayment(payment.id)}
+                onclick={() => role="button" tabindex="0"> viewPayment(payment.id)}
                 onkeydown={(e) =>
                   (e.key === "Enter" || e.key === " ") &&
                   viewPayment(payment.id)}
