@@ -50,7 +50,7 @@
     errors = [];
 
     router.post(
-      `/projects/${project.id}/billing_cycles/${billing_cycle.id}/adjust`,
+      `/projects/${project.slug}/billing_cycles/${billing_cycle.id}/adjust`,
       {
         adjustment: form,
       },
@@ -67,7 +67,7 @@
   }
 
   function goBack() {
-    router.visit(`/projects/${project.id}/billing_cycles/${billing_cycle.id}`);
+    router.visit(`/projects/${project.slug}/billing_cycles/${billing_cycle.id}`);
   }
 </script>
 
@@ -78,7 +78,7 @@
 <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
   <!-- Header -->
   <div class="flex items-center gap-4 mb-6">
-    <Button variant="ghost" size="sm" on:click={goBack}>
+    <Button variant="ghost" size="sm" onclick={goBack}>
       <ArrowLeft class="w-4 h-4 mr-2" />
       Back to Billing Cycle
     </Button>
@@ -148,7 +148,7 @@
       </p>
     </CardHeader>
     <CardContent>
-      <form on:submit|preventDefault={handleSubmit} class="space-y-6">
+      <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-6">
         <!-- Error Messages -->
         {#if errors.length > 0}
           <div class="bg-red-50 border border-red-200 rounded-md p-4">
@@ -241,7 +241,7 @@
 
         <!-- Submit Button -->
         <div class="flex justify-end gap-3">
-          <Button variant="outline" type="button" on:click={goBack}>
+          <Button variant="outline" type="button" onclick={goBack}>
             Cancel
           </Button>
           <Button type="submit" disabled={processing || !form.reason.trim()}>

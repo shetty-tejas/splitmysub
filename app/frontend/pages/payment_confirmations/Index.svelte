@@ -100,7 +100,7 @@
     if (sortBy) params.set("sort", sortBy);
 
     router.get(
-      `/projects/${project.id}/payment_confirmations?${params.toString()}`,
+      `/projects/${project.slug}/payment_confirmations?${params.toString()}`,
     );
   }
 
@@ -109,11 +109,11 @@
     statusFilter = "";
     disputedFilter = "";
     sortBy = "date_desc";
-    router.get(`/projects/${project.id}/payment_confirmations`);
+    router.get(`/projects/${project.slug}/payment_confirmations`);
   }
 
   function viewPayment(paymentId) {
-    router.get(`/projects/${project.id}/payment_confirmations/${paymentId}`);
+    router.get(`/projects/${project.slug}/payment_confirmations/${paymentId}`);
   }
 
   function downloadEvidence(paymentId) {
@@ -164,7 +164,7 @@
     });
 
     router.patch(
-      `/projects/${project.id}/payment_confirmations/batch_update`,
+      `/projects/${project.slug}/payment_confirmations/batch_update`,
       formData,
       {
         onSuccess: () => {
@@ -176,7 +176,7 @@
   }
 
   function goBack() {
-    router.get(`/projects/${project.id}`);
+    router.get(`/projects/${project.slug}`);
   }
 </script>
 
@@ -191,7 +191,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          on:click={goBack}
+          onclick={goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -312,7 +312,7 @@
                 placeholder="Search by email, transaction ID, or notes..."
                 bind:value={searchTerm}
                 class="pl-10"
-                on:keydown={(e) => e.key === "Enter" && applyFilters()}
+                onkeydown={(e) => e.key === "Enter" && applyFilters()}
               />
             </div>
           </div>
@@ -351,11 +351,11 @@
 
           <!-- Filter Buttons -->
           <div class="flex gap-2">
-            <Button on:click={applyFilters} size="sm">
+            <Button onclick={applyFilters} size="sm">
               <Filter class="h-4 w-4 mr-2" />
               Apply
             </Button>
-            <Button on:click={clearFilters} variant="outline" size="sm">
+            <Button onclick={clearFilters} variant="outline" size="sm">
               Clear
             </Button>
           </div>
@@ -372,10 +372,10 @@
               <span class="text-sm font-medium">
                 {selectedPayments.length} payment(s) selected
               </span>
-              <Button on:click={openBatchModal} size="sm">Batch Actions</Button>
+              <Button onclick={openBatchModal} size="sm">Batch Actions</Button>
             </div>
             <Button
-              on:click={() => (selectedPayments = [])}
+              onclick={() => (selectedPayments = [])}
               variant="outline"
               size="sm"
             >
@@ -400,7 +400,7 @@
             <div class="flex items-center gap-2">
               <Checkbox
                 checked={selectedPayments.length === payments.length}
-                on:change={selectAllPayments}
+                onchange={selectAllPayments}
               />
               <span class="text-sm text-muted-foreground">Select All</span>
             </div>
@@ -437,7 +437,7 @@
                     <td class="p-4">
                       <Checkbox
                         checked={selectedPayments.includes(payment.id)}
-                        on:change={() => togglePaymentSelection(payment.id)}
+                        onchange={() => togglePaymentSelection(payment.id)}
                       />
                     </td>
                     <td class="p-4">
@@ -488,7 +488,7 @@
                             {payment.evidence_filename}
                           </span>
                           <Button
-                            on:click={() => downloadEvidence(payment.id)}
+                            onclick={() => downloadEvidence(payment.id)}
                             variant="ghost"
                             size="sm"
                           >
@@ -513,7 +513,7 @@
                     </td>
                     <td class="p-4">
                       <Button
-                        on:click={() => viewPayment(payment.id)}
+                        onclick={() => viewPayment(payment.id)}
                         variant="outline"
                         size="sm"
                       >
@@ -535,8 +535,8 @@
   {#if showBatchModal}
     <div
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      on:click={closeBatchModal}
-      on:keydown={(e) => e.key === "Escape" && closeBatchModal()}
+      onclick={closeBatchModal}
+      onkeydown={(e) => e.key === "Escape" && closeBatchModal()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="batch-modal-title"
@@ -544,8 +544,8 @@
     >
       <div
         class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-        on:click|stopPropagation
-        on:keydown={() => {}}
+        onclick={(e) => { e.stopPropagation(); }}
+        onkeydown={() => {}}
         role="document"
       >
         <h3 id="batch-modal-title" class="text-lg font-semibold mb-4">
@@ -585,8 +585,8 @@
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-          <Button on:click={closeBatchModal} variant="outline">Cancel</Button>
-          <Button on:click={submitBatchAction}>Apply Action</Button>
+          <Button onclick={closeBatchModal} variant="outline">Cancel</Button>
+          <Button onclick={submitBatchAction}>Apply Action</Button>
         </div>
       </div>
     </div>

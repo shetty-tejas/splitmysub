@@ -107,7 +107,7 @@
   }
 
   function goBack() {
-    router.get(`/projects/${project.id}/payment_confirmations`);
+    router.get(`/projects/${project.slug}/payment_confirmations`);
   }
 
   function downloadEvidence() {
@@ -139,7 +139,7 @@
     }
 
     router.patch(
-      `/projects/${project.id}/payment_confirmations/${payment.id}`,
+      `/projects/${project.slug}/payment_confirmations/${payment.id}`,
       formData,
       {
         onSuccess: () => {
@@ -164,7 +164,7 @@
     formData.append("note", newNote);
 
     router.post(
-      `/projects/${project.id}/payment_confirmations/${payment.id}/add_note`,
+      `/projects/${project.slug}/payment_confirmations/${payment.id}/add_note`,
       formData,
       {
         onSuccess: () => {
@@ -188,7 +188,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          on:click={goBack}
+          onclick={goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -449,7 +449,7 @@
                   {/if}
 
                   <Button
-                    on:click={downloadEvidence}
+                    onclick={downloadEvidence}
                     variant="outline"
                     size="sm"
                     class="w-full"
@@ -483,14 +483,14 @@
           <CardContent class="space-y-3">
             {#if payment.status === "pending"}
               <Button
-                on:click={() => openActionModal("confirm")}
+                onclick={() => openActionModal("confirm")}
                 class="w-full bg-green-600 hover:bg-green-700"
               >
                 <Check class="h-4 w-4 mr-2" />
                 Confirm Payment
               </Button>
               <Button
-                on:click={() => openActionModal("reject")}
+                onclick={() => openActionModal("reject")}
                 variant="destructive"
                 class="w-full"
               >
@@ -501,7 +501,7 @@
 
             {#if !payment.disputed}
               <Button
-                on:click={() => openActionModal("dispute")}
+                onclick={() => openActionModal("dispute")}
                 variant="outline"
                 class="w-full"
               >
@@ -510,7 +510,7 @@
               </Button>
             {:else}
               <Button
-                on:click={() => openActionModal("resolve_dispute")}
+                onclick={() => openActionModal("resolve_dispute")}
                 variant="outline"
                 class="w-full"
               >
@@ -519,7 +519,7 @@
               </Button>
             {/if}
 
-            <Button on:click={openNoteModal} variant="outline" class="w-full">
+            <Button onclick={openNoteModal} variant="outline" class="w-full">
               <MessageSquare class="h-4 w-4 mr-2" />
               Add Note
             </Button>
@@ -570,8 +570,8 @@
   {#if showActionModal}
     <div
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      on:click={closeActionModal}
-      on:keydown={(e) => e.key === "Escape" && closeActionModal()}
+      onclick={closeActionModal}
+      onkeydown={(e) => e.key === "Escape" && closeActionModal()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="action-modal-title"
@@ -579,8 +579,8 @@
     >
       <div
         class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-        on:click|stopPropagation
-        on:keydown={() => {}}
+        onclick={(e) => { e.stopPropagation(); }}
+        onkeydown={() => {}}
         role="document"
       >
         <h3 id="action-modal-title" class="text-lg font-semibold mb-4">
@@ -627,9 +627,9 @@
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-          <Button on:click={closeActionModal} variant="outline">Cancel</Button>
+          <Button onclick={closeActionModal} variant="outline">Cancel</Button>
           <Button
-            on:click={submitAction}
+            onclick={submitAction}
             disabled={actionType === "dispute" && !disputeReason.trim()}
           >
             {#if actionType === "confirm"}
@@ -651,8 +651,8 @@
   {#if showNoteModal}
     <div
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      on:click={closeNoteModal}
-      on:keydown={(e) => e.key === "Escape" && closeNoteModal()}
+      onclick={closeNoteModal}
+      onkeydown={(e) => e.key === "Escape" && closeNoteModal()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="note-modal-title"
@@ -660,8 +660,8 @@
     >
       <div
         class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-        on:click|stopPropagation
-        on:keydown={() => {}}
+        onclick={(e) => { e.stopPropagation(); }}
+        onkeydown={() => {}}
         role="document"
       >
         <h3 id="note-modal-title" class="text-lg font-semibold mb-4">
@@ -685,8 +685,8 @@
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-          <Button on:click={closeNoteModal} variant="outline">Cancel</Button>
-          <Button on:click={submitNote} disabled={!newNote.trim()}>
+          <Button onclick={closeNoteModal} variant="outline">Cancel</Button>
+          <Button onclick={submitNote} disabled={!newNote.trim()}>
             Add Note
           </Button>
         </div>

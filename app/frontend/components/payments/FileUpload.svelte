@@ -104,13 +104,13 @@
       class="upload-area {dragOver ? 'drag-over' : ''} {disabled
         ? 'disabled'
         : ''}"
-      on:dragover={handleDragOver}
-      on:dragleave={handleDragLeave}
-      on:drop={handleDrop}
+      ondragover={handleDragOver}
+      ondragleave={handleDragLeave}
+      ondrop={handleDrop}
       role="button"
       tabindex="0"
-      on:click={() => !disabled && fileInput.click()}
-      on:keydown={(e) =>
+      onclick={() => !disabled && fileInput.click()}
+      onkeydown={(e) =>
         (e.key === "Enter" || e.key === " ") && !disabled && fileInput.click()}
     >
       <div class="upload-content">
@@ -132,7 +132,7 @@
         <button
           type="button"
           class="remove-button"
-          on:click={removeFile}
+          onclick={removeFile}
           {disabled}
         >
           ✕
@@ -157,7 +157,7 @@
     bind:this={fileInput}
     type="file"
     {accept}
-    on:change={handleFileInput}
+    onchange={handleFileInput}
     style="display: none;"
     {disabled}
   />

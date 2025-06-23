@@ -7,7 +7,7 @@ class UnsubscribeController < ApplicationController
 
     if @unsubscribe_data
       @user = User.find_by(id: @unsubscribe_data["user_id"])
-      @project = Project.find_by(id: @unsubscribe_data["project_id"])
+      @project = Project.find(@unsubscribe_data["project_id"])
 
       if @user && @project
         render :show
@@ -28,7 +28,7 @@ class UnsubscribeController < ApplicationController
 
     if @unsubscribe_data
       user = User.find_by(id: @unsubscribe_data["user_id"])
-      project = Project.find_by(id: @unsubscribe_data["project_id"])
+      project = Project.find(@unsubscribe_data["project_id"])
 
       if user && project
         # Create or update user preferences to unsubscribe from this project

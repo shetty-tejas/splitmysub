@@ -39,7 +39,7 @@
 
   function handleSearch() {
     router.get(
-      `/projects/${project.id}/billing_cycles`,
+      `/projects/${project.slug}/billing_cycles`,
       {
         search: searchTerm,
         filter: selectedFilter,
@@ -54,7 +54,7 @@
 
   function handleFilterChange() {
     router.get(
-      `/projects/${project.id}/billing_cycles`,
+      `/projects/${project.slug}/billing_cycles`,
       {
         search: searchTerm,
         filter: selectedFilter,
@@ -69,7 +69,7 @@
 
   function generateUpcomingCycles() {
     router.post(
-      `/projects/${project.id}/billing_cycles/generate_upcoming`,
+      `/projects/${project.slug}/billing_cycles/generate_upcoming`,
       {},
       {
         preserveState: false,
@@ -84,7 +84,7 @@
   }
 
   function goBack() {
-    router.get(`/projects/${project.id}`);
+    router.get(`/projects/${project.slug}`);
   }
 </script>
 
@@ -99,7 +99,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          on:click={goBack}
+          onclick={goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -119,11 +119,11 @@
     <!-- Action Buttons - Only for owners -->
     {#if user_permissions?.can_manage}
       <div class="flex flex-col sm:flex-row gap-2 mb-8">
-        <Button on:click={generateUpcomingCycles} variant="outline">
+        <Button onclick={generateUpcomingCycles} variant="outline">
           <Calendar class="w-4 h-4 mr-2" />
           Generate Upcoming
         </Button>
-        <Button href="/projects/{project.id}/billing_cycles/new">
+        <Button href="/projects/{project.slug}/billing_cycles/new">
           <Plus class="w-4 h-4 mr-2" />
           New Billing Cycle
         </Button>
@@ -225,7 +225,7 @@
                 bind:value={searchTerm}
                 placeholder="Search by amount..."
                 class="pl-10"
-                on:keydown={(e) => e.key === "Enter" && handleSearch()}
+                onkeydown={(e) => e.key === "Enter" && handleSearch()}
               />
             </div>
           </div>
@@ -233,7 +233,7 @@
           <!-- Filter -->
           <select
             bind:value={selectedFilter}
-            on:change={handleFilterChange}
+            onchange={handleFilterChange}
             class="flex h-9 w-full sm:w-48 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
             <option value={FILTER_OPTIONS.ALL}>All Cycles</option>
@@ -245,7 +245,7 @@
           <!-- Sort -->
           <select
             bind:value={selectedSort}
-            on:change={handleFilterChange}
+            onchange={handleFilterChange}
             class="flex h-9 w-full sm:w-48 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
             <option value={SORT_OPTIONS.DUE_DATE_DESC}>Due Date (Newest)</option
@@ -258,7 +258,7 @@
             >
           </select>
 
-          <Button on:click={handleSearch} variant="outline">
+          <Button onclick={handleSearch} variant="outline">
             <Search class="w-4 h-4 mr-2" />
             Search
           </Button>
@@ -283,7 +283,7 @@
               {/if}
             </p>
             {#if !filters.search && filters.filter === FILTER_OPTIONS.ALL}
-              <Button href="/projects/{project.id}/billing_cycles/new">
+              <Button href="/projects/{project.slug}/billing_cycles/new">
                 <Plus class="w-4 h-4 mr-2" />
                 Create Billing Cycle
               </Button>
@@ -379,7 +379,7 @@
 
                 <div class="flex gap-2">
                   <Button
-                    href="/projects/{project.id}/billing_cycles/{cycle.id}"
+                    href="/projects/{project.slug}/billing_cycles/{cycle.id}"
                     variant="outline"
                     size="sm"
                   >
@@ -387,7 +387,7 @@
                   </Button>
                   {#if project.is_owner}
                     <Button
-                      href="/projects/{project.id}/billing_cycles/{cycle.id}/edit"
+                      href="/projects/{project.slug}/billing_cycles/{cycle.id}/edit"
                       variant="outline"
                       size="sm"
                     >

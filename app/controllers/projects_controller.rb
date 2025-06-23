@@ -116,7 +116,7 @@ class ProjectsController < ApplicationController
   private
 
   def set_project
-    @project = Project.find(params[:id])
+    @project = Project.find_by!(slug: params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to dashboard_path, alert: "Project not found."
   end
@@ -165,6 +165,7 @@ class ProjectsController < ApplicationController
   def project_json(project)
     {
       id: project.id,
+      slug: project.slug,
       name: project.name,
       description: project.description,
       cost: project.cost,

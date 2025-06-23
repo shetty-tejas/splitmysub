@@ -56,7 +56,7 @@
       )
     ) {
       router.delete(
-        `/projects/${project.id}/billing_cycles/${billing_cycle.id}`,
+        `/projects/${project.slug}/billing_cycles/${billing_cycle.id}`,
       );
     }
   }
@@ -85,7 +85,7 @@
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-4">
         <a
-          href="/projects/{project.id}/billing_cycles"
+          href="/projects/{project.slug}/billing_cycles"
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -95,13 +95,13 @@
       {#if user_permissions?.can_manage}
         <div class="flex gap-2">
           <Button
-            href="/projects/{project.id}/billing_cycles/{billing_cycle.id}/edit"
+            href="/projects/{project.slug}/billing_cycles/{billing_cycle.id}/edit"
             variant="outline"
           >
             <Edit class="w-4 h-4 mr-2" />
             Edit
           </Button>
-          <Button on:click={deleteBillingCycle} variant="destructive">
+          <Button onclick={deleteBillingCycle} variant="destructive">
             <Trash2 class="w-4 h-4 mr-2" />
             Delete
           </Button>
@@ -399,7 +399,7 @@
                   <div class="flex gap-2">
                     {#if payment.has_evidence}
                       <Button
-                        on:click={() => downloadEvidence(payment)}
+                        onclick={() => downloadEvidence(payment)}
                         variant="outline"
                         size="sm"
                       >

@@ -7,7 +7,7 @@ class PaymentsController < ApplicationController
   def index
     # Check if this is a project-specific payment view
     if params[:project_id].present?
-      @project = Project.find(params[:project_id])
+      @project = Project.find_by!(slug: params[:project_id])
       ensure_project_access!(@project)
 
       # Get all payments for this project's billing cycles

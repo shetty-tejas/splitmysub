@@ -35,7 +35,7 @@
     isGeneratingUrl = true;
 
     try {
-      const response = await fetch(`/projects/${project.id}/invitations`, {
+      const response = await fetch(`/projects/${project.slug}/invitations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +97,7 @@
     try {
       // First, update the invitation with the email address
       const updateResponse = await fetch(
-        `/projects/${project.id}/invitations/${invitationId}`,
+        `/projects/${project.slug}/invitations/${invitationId}`,
         {
           method: "PATCH",
           headers: {
@@ -119,7 +119,7 @@
       if (updateResponse.ok) {
         // Now send the email
         const emailResponse = await fetch(
-          `/projects/${project.id}/invitations/${invitationId}/send_email`,
+          `/projects/${project.slug}/invitations/${invitationId}/send_email`,
           {
             method: "POST",
             headers: {
@@ -218,7 +218,7 @@
       </DialogDescription>
     </DialogHeader>
 
-    <form on:submit|preventDefault={handleSubmit} class="space-y-4">
+    <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-4">
       <div class="space-y-2">
         <Label for="email">Email Address (Optional)</Label>
         <Input
@@ -226,8 +226,8 @@
           type="email"
           placeholder="Enter email address to send invitation"
           bind:value={email}
-          on:keydown={handleKeydown}
-          on:input={handleEmailInput}
+          onkeydown={handleKeydown}
+          oninput={handleEmailInput}
           disabled={isSubmitting || isGeneratingUrl}
           class={emailError ? "border-red-500" : ""}
         />
@@ -253,7 +253,7 @@
             type="button"
             variant="outline"
             size="sm"
-            on:click={copyInviteUrl}
+            onclick={copyInviteUrl}
             disabled={!inviteUrl || isGeneratingUrl}
             class="flex-shrink-0"
           >

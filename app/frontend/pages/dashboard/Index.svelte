@@ -57,13 +57,13 @@
           {#each owned_projects as project}
             <div
               class="bg-card text-card-foreground rounded-xl border shadow cursor-pointer hover:shadow-md transition-shadow"
-              on:click={() => {
-                router.get(`/projects/${project.id}`);
+              onclick={() => {
+                router.get(`/projects/${project.slug}`);
               }}
               role="button"
               tabindex="0"
-              on:keydown={(e) =>
-                e.key === "Enter" && router.get(`/projects/${project.id}`)}
+              onkeydown={(e) =>
+                e.key === "Enter" && router.get(`/projects/${project.slug}`)}
             >
               <CardHeader class="pb-3">
                 <div class="flex justify-between items-start">
@@ -170,13 +170,13 @@
           {#each member_projects as project}
             <div
               class="bg-card text-card-foreground rounded-xl border shadow cursor-pointer hover:shadow-md transition-shadow"
-              on:click={() => {
-                router.get(`/projects/${project.id}`);
+              onclick={() => {
+                router.get(`/projects/${project.slug}`);
               }}
               role="button"
               tabindex="0"
-              on:keydown={(e) =>
-                e.key === "Enter" && router.get(`/projects/${project.id}`)}
+              onkeydown={(e) =>
+                e.key === "Enter" && router.get(`/projects/${project.slug}`)}
             >
               <CardHeader class="pb-3">
                 <div class="flex justify-between items-start">

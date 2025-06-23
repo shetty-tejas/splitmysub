@@ -322,7 +322,7 @@ class InvitationsController < ApplicationController
   private
 
   def set_project
-    @project = Current.user.projects.find(params[:project_id])
+    @project = Current.user.projects.find_by!(slug: params[:project_id])
   rescue ActiveRecord::RecordNotFound
     redirect_to dashboard_path, alert: "Project not found"
   end

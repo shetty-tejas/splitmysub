@@ -26,7 +26,7 @@
 
     isSubmitting = true;
     router.post(
-      `/projects/${project.id}/billing_cycles`,
+      `/projects/${project.slug}/billing_cycles`,
       {
         billing_cycle: form,
       },
@@ -77,7 +77,7 @@
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-4">
         <a
-          href="/projects/{project.id}/billing_cycles"
+          href="/projects/{project.slug}/billing_cycles"
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -107,7 +107,7 @@
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form on:submit|preventDefault={handleSubmit} class="space-y-6">
+            <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-6">
               <!-- Error Messages -->
               {#if errors.length > 0}
                 <div class="bg-red-50 border border-red-200 rounded-md p-4">
@@ -176,7 +176,7 @@
                   {isSubmitting ? "Creating..." : "Create Billing Cycle"}
                 </Button>
                 <Button
-                  href="/projects/{project.id}/billing_cycles"
+                  href="/projects/{project.slug}/billing_cycles"
                   variant="outline"
                   disabled={isSubmitting}
                 >

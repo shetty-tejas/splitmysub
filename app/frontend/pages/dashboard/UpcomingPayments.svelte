@@ -197,7 +197,7 @@
                       {cycle.user_payment_status}
                     </Badge>
                     <div class="flex gap-2 mt-2">
-                      <Link href="/projects/{cycle.project.id}">
+                      <Link href="/projects/{cycle.project.slug}">
                         <Button variant="outline" size="sm">
                           <Eye class="h-3 w-3 mr-1" />
                           View
@@ -271,7 +271,7 @@
                       {cycle.user_payment_status}
                     </Badge>
                     <div class="flex gap-2 mt-2">
-                      <Link href="/projects/{cycle.project.id}">
+                      <Link href="/projects/{cycle.project.slug}">
                         <Button variant="outline" size="sm">
                           <Eye class="h-3 w-3 mr-1" />
                           View
@@ -352,7 +352,7 @@
                         {/if}
                       </p>
                       <div class="flex gap-2">
-                        <Link href="/projects/{cycle.project.id}">
+                        <Link href="/projects/{cycle.project.slug}">
                           <Button variant="outline" size="sm" class="flex-1">
                             <Eye class="h-3 w-3 mr-1" />
                             View

@@ -106,7 +106,7 @@
 
           <!-- Actions -->
           <div class="pt-6">
-            <Button on:click={editProfile} class="w-full sm:w-auto">
+            <Button onclick={editProfile} class="w-full sm:w-auto">
               <Edit class="h-4 w-4 mr-2" />
               Edit Profile
             </Button>

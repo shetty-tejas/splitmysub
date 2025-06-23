@@ -235,7 +235,7 @@
           Cancel
         </Button>
         <Button
-          on:click={handleSubmit}
+          onclick={handleSubmit}
           variant="default"
           class="bg-blue-600 hover:bg-blue-700"
           disabled={!has_unsaved_changes}
@@ -283,7 +283,7 @@
     {/if}
 
     <!-- Form Content -->
-    <form on:submit|preventDefault={handleSubmit} class="space-y-6">
+    <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-6">
       <!-- Cycle Generation Settings -->
       <Card>
         <CardHeader>
@@ -523,7 +523,7 @@
                       min="1"
                       max="30"
                       value={days}
-                      on:input={(e) =>
+                      oninput={(e) =>
                         updateReminderSchedule(index, e.target.value)}
                       class="w-16 text-sm"
                     />
@@ -531,7 +531,7 @@
                       type="button"
                       variant="outline"
                       size="sm"
-                      on:click={() => removeReminderDay(index)}
+                      onclick={() => removeReminderDay(index)}
                       class="text-red-600 hover:text-red-700 p-1"
                     >
                       ✕
@@ -542,7 +542,7 @@
                   type="button"
                   variant="outline"
                   size="sm"
-                  on:click={addReminderDay}
+                  onclick={addReminderDay}
                   class="text-blue-600 hover:text-blue-700"
                 >
                   + Add Day
@@ -599,7 +599,7 @@
                         checked={form_data.supported_billing_frequencies.includes(
                           freq.value,
                         )}
-                        on:change={(e) => {
+                        onchange={(e) => {
                           if (e.target.checked) {
                             addToArray(
                               "supported_billing_frequencies",
@@ -643,7 +643,7 @@
                           checked={form_data.default_billing_frequencies.includes(
                             freq.value,
                           )}
-                          on:change={(e) => {
+                          onchange={(e) => {
                             if (e.target.checked) {
                               addToArray(
                                 "default_billing_frequencies",
@@ -691,7 +691,7 @@
             type="button"
             variant="secondary"
             disabled={!has_unsaved_changes || is_validating}
-            on:click={validateForm}
+            onclick={validateForm}
           >
             {is_validating ? "⏳ Validating..." : "🔍 Validate"}
           </Button>

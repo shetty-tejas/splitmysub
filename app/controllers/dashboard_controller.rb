@@ -111,6 +111,7 @@ class DashboardController < ApplicationController
   def project_json(project)
     {
       id: project.id,
+      slug: project.slug,
       name: project.name,
       description: project.description,
       cost: project.cost,
@@ -219,6 +220,7 @@ class DashboardController < ApplicationController
 
     {
       id: project.id,
+      slug: project.slug,
       name: project.name,
       description: project.description,
       cost: project.cost,
@@ -268,6 +270,7 @@ class DashboardController < ApplicationController
       },
       project: {
         id: payment.billing_cycle.project.id,
+        slug: payment.billing_cycle.project.slug,
         name: payment.billing_cycle.project.name,
         billing_cycle: payment.billing_cycle.project.billing_cycle
       }
@@ -294,6 +297,7 @@ class DashboardController < ApplicationController
       user_payment_amount: user_payment&.amount,
       project: {
         id: cycle.project.id,
+        slug: cycle.project.slug,
         name: cycle.project.name,
         billing_cycle: cycle.project.billing_cycle,
         is_owner: @owned_project_ids.include?(cycle.project.id)

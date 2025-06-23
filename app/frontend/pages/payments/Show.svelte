@@ -223,7 +223,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              on:click={downloadEvidence}
+              onclick={downloadEvidence}
             >
               📥 Download Evidence
             </button>
@@ -248,7 +248,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            on:click={() => router.visit("/payments")}
+            onclick={() => router.visit("/payments")}
           >
             ← Back to Payments
           </button>
@@ -256,7 +256,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            on:click={() => router.visit(`/projects/${project.id}`)}
+            onclick={() => router.visit(`/projects/${project.slug}`)}
           >
             View Project
           </button>
@@ -265,7 +265,7 @@
             <button
               type="button"
               class="btn btn-danger"
-              on:click={deletePayment}
+              onclick={deletePayment}
             >
               🗑️ Delete Payment
             </button>

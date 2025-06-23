@@ -64,12 +64,12 @@
   }
 
   function goBack() {
-    router.get(`/projects/${project.id}`);
+    router.get(`/projects/${project.slug}`);
   }
 
   function deleteInvitation(invitationId) {
     if (confirm("Are you sure you want to cancel this invitation?")) {
-      router.delete(`/projects/${project.id}/invitations/${invitationId}`);
+      router.delete(`/projects/${project.slug}/invitations/${invitationId}`);
     }
   }
 
@@ -93,7 +93,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          on:click={goBack}
+          onclick={goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -169,14 +169,14 @@
                     <Button
                       variant="outline"
                       size="sm"
-                      on:click={() => copyInvitationLink(invitation.token)}
+                      onclick={() => copyInvitationLink(invitation.token)}
                     >
                       Copy Link
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
-                      on:click={() => deleteInvitation(invitation.id)}
+                      onclick={() => deleteInvitation(invitation.id)}
                     >
                       <Trash2 class="h-4 w-4" />
                     </Button>

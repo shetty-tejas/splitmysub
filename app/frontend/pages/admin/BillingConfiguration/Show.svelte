@@ -70,7 +70,7 @@
         >
           ✏️ Edit Configuration
         </Button>
-        <Button on:click={resetToDefaults} variant="destructive" size="sm">
+        <Button onclick={resetToDefaults} variant="destructive" size="sm">
           🔄 Reset to Defaults
         </Button>
       </div>

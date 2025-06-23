@@ -177,13 +177,12 @@ class BillingCyclesController < ApplicationController
   private
 
   def set_project
-    @project = Current.user.projects.find(params[:project_id])
+    @project = Current.user.projects.find_by!(slug: params[:project_id])
   rescue ActiveRecord::RecordNotFound
-    # Check if user is a member of the project
-    membership = Current.user.project_memberships.joins(:project)
-                            .find_by(project_id: params[:project_id])
-    if membership
-      @project = membership.project
+    # Check if user is a member of the project by slug
+    project = Project.find_by(slug: params[:project_id])
+    if project && project.is_member?(Current.user)
+      @project = project
     else
       redirect_to root_path, alert: "Project not found or access denied."
     end

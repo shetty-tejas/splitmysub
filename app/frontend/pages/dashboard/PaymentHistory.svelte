@@ -147,7 +147,7 @@
                 bind:value={searchTerm}
                 placeholder="Search projects..."
                 class="pl-10"
-                on:keydown={(e) => e.key === "Enter" && applyFilters()}
+                onkeydown={(e) => e.key === "Enter" && applyFilters()}
               />
             </div>
           </div>
@@ -189,10 +189,10 @@
           </div>
 
           <div class="flex items-end gap-2">
-            <Button on:click={applyFilters} class="flex-1">
+            <Button onclick={applyFilters} class="flex-1">
               Apply Filters
             </Button>
-            <Button variant="outline" on:click={clearFilters}>Clear</Button>
+            <Button variant="outline" onclick={clearFilters}>Clear</Button>
           </div>
         </div>
       </Card.Content>
@@ -200,7 +200,7 @@
 
     <!-- Export Button -->
     <div class="flex justify-end mb-6">
-      <Button variant="outline" on:click={exportPayments}>
+      <Button variant="outline" onclick={exportPayments}>
         <Download class="h-4 w-4 mr-2" />
         Export CSV
       </Button>
@@ -290,7 +290,7 @@
                     <span>{payment.project.billing_cycle} subscription</span>
                   </div>
                   <div class="flex gap-2">
-                    <Link href="/projects/{payment.project.id}">
+                    <Link href="/projects/{payment.project.slug}">
                       <Button variant="outline" size="sm">
                         <Eye class="h-3 w-3 mr-1" />
                         View Project
@@ -322,7 +322,7 @@
                   variant="outline"
                   size="sm"
                   disabled={pagination.current_page <= 1}
-                  on:click={() => goToPage(pagination.current_page - 1)}
+                  onclick={() => goToPage(pagination.current_page - 1)}
                 >
                   <ChevronLeft class="h-4 w-4" />
                   Previous
@@ -331,7 +331,7 @@
                   variant="outline"
                   size="sm"
                   disabled={pagination.current_page >= pagination.total_pages}
-                  on:click={() => goToPage(pagination.current_page + 1)}
+                  onclick={() => goToPage(pagination.current_page + 1)}
                 >
                   Next
                   <ChevronRight class="h-4 w-4" />
@@ -353,7 +353,7 @@
               {/if}
             </p>
             {#if searchTerm || statusFilter || dateFrom || dateTo}
-              <Button variant="outline" on:click={clearFilters}>
+              <Button variant="outline" onclick={clearFilters}>
                 Clear Filters
               </Button>
             {:else}

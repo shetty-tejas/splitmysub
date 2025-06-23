@@ -97,7 +97,7 @@
     <div class="flex items-center gap-4 mb-6 sm:mb-8">
       <button
         type="button"
-        on:click={goBack}
+        onclick={goBack}
         class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
       >
         <ArrowLeft class="h-4 w-4" />
@@ -115,7 +115,7 @@
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form on:submit|preventDefault={handleSubmit} class="space-y-6">
+          <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-6">
             <!-- Basic Information -->
             <div class="space-y-4">
               <h3 class="text-base sm:text-lg font-semibold">
@@ -212,7 +212,7 @@
                   <select
                     id="billing_cycle"
                     bind:value={form.billing_cycle}
-                    on:change={updateRenewalDate}
+                    onchange={updateRenewalDate}
                     class="flex h-10 sm:h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 {errors.billing_cycle
                       ? 'border-destructive'
                       : ''}"
@@ -304,7 +304,7 @@
             <div class="flex justify-end gap-4 pt-6">
               <button
                 type="button"
-                on:click={goBack}
+                onclick={goBack}
                 class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-9 px-4 py-2 cursor-pointer"
               >
                 Cancel

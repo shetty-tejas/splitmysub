@@ -170,8 +170,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_104318) do
     t.datetime "updated_at", null: false
     t.text "description"
     t.string "subscription_url"
+    t.string "slug", null: false
     t.index ["billing_cycle"], name: "index_projects_on_billing_cycle"
     t.index ["renewal_date"], name: "index_projects_on_renewal_date"
+    t.index ["slug"], name: "index_projects_on_slug", unique: true
     t.index ["user_id", "renewal_date"], name: "index_projects_on_user_id_and_renewal_date"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end

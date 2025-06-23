@@ -7,8 +7,12 @@ class Project < ApplicationRecord
   has_many :payments, through: :billing_cycles
   has_many :invitations, dependent: :destroy
 
+  # Callbacks
+  before_validation :generate_slug, on: :create
+
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
+  validates :slug, presence: true, uniqueness: true, format: { with: /\A\d{10}\z/, message: "must be exactly 10 digits" }
   validates :cost, presence: true, numericality: { greater_than: 0 }
   validates :billing_cycle, presence: true
   validates :renewal_date, presence: true
@@ -146,7 +150,26 @@ class Project < ApplicationRecord
     is_owner?(user) || is_member?(user)
   end
 
+  # Override to_param to use slug instead of ID for URLs
+  def to_param
+    slug
+  end
+
   private
+
+  def generate_slug
+    return if slug.present?
+
+    loop do
+      self.slug = generate_numeric_slug
+      break unless Project.exists?(slug: slug)
+    end
+  end
+
+  def generate_numeric_slug
+    # Generate a 10-character numeric string
+    10.times.map { rand(10) }.join
+  end
 
   def validate_billing_cycle_frequency
     return if billing_cycle.blank? # Let presence validation handle this

@@ -104,7 +104,7 @@
     </div>
   {/if}
 
-  <form on:submit|preventDefault={handleSubmit} class="payment-form">
+  <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="payment-form">
     <div class="form-section">
       <h3>Payment Details</h3>
 
@@ -183,7 +183,7 @@
       <button
         type="button"
         class="btn btn-secondary"
-        on:click={() => router.visit(`/projects/${project.id}`)}
+        onclick={() => router.visit(`/projects/${project.slug}`)}
         disabled={submitting}
       >
         Cancel

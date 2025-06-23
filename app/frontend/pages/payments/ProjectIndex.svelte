@@ -87,7 +87,7 @@
   }
 
   function goBack() {
-    router.get(`/projects/${project.id}`);
+    router.get(`/projects/${project.slug}`);
   }
 
   function viewPayment(paymentId) {
@@ -121,7 +121,7 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          on:click={goBack}
+          onclick={goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -334,7 +334,7 @@
                   <Button
                     variant="outline"
                     size="sm"
-                    on:click={() => viewPayment(payment.id)}
+                    onclick={() => viewPayment(payment.id)}
                   >
                     <Eye class="h-4 w-4 mr-2" />
                     View Details
@@ -343,7 +343,7 @@
                     <Button
                       variant="outline"
                       size="sm"
-                      on:click={() => downloadEvidence(payment.id)}
+                      onclick={() => downloadEvidence(payment.id)}
                     >
                       <Download class="h-4 w-4 mr-2" />
                       Evidence
