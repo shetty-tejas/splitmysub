@@ -102,14 +102,14 @@
                 <DropdownMenu.Separator />
                 <DropdownMenu.Group>
                   <DropdownMenu.Item
-                    onclick={() => router.visit("/dashboard")}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit("/dashboard"))}
+                    onclick={() => router.visit("/dashboard")}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit("/dashboard"))}
                     class="cursor-pointer"
                   >
                     <BarChart3 class="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
-                    onclick={() => router.visit("/profile")}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit("/profile"))}
+                    onclick={() => router.visit("/profile")}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit("/profile"))}
                     class="cursor-pointer"
                   >
                     <User class="mr-2 h-4 w-4" />
@@ -118,7 +118,7 @@
                 </DropdownMenu.Group>
                 <DropdownMenu.Separator />
                 <DropdownMenu.Item
-                  onclick={handleLogout}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (handleLogout)}
+                  onclick={handleLogout}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (handleLogout)}
                   class="text-red-600 focus:text-red-600 cursor-pointer"
                 >
                   <LogOut class="mr-2 h-4 w-4" />
@@ -146,7 +146,7 @@
             variant="ghost"
             size="sm"
             class="h-9 w-9 px-0"
-            onclick={toggleMobileMenu}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (toggleMobileMenu)}
+            onclick={toggleMobileMenu}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (toggleMobileMenu)}
           >
             {#if mobileMenuOpen}
               <X class="h-5 w-5" />
@@ -166,7 +166,7 @@
       <div class="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
         {#if currentUser}
           <!-- User Info -->
-          <Link href="/profile" onclick={closeMobileMenu}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)}>
+          <Link href="/profile" onclick={closeMobileMenu}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)}>
             <div
               class="mb-4 rounded-lg border bg-card p-4 transition-colors hover:bg-accent cursor-pointer"
             >
@@ -192,7 +192,7 @@
           <nav class="space-y-1">
             <Link
               href="/dashboard"
-              onclick={closeMobileMenu}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)}
+              onclick={closeMobileMenu}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)}
               class="flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <BarChart3 class="h-5 w-5" />
@@ -200,7 +200,7 @@
             </Link>
             <Link
               href="/profile"
-              onclick={closeMobileMenu}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)}
+              onclick={closeMobileMenu}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)}
               class="flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <User class="h-5 w-5" />
@@ -216,7 +216,7 @@
             onclick={() => {
               handleLogout(event);
               closeMobileMenu();
-            }}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => {
+            }\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => {
               handleLogout(event);
               closeMobileMenu();
             )}}
@@ -231,7 +231,7 @@
             {#each links as link}
               <Link
                 href={link.href}
-                onclick={closeMobileMenu}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)}
+                onclick={closeMobileMenu}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)}
                 class="block rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 {link.label}
@@ -243,12 +243,12 @@
 
           <!-- Auth Buttons -->
           <div class="space-y-2">
-            <Link href={loginPath()} onclick={closeMobileMenu}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)} class="block">
+            <Link href={loginPath()} onclick={closeMobileMenu}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)} class="block">
               <Button variant="outline" class="w-full justify-center">
                 Log in
               </Button>
             </Link>
-            <Link href={signupPath()} onclick={closeMobileMenu}}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)} class="block">
+            <Link href={signupPath()} onclick={closeMobileMenu}\n            onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (closeMobileMenu)} class="block">
               <Button class="w-full justify-center">Sign up</Button>
             </Link>
           </div>

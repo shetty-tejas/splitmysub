@@ -107,7 +107,8 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
+          onclick={goBack}
+          onkeydown={(e) => (e.key === "Enter" || e.key === " ") && goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -223,7 +224,12 @@
               <p class="text-gray-600 mb-4">
                 You haven't submitted any payment evidence yet.
               </p>
-              <Button onclick={() => router.visit("/dashboard")} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => router.visit("/dashboard"))}>
+              <Button
+                onclick={() => router.visit("/dashboard")}
+                onkeydown={(e) =>
+                  (e.key === "Enter" || e.key === " ") &&
+                  (() => router.visit("/dashboard"))}
+              >
                 View Projects
               </Button>
             {:else}
@@ -239,10 +245,13 @@
                 onclick={() => {
                   filterStatus = "all";
                   searchTerm = "";
-                }\n                  onkeydown={(e) => (e.key === "Enter" || e.key === " ") && (() => {
-                  filterStatus = "all";
-                  searchTerm = "";
-                )}}
+                }}
+                onkeydown="{(e) =>
+                  (e.key === 'Enter' || e.key === ' ') &&
+                  (() => {
+                    filterStatus = 'all';
+                    searchTerm = '';
+                  })}}"
               >
                 Clear Filters
               </Button>
@@ -257,7 +266,7 @@
             <CardContent class="pt-6">
               <div
                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-                onclick={() => role="button" tabindex="0"> viewPayment(payment.id)}
+                onclick={() => viewPayment(payment.id)}
                 onkeydown={(e) =>
                   (e.key === "Enter" || e.key === " ") &&
                   viewPayment(payment.id)}
