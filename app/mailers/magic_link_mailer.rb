@@ -4,7 +4,7 @@ class MagicLinkMailer < ApplicationMailer
   #
   #   en.magic_link_mailer.send_magic_link.subject
   #
-  default from: "noreply@splitsub.com"
+  default from: "noreply@splitmysub.com"
 
   def send_magic_link(user, magic_link)
     @user = user
@@ -14,7 +14,7 @@ class MagicLinkMailer < ApplicationMailer
 
     mail(
       to: @user.email_address,
-      subject: "Your SplitSub Magic Link - Sign in securely"
+      subject: "Your SplitMySub Magic Link - Sign in securely"
     )
   end
 end

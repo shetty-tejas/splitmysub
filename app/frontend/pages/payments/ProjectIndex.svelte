@@ -111,7 +111,7 @@
 </script>
 
 <svelte:head>
-  <title>Payments - {project.name} - SplitSub</title>
+  <title>Payments - {project.name} - SplitMySub</title>
 </svelte:head>
 
 <Layout>
@@ -121,7 +121,8 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
+          onclick={goBack}
+          onkeydown={(e) => (e.key === "Enter" || e.key === " ") && goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -334,7 +335,10 @@
                   <Button
                     variant="outline"
                     size="sm"
-                    onclick={() => viewPayment(payment.id)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => viewPayment(payment.id))}
+                    onclick={() => viewPayment(payment.id)}
+                    onkeydown={(e) =>
+                      (e.key === "Enter" || e.key === " ") &&
+                      (() => viewPayment(payment.id))}
                   >
                     <Eye class="h-4 w-4 mr-2" />
                     View Details
@@ -343,7 +347,10 @@
                     <Button
                       variant="outline"
                       size="sm"
-                      onclick={() => downloadEvidence(payment.id)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => downloadEvidence(payment.id))}
+                      onclick={() => downloadEvidence(payment.id)}
+                      onkeydown={(e) =>
+                        (e.key === "Enter" || e.key === " ") &&
+                        (() => downloadEvidence(payment.id))}
                     >
                       <Download class="h-4 w-4 mr-2" />
                       Evidence

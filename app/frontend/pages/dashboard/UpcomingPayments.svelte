@@ -76,7 +76,7 @@
 </script>
 
 <svelte:head>
-  <title>Upcoming Payments - SplitSub</title>
+  <title>Upcoming Payments - SplitMySub</title>
 </svelte:head>
 
 <Layout>

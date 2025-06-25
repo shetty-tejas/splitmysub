@@ -1,7 +1,7 @@
 # Billing Cycle System Refactoring - Product Requirements Document
 
 ## Project Overview
-Simplify and make the SplitSub billing cycle system more configurable by reducing complexity, creating a centralized configuration system, and improving maintainability.
+Simplify and make the SplitMySub billing cycle system more configurable by reducing complexity, creating a centralized configuration system, and improving maintainability.
 
 ## Current State Analysis
 The current billing cycle implementation has several issues:
@@ -92,7 +92,7 @@ project.billing_config.update!(
 - Maintain backward compatibility with existing billing cycles
 - Ensure zero-downtime migration for configuration system
 - Preserve all existing functionality during refactoring
-- Follow Rails conventions and SplitSub code patterns
+- Follow Rails conventions and SplitMySub code patterns
 
 ## Acceptance Criteria
 - All billing rules configurable via admin interface

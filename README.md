@@ -1,6 +1,6 @@
-# Splitsub
+# SplitMySub
 
-Splitsub is a modern subscription splitting application that helps you share and manage recurring subscriptions with friends, family, or colleagues. Built with Ruby on Rails and Svelte for a seamless user experience.
+SplitMySub is a modern subscription splitting application that helps you share and manage recurring subscriptions with friends, family, or colleagues. Built with Ruby on Rails and Svelte for a seamless user experience.
 
 ![localhost_3100_login (1)](https://github.com/user-attachments/assets/e3d98e5c-6e4b-4d64-a5d3-e31209459f07)
 
@@ -23,8 +23,8 @@ Splitsub is a modern subscription splitting application that helps you share and
 
 1. Clone the repository:
    ```sh
-   git clone <repository-url> splitsub
-   cd splitsub
+   git clone <repository-url> splitmysub
+   cd splitmysub
    ```
 2. Install dependencies:
    ```sh
@@ -45,8 +45,8 @@ Splitsub is a modern subscription splitting application that helps you share and
 
 1. Clone the repository:
    ```sh
-   git clone <repository-url> splitsub
-   cd splitsub
+   git clone <repository-url> splitmysub
+   cd splitmysub
    ```
 2. Start with docker-compose:
    ```sh
@@ -62,15 +62,15 @@ Splitsub is a modern subscription splitting application that helps you share and
 
 1. Build the production image:
    ```sh
-   docker build -t splitsub .
+   docker build -t splitmysub .
    ```
 2. Run the container:
    ```sh
    docker run -d -p 80:80 \
      -e RAILS_MASTER_KEY=<your-master-key> \
-     -v splitsub_storage:/rails/storage \
-     -v splitsub_db:/rails/db \
-     --name splitsub splitsub
+     -v splitmysub_storage:/rails/storage \
+-v splitmysub_db:/rails/db \
+--name splitmysub splitmysub
    ```
 
 ### Deployment with Kamal
@@ -87,7 +87,7 @@ This application is configured for deployment with [Kamal](https://kamal-deploy.
 
 ## Usage
 
-Splitsub makes it easy to share subscription costs:
+SplitMySub makes it easy to share subscription costs:
 
 1. **Create a Project** - Set up a new subscription (Netflix, Spotify, etc.)
 2. **Invite Members** - Send invitations to friends or family

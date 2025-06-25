@@ -97,7 +97,7 @@
 </script>
 
 <svelte:head>
-  <title>My Payments - SplitSub</title>
+  <title>My Payments - SplitMySub</title>
 </svelte:head>
 
 <Layout>

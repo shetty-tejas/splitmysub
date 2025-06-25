@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Your SplitSub Magic Link</title>
+    <title>Your SplitMySub Magic Link</title>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -54,17 +54,17 @@
   </head>
   <body>
     <div class="header">
-      <div class="logo">SplitSub</div>
+              <div class="logo">SplitMySub</div>
       <p>Your secure sign-in link</p>
     </div>
 
     <p>Hi there!</p>
 
-    <p>You requested a magic link to sign in to your SplitSub account. Click the button below to sign in securely:</p>
+          <p>You requested a magic link to sign in to your SplitMySub account. Click the button below to sign in securely:</p>
 
     <div style="text-align: center;">
       <a href="<%= @magic_link_url %>" class="magic-link-button">
-        Sign in to SplitSub
+        Sign in to SplitMySub
       </a>
     </div>
 
@@ -85,7 +85,7 @@
     <div class="footer">
       <p>This email was sent to <%= @user.email_address %></p>
       <p>If you have any questions, please contact our support team.</p>
-      <p>&copy; <%= Date.current.year %> SplitSub. All rights reserved.</p>
+              <p>&copy; <%= Date.current.year %> SplitMySub. All rights reserved.</p>
     </div>
   </body>
 </html> 

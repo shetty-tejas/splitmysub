@@ -32,7 +32,7 @@ Rails.application.configure do
 
   # Configure secure session settings for production
   config.session_store :cookie_store,
-    key: "_splitsub_session",
+    key: "_splitmysub_session",
     secure: true,
     httponly: true,
     same_site: :strict,

@@ -64,7 +64,7 @@
 </script>
 
 <svelte:head>
-  <title>{project.name} - SplitSub</title>
+  <title>{project.name} - SplitMySub</title>
 </svelte:head>
 
 <Layout>

@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
 
-  # SplitSub associations
+  # SplitMySub associations
   has_many :projects, dependent: :destroy
   has_many :project_memberships, dependent: :destroy
   has_many :member_projects, through: :project_memberships, source: :project

@@ -1,6 +1,6 @@
-# SplitSub Self-Hosting Guide
+# SplitMySub Self-Hosting Guide
 
-Welcome to SplitSub! This guide will help you self-host your own instance of SplitSub.
+Welcome to SplitMySub! This guide will help you self-host your own instance of SplitMySub.
 
 ## Quick Start
 
@@ -23,8 +23,8 @@ SMTP_PASSWORD=your-smtp-password
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/splitsub.git
-cd splitsub
+git clone https://github.com/yourusername/splitmysub.git
+cd splitmysub
 
 # Build and run
 docker-compose up -d
@@ -32,7 +32,7 @@ docker-compose up -d
 
 ## Email Configuration (SMTP)
 
-SplitSub uses SMTP for sending emails. Choose one of the following providers:
+SplitMySub uses SMTP for sending emails. Choose one of the following providers:
 
 ### 🟢 Gmail (Easiest for personal use)
 
@@ -137,12 +137,12 @@ services:
     ports:
       - "80:80"
     volumes:
-      - splitsub_storage:/rails/storage
-      - splitsub_db:/rails/db
+      - splitmysub_storage:/rails/storage
+      - splitmysub_db:/rails/db
 
 volumes:
-  splitsub_storage:
-  splitsub_db:
+  splitmysub_storage:
+  splitmysub_db:
 ```
 
 ### Option 2: Kamal Deployment
@@ -169,7 +169,7 @@ After deployment, test your email setup:
 
 ```bash
 # Via Docker
-docker exec -it splitsub-app bin/rails runner "TestMailer.test_email('your-email@example.com').deliver_now"
+docker exec -it splitmysub-app bin/rails runner "TestMailer.test_email('your-email@example.com').deliver_now"
 
 # Via Kamal
 bin/kamal runner "TestMailer.test_email('your-email@example.com').deliver_now"
@@ -198,7 +198,7 @@ bin/rails runner "TestMailer.test_email('your-email@example.com').deliver_now"
 
 ### Getting Help
 
-- Check logs: `docker logs splitsub-app` or `bin/kamal logs`
+- Check logs: `docker logs splitmysub-app` or `bin/kamal logs`
 - Test SMTP connection manually using telnet or openssl
 - Consult your SMTP provider's documentation
 

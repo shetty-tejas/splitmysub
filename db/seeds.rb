@@ -8,7 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-puts "🌱 Starting SplitSub seed data creation..."
+puts "🌱 Starting SplitMySub seed data creation..."
 
 # Clear existing data in development
 if Rails.env.development?
@@ -530,7 +530,7 @@ puts "    - Confirmed: #{Payment.confirmed.count}"
 puts "    - Pending: #{Payment.pending.count}"
 puts "    - Rejected: #{Payment.rejected.count}"
 
-puts "\n🚀 Ready to test SplitSub!"
+puts "\n🚀 Ready to test SplitMySub!"
 puts "🧪 Use testuser@example.com for testing (owns Hulu + Live TV project)"
 puts "You can also log in with any of the other seeded user emails."
 puts "=" * 50

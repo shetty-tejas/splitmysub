@@ -4,7 +4,7 @@ class InvitationMailer < ApplicationMailer
   #
   #   en.invitation_mailer.invite.subject
   #
-  default from: "noreply@splitsub.com"
+  default from: "noreply@splitmysub.com"
 
   def invite(invitation)
     @invitation = invitation
@@ -14,7 +14,7 @@ class InvitationMailer < ApplicationMailer
 
     mail(
       to: @invitation.email,
-      subject: "You're invited to join #{@project.name} on SplitSub",
+      subject: "You're invited to join #{@project.name} on SplitMySub",
       reply_to: @invited_by.email_address
     )
   end

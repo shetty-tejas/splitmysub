@@ -31,7 +31,7 @@
 </script>
 
 <svelte:head>
-  <title>Dashboard - SplitSub</title>
+  <title>Dashboard - SplitMySub</title>
 </svelte:head>
 
 <Layout>

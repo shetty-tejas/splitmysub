@@ -97,14 +97,14 @@
 </script>
 
 <svelte:head>
-  <title>Confirm Invitation - {project.name} - SplitSub</title>
+  <title>Confirm Invitation - {project.name} - SplitMySub</title>
 </svelte:head>
 
 <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
   <!-- Header -->
   <div class="text-center mb-8">
     <div class="mb-4">
-      <div class="text-2xl font-bold text-blue-600 mb-2">SplitSub</div>
+      <div class="text-2xl font-bold text-blue-600 mb-2">SplitMySub</div>
       <p class="text-muted-foreground">Subscription Cost Sharing Made Simple</p>
     </div>
 
@@ -190,7 +190,8 @@
           <button
             type="button"
             class="flex-1 h-9 px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm rounded-md text-sm font-medium transition-colors inline-flex items-center justify-center gap-2 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
-            onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
+            onclick={goBack}
+            onkeydown={(e) => (e.key === "Enter" || e.key === " ") && goBack}
             disabled={isSubmitting}
           >
             <ArrowLeft class="h-4 w-4 mr-2" />
@@ -199,7 +200,9 @@
           <button
             type="button"
             class="flex-1 h-9 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow rounded-md text-sm font-medium transition-colors inline-flex items-center justify-center gap-2 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
-            onclick={confirmAcceptance} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (confirmAcceptance)}
+            onclick={confirmAcceptance}
+            onkeydown={(e) =>
+              (e.key === "Enter" || e.key === " ") && confirmAcceptance}
             disabled={isSubmitting || !isFormValid()}
           >
             <CheckCircle class="h-4 w-4 mr-2" />

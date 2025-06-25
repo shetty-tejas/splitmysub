@@ -1,5 +1,5 @@
 /**
- * Centralized billing utilities for SplitSub frontend
+ * Centralized billing utilities for SplitMySub frontend
  * Consolidates formatting, badge logic, and status calculations
  */
 

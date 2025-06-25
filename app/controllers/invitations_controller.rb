@@ -252,7 +252,7 @@ class InvitationsController < ApplicationController
         start_new_session_for(user)
 
         redirect_to project_path(@invitation.project),
-                   notice: "Welcome to SplitSub! Your account has been created and you've joined #{@invitation.project.name}."
+                   notice: "Welcome to SplitMySub! Your account has been created and you've joined #{@invitation.project.name}."
       else
         Rails.logger.error "Failed to accept invitation for user: #{user.id}"
         user.destroy # Clean up if invitation acceptance fails

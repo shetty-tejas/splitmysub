@@ -3,7 +3,7 @@ require "test_helper"
 class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTest
       def setup
     # Create test user for admin access (in development mode, all users have admin access)
-    @user = User.new(email_address: "admin@splitsub.test", first_name: "Admin", last_name: "User")
+    @user = User.new(email_address: "admin@splitmysub.test", first_name: "Admin", last_name: "User")
     @user.save!(validate: false)
 
     # Sign in using the same method as other tests

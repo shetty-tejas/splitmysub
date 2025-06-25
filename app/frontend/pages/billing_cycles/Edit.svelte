@@ -72,7 +72,7 @@
 <svelte:head>
   <title
     >Edit Billing Cycle - {formatDate(billing_cycle.due_date)} - {project.name} -
-    SplitSub</title
+    SplitMySub</title
   >
 </svelte:head>
 
@@ -110,7 +110,13 @@
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-6">
+            <form
+              onsubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(e);
+              }}
+              class="space-y-6"
+            >
               <!-- Error Messages -->
               {#if errors.length > 0}
                 <div class="bg-red-50 border border-red-200 rounded-md p-4">

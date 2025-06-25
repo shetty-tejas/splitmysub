@@ -1,7 +1,7 @@
 # Mobile Responsive Design Implementation Summary
 
 ## Overview
-This document summarizes the mobile responsive design improvements implemented for the SplitSub application as part of Task 11.
+This document summarizes the mobile responsive design improvements implemented for the SplitMySub application as part of Task 11.
 
 ## Key Improvements Made
 

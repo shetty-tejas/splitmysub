@@ -177,7 +177,7 @@
 
 <svelte:head>
   <title
-    >Payment Review - {payment.user.email_address} - {project.name} - SplitSub</title
+    >Payment Review - {payment.user.email_address} - {project.name} - SplitMySub</title
   >
 </svelte:head>
 

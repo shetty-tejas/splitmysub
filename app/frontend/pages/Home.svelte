@@ -90,10 +90,10 @@
 </script>
 
 <svelte:head>
-  <title>SplitSub - Split Subscription Costs with Friends</title>
+  <title>SplitMySub - Split Subscription Costs with Friends</title>
   <meta
     name="description"
-    content="Share and manage recurring subscriptions with friends and family. Split costs automatically and never miss a payment with Splitsub."
+    content="Share and manage recurring subscriptions with friends and family. Split costs automatically and never miss a payment with SplitMySub."
   />
 </svelte:head>
 
@@ -327,8 +327,8 @@
           Simple, Transparent Pricing
         </h2>
         <p class="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
-          SplitSub is completely free to use. No hidden fees, no subscriptions,
-          no credit card required.
+          SplitMySub is completely free to use. No hidden fees, no
+          subscriptions, no credit card required.
         </p>
       </div>
 

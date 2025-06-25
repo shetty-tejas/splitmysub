@@ -181,7 +181,7 @@
 </script>
 
 <svelte:head>
-  <title>Payment Confirmations - {project.name} - SplitSub</title>
+  <title>Payment Confirmations - {project.name} - SplitMySub</title>
 </svelte:head>
 
 <Layout>

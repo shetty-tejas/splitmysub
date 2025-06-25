@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-  <title>{title} - SplitSub Admin</title>
+  <title>{title} - SplitMySub Admin</title>
 </svelte:head>
 
 <div class="min-h-screen bg-gray-50">
@@ -23,7 +23,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-4">
-          <h1 class="text-xl font-bold">🛠️ SplitSub Admin</h1>
+          <h1 class="text-xl font-bold">🛠️ SplitMySub Admin</h1>
           <Badge variant="secondary" class="bg-red-500 text-white">
             Administrator Panel
           </Badge>
@@ -72,7 +72,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center text-sm text-gray-500">
         <p>
-          SplitSub Admin Panel |
+          SplitMySub Admin Panel |
           <strong class="text-red-600">Use with caution</strong> - Changes affect
           all users
         </p>

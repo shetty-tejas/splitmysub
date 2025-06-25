@@ -1,5 +1,5 @@
 # Overview  
-SplitSub is a web-based subscription bill-splitting reminder system built on Rails with a modern Svelte frontend. It solves the problem of subscription owners having to manually chase down payment contributions from friends, family, or teammates every billing cycle. The application targets groups who share subscriptions (Netflix, Spotify, etc.) but struggle with the administrative burden of collecting payments.
+SplitMySub is a web-based subscription bill-splitting reminder system built on Rails with a modern Svelte frontend. It solves the problem of subscription owners having to manually chase down payment contributions from friends, family, or teammates every billing cycle. The application targets groups who share subscriptions (Netflix, Spotify, etc.) but struggle with the administrative burden of collecting payments.
 
 The value proposition is automation and transparency - subscription owners can set up payment reminders once and let the system handle recurring notifications, while contributors get clear visibility into their payment obligations and history.
 

@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-  <title>Sign Up - SplitSub</title>
+  <title>Sign Up - SplitMySub</title>
 </svelte:head>
 
 <AuthLayout>

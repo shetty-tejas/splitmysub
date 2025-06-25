@@ -9,12 +9,12 @@ services:
       - RAILS_ENV=production
       - SECRET_KEY_BASE=your_secret_key_base_here_change_this_in_production
     volumes:
-      - splitsub_storage:/rails/storage
-      - splitsub_db:/rails/db
+      - splitmysub_storage:/rails/storage
+      - splitmysub_db:/rails/db
     restart: unless-stopped
 
 volumes:
-  splitsub_storage:
+  splitmysub_storage:
     driver: local
-  splitsub_db:
+  splitmysub_db:
     driver: local

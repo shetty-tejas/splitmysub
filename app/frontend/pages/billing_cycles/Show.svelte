@@ -75,7 +75,7 @@
 
 <svelte:head>
   <title
-    >Billing Cycle - {formatDate(billing_cycle.due_date)} - {project.name} - SplitSub</title
+    >Billing Cycle - {formatDate(billing_cycle.due_date)} - {project.name} - SplitMySub</title
   >
 </svelte:head>
 
@@ -101,7 +101,12 @@
             <Edit class="w-4 h-4 mr-2" />
             Edit
           </Button>
-          <Button onclick={deleteBillingCycle} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (deleteBillingCycle)} variant="destructive">
+          <Button
+            onclick={deleteBillingCycle}
+            onkeydown={(e) =>
+              (e.key === "Enter" || e.key === " ") && deleteBillingCycle}
+            variant="destructive"
+          >
             <Trash2 class="w-4 h-4 mr-2" />
             Delete
           </Button>
@@ -399,7 +404,10 @@
                   <div class="flex gap-2">
                     {#if payment.has_evidence}
                       <Button
-                        onclick={() => downloadEvidence(payment)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (() => downloadEvidence(payment))}
+                        onclick={() => downloadEvidence(payment)}
+                        onkeydown={(e) =>
+                          (e.key === "Enter" || e.key === " ") &&
+                          (() => downloadEvidence(payment))}
                         variant="outline"
                         size="sm"
                       >

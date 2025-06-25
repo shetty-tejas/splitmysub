@@ -68,7 +68,7 @@
 </script>
 
 <svelte:head>
-  <title>New Billing Cycle - {project.name} - SplitSub</title>
+  <title>New Billing Cycle - {project.name} - SplitMySub</title>
 </svelte:head>
 
 <Layout>
@@ -107,7 +107,13 @@
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-6">
+            <form
+              onsubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(e);
+              }}
+              class="space-y-6"
+            >
               <!-- Error Messages -->
               {#if errors.length > 0}
                 <div class="bg-red-50 border border-red-200 rounded-md p-4">

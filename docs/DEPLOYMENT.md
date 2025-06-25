@@ -1,6 +1,6 @@
-# SplitSub Deployment Guide with Kamal
+# SplitMySub Deployment Guide with Kamal
 
-This guide covers deploying SplitSub using [Kamal](https://kamal-deploy.org/), a modern deployment tool for containerized applications.
+This guide covers deploying SplitMySub using [Kamal](https://kamal-deploy.org/), a modern deployment tool for containerized applications.
 
 ## Prerequisites
 
@@ -82,7 +82,7 @@ export RAILS_MASTER_KEY="$(cat config/master.key)"
 In `config/deploy.yml`, update the image name:
 
 ```yaml
-image: your-registry-username/splitsub
+image: your-registry-username/splitmysub
 ```
 
 ## Deployment Commands
@@ -157,7 +157,7 @@ env:
     
     # External database (if not using SQLite)
     # DB_HOST: your-db-host
-    # DB_NAME: splitsub_production
+    # DB_NAME: splitmysub_production
     
     # Asset CDN
     # ASSET_HOST: https://cdn.your-domain.com
@@ -206,12 +206,12 @@ If you have custom certificates, you can configure them in the proxy section.
 
 ### SQLite (Default)
 
-SplitSub uses SQLite by default with persistent volumes:
+SplitMySub uses SQLite by default with persistent volumes:
 
 ```yaml
 volumes:
-  - "splitsub_storage:/rails/storage"
-  - "splitsub_db:/rails/db"
+  - "splitmysub_storage:/rails/storage"
+- "splitmysub_db:/rails/db"
 ```
 
 ### External Database
@@ -226,7 +226,7 @@ accessories:
     port: "127.0.0.1:5432:5432"
     env:
       clear:
-        POSTGRES_DB: splitsub_production
+        POSTGRES_DB: splitmysub_production
       secret:
         - POSTGRES_PASSWORD
     directories:
@@ -266,10 +266,10 @@ For SQLite databases, backup the volume:
 
 ```bash
 # Create backup
-docker run --rm -v splitsub_db:/source -v $(pwd):/backup alpine tar czf /backup/db-backup-$(date +%Y%m%d).tar.gz -C /source .
+docker run --rm -v splitmysub_db:/source -v $(pwd):/backup alpine tar czf /backup/db-backup-$(date +%Y%m%d).tar.gz -C /source .
 
 # Restore backup
-docker run --rm -v splitsub_db:/target -v $(pwd):/backup alpine tar xzf /backup/db-backup-YYYYMMDD.tar.gz -C /target
+docker run --rm -v splitmysub_db:/target -v $(pwd):/backup alpine tar xzf /backup/db-backup-YYYYMMDD.tar.gz -C /target
 ```
 
 ## Troubleshooting

@@ -52,7 +52,7 @@
 </script>
 
 <svelte:head>
-  <title>Edit Profile - SplitSub</title>
+  <title>Edit Profile - SplitMySub</title>
 </svelte:head>
 
 <Layout>
@@ -60,7 +60,8 @@
     <div class="flex items-center gap-4 mb-8">
       <button
         type="button"
-        onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
+        onclick={goBack}
+        onkeydown={(e) => (e.key === "Enter" || e.key === " ") && goBack}
         class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
       >
         <ArrowLeft class="h-4 w-4" />
@@ -80,7 +81,13 @@
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-6">
+          <form
+            onsubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(e);
+            }}
+            class="space-y-6"
+          >
             <!-- Personal Information -->
             <div class="space-y-4">
               <h3 class="text-lg font-semibold">Personal Information</h3>
@@ -153,7 +160,9 @@
               <Button
                 type="button"
                 variant="outline"
-                onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
+                onclick={goBack}
+                onkeydown={(e) =>
+                  (e.key === "Enter" || e.key === " ") && goBack}
                 disabled={isSubmitting}
               >
                 Cancel

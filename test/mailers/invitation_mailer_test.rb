@@ -20,7 +20,7 @@ class InvitationMailerTest < ActionMailer::TestCase
     end
 
     assert_equal [ @invitation.email ], email.to
-    assert_equal "You're invited to join #{@project.name} on SplitSub", email.subject
+    assert_equal "You're invited to join #{@project.name} on SplitMySub", email.subject
     assert_match @project.name, email.body.encoded
     assert_match @invitation.invited_by.full_name, email.body.encoded
     assert_match "invitations/", email.body.encoded
@@ -116,7 +116,7 @@ class InvitationMailerTest < ActionMailer::TestCase
   test "invite email from address is correct" do
     email = InvitationMailer.invite(@invitation)
 
-    assert_equal [ "noreply@splitsub.com" ], email.from
+    assert_equal [ "noreply@splitmysub.com" ], email.from
   end
 
   test "invite email reply-to is inviter's email" do

@@ -1,5 +1,5 @@
 /**
- * Centralized billing constants for SplitSub frontend
+ * Centralized billing constants for SplitMySub frontend
  * Contains status mappings, default values, and configuration constants
  */
 

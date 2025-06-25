@@ -62,7 +62,7 @@
 </script>
 
 <svelte:head>
-  <title>Analytics - SplitSub</title>
+  <title>Analytics - SplitMySub</title>
 </svelte:head>
 
 <Layout>
