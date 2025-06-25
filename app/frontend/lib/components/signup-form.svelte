@@ -6,21 +6,111 @@
   import { Label } from "$lib/components/ui/label/index.js";
   import { Link, useForm } from "@inertiajs/svelte";
   import { signupPath, loginPath } from "@/routes";
+  import { onMount } from "svelte";
 
   const form = useForm({
     email_address: "",
     first_name: "",
     last_name: "",
+    "cf-turnstile-response": "",
+  });
+
+  let turnstileWidget;
+  let turnstileWidgetId;
+  let turnstileCallback;
+
+  onMount(() => {
+    // Validate site key availability
+    if (!window.CLOUDFLARE_TURNSTILE_SITE_KEY) {
+      console.error("Turnstile site key is not available");
+      return;
+    }
+
+    // Set up the Turnstile callback function
+    turnstileCallback = (token) => {
+      $form["cf-turnstile-response"] = token;
+    };
+
+    // Function to initialize Turnstile widget
+    const initializeTurnstile = () => {
+      if (
+        window.turnstile &&
+        turnstileWidget &&
+        !turnstileWidgetId &&
+        window.CLOUDFLARE_TURNSTILE_SITE_KEY
+      ) {
+        try {
+          turnstileWidgetId = window.turnstile.render(turnstileWidget, {
+            sitekey: window.CLOUDFLARE_TURNSTILE_SITE_KEY,
+            callback: turnstileCallback,
+            theme: "light",
+            size: "normal",
+          });
+        } catch (error) {
+          console.error("Failed to render Turnstile widget:", error);
+        }
+      }
+    };
+
+    // Check if Turnstile is already loaded
+    if (window.turnstile) {
+      initializeTurnstile();
+    } else {
+      // Poll for Turnstile to be available
+      const checkTurnstile = setInterval(() => {
+        if (window.turnstile) {
+          clearInterval(checkTurnstile);
+          initializeTurnstile();
+        }
+      }, 100);
+
+      // Clear interval after 10 seconds to prevent infinite polling
+      setTimeout(() => {
+        clearInterval(checkTurnstile);
+      }, 10000);
+    }
+
+    // Cleanup function
+    return () => {
+      if (window.turnstile && turnstileWidgetId) {
+        try {
+          window.turnstile.remove(turnstileWidgetId);
+        } catch (error) {
+          console.error("Failed to remove Turnstile widget:", error);
+        }
+      }
+    };
   });
 
   function submit(e) {
     e.preventDefault();
+
     $form.post(signupPath(), {
       onSuccess: () => {
         // Reset all form fields after successful submission
         $form.email_address = "";
         $form.first_name = "";
         $form.last_name = "";
+        $form["cf-turnstile-response"] = "";
+
+        // Reset the Turnstile widget
+        if (window.turnstile && turnstileWidgetId) {
+          try {
+            window.turnstile.reset(turnstileWidgetId);
+          } catch (error) {
+            console.error("Failed to reset Turnstile widget:", error);
+          }
+        }
+      },
+      onError: () => {
+        // Reset the Turnstile widget on error
+        if (window.turnstile && turnstileWidgetId) {
+          try {
+            window.turnstile.reset(turnstileWidgetId);
+          } catch (error) {
+            console.error("Failed to reset Turnstile widget:", error);
+          }
+        }
       },
     });
   }
@@ -69,6 +159,13 @@
           />
           <InputError errors={$form.errors.email_address} />
         </div>
+
+        <!-- Cloudflare Turnstile Widget -->
+        <div class="grid gap-2">
+          <div class="flex justify-center" bind:this={turnstileWidget}></div>
+          <InputError errors={$form.errors["cf-turnstile-response"]} />
+        </div>
+
         <Button type="submit" class="w-full" disabled={$form.processing}>
           {$form.processing ? "Creating account..." : "Create Account"}
         </Button>

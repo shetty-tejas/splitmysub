@@ -7,6 +7,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= cloudflare_turnstile_script_tag %>
+
+    <script nonce="<%= content_security_policy_nonce %>">
+      window.CLOUDFLARE_TURNSTILE_SITE_KEY = '<%= cloudflare_turnstile_site_key %>';
+    </script>
 
     <%= yield :head %>
 

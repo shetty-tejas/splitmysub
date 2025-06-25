@@ -10,6 +10,14 @@ class RegistrationsController < ApplicationController
   end
 
   def create
+    # Validate Turnstile first
+    unless verify_turnstile_token(params[:"cf-turnstile-response"])
+      redirect_to signup_path, inertia: {
+        errors: { "cf-turnstile-response" => [ "Please complete the security verification" ] }
+      }
+      return
+    end
+
     user = User.new(user_params)
 
     if user.save
@@ -34,5 +42,11 @@ class RegistrationsController < ApplicationController
       :first_name,
       :last_name
     )
+  end
+
+  def verify_turnstile_token(token)
+    return false if token.blank?
+
+    CloudflareTurnstile.validate(token, request.remote_ip)
   end
 end

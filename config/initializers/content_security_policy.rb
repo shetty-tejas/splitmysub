@@ -10,7 +10,9 @@ Rails.application.configure do
     policy.font_src    :self, :https, :data
     policy.img_src     :self, :https, :data, :blob
     policy.object_src  :none
-    policy.script_src  :self, :https
+
+    # Allow Cloudflare Turnstile scripts
+    policy.script_src  :self, :https, "https://challenges.cloudflare.com"
 
     # Allow @vite/client to hot reload javascript changes in development
     policy.script_src *policy.script_src, :unsafe_eval, "http://#{ViteRuby.config.host_with_port}" if Rails.env.development?
@@ -18,14 +20,15 @@ Rails.application.configure do
     # You may need to enable this in production as well depending on your setup.
     policy.script_src *policy.script_src, :blob if Rails.env.test?
 
-    policy.style_src :self, :https
+    # Allow styles from self, HTTPS, and inline styles for Turnstile widget
+    policy.style_src :self, :https, :unsafe_inline
     # Allow @vite/client to hot reload style changes in development
     policy.style_src *policy.style_src, :unsafe_inline if Rails.env.development?
     # Allow inline styles for email templates in production (required for email client compatibility)
     policy.style_src *policy.style_src, :unsafe_inline if Rails.env.production?
 
-    # Allow connections to self and HTTPS
-    policy.connect_src :self, :https
+    # Allow connections to self, HTTPS, and Cloudflare Turnstile
+    policy.connect_src :self, :https, "https://challenges.cloudflare.com"
 
     # Allow @vite/client WebSocket connections in development
     policy.connect_src *policy.connect_src, "ws://#{ViteRuby.config.host_with_port}" if Rails.env.development?
@@ -36,8 +39,9 @@ Rails.application.configure do
     # Form actions
     policy.form_action :self
 
-    # Frame ancestors (prevent clickjacking)
+    # Frame ancestors (prevent clickjacking) - but allow Cloudflare Turnstile frames
     policy.frame_ancestors :none
+    policy.frame_src "https://challenges.cloudflare.com"
 
     # Base URI
     policy.base_uri :self

@@ -7,7 +7,7 @@ image: ashwinmk2016/splitmysub
 # Deploy to these servers.
 servers:
   web:
-    - 157.180.44.246
+    - 146.190.118.95
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -19,7 +19,7 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: true
-  host: splitmysub.sabha.app
+  host: splitmysubscription.xyz
 
 # Credentials for your image host.
 registry:
@@ -58,7 +58,7 @@ env:
     # Log everything from Rails
     # RAILS_LOG_LEVEL: debug
     
-    APP_HOST: splitmysub.sabha.app
+    APP_HOST: splitmysubscription.xyz
     APP_PROTOCOL: https
     
     # Vite configuration for production
