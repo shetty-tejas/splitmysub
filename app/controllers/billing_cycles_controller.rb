@@ -211,6 +211,7 @@ class BillingCyclesController < ApplicationController
   def project_props(project)
     {
       id: project.id,
+      slug: project.slug,
       name: project.name,
       description: project.description,
       cost: project.cost,
