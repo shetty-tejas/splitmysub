@@ -23,9 +23,16 @@ class CloudflareTurnstile
   private
 
   def secret_key
-    @secret_key ||= Rails.application.credentials.dig(:turnstile, :cloudflare_secret_key) ||
-                    ENV["CLOUDFLARE_TURNSTILE_SECRET_KEY"] ||
-                    "1x0000000000000000000000000000000AA" # Test key for development
+    @secret_key ||= begin
+      # Use test keys in development and test, even if credentials are set
+      if Rails.env.development? || Rails.env.test?
+        "1x0000000000000000000000000000000AA" # Test secret for development/test
+      else
+        Rails.application.credentials.dig(:turnstile, :cloudflare_secret_key) ||
+        ENV["CLOUDFLARE_TURNSTILE_SECRET_KEY"] ||
+        "1x0000000000000000000000000000000AA" # Test key for development
+      end
+    end
   end
 
   def validate_from_cloudflare

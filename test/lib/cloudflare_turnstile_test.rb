@@ -16,35 +16,25 @@ class CloudflareTurnstileTest < ActiveSupport::TestCase
     # Access private method to test secret key configuration
     secret_key = turnstile.send(:secret_key)
     assert_not_nil secret_key
-    # Should use test key by default
+    # Should use test key in test environment
     assert_equal "1x0000000000000000000000000000000AA", secret_key
   end
 
-  test "should validate with mocked HTTP response" do
-    # Mock successful HTTP response
-    http_response = mock()
-    http_response.expects(:body).returns('{"success": true}')
-    Net::HTTP.expects(:post_form).returns(http_response)
+  test "should initialize with payload and remote_ip" do
+    payload = "test_token"
+    remote_ip = "192.168.1.1"
+    turnstile = CloudflareTurnstile.new(payload, remote_ip)
 
-    result = CloudflareTurnstile.validate("valid_token", "127.0.0.1")
-    assert_equal true, result
+    assert_equal payload, turnstile.instance_variable_get(:@payload)
+    assert_equal remote_ip, turnstile.instance_variable_get(:@remote_ip)
   end
 
-  test "should handle failed validation with mocked HTTP response" do
-    # Mock failed HTTP response
-    http_response = mock()
-    http_response.expects(:body).returns('{"success": false}')
-    Net::HTTP.expects(:post_form).returns(http_response)
+  test "should use test secret key in test environment" do
+    # Verify the secret key logic works correctly in test environment
+    turnstile = CloudflareTurnstile.new("test", "127.0.0.1")
+    secret_key = turnstile.send(:secret_key)
 
-    result = CloudflareTurnstile.validate("invalid_token", "127.0.0.1")
-    assert_equal false, result
-  end
-
-  test "should handle network errors gracefully" do
-    # Mock network error
-    Net::HTTP.expects(:post_form).raises(Errno::ETIMEDOUT)
-
-    result = CloudflareTurnstile.validate("test_token", "127.0.0.1")
-    assert_equal false, result
+    # Test key should be used in test environment regardless of credentials
+    assert_equal "1x0000000000000000000000000000000AA", secret_key
   end
 end

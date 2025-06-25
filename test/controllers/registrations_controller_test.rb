@@ -7,9 +7,7 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create user and send magic link with valid turnstile" do
-    # Mock the CloudflareTurnstile.validate method to return true
-    CloudflareTurnstile.stubs(:validate).returns(true)
-
+    # In test environment, any non-empty token will validate as true
     assert_emails 1 do
       post signup_url, params: {
         email_address: "newuser@example.com",
@@ -46,16 +44,14 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_nil user
   end
 
-  test "should not create user with invalid turnstile token" do
-    # Mock the CloudflareTurnstile.validate method to return false
-    CloudflareTurnstile.stubs(:validate).returns(false)
-
+  test "should not create user with empty turnstile token" do
+    # Empty token should fail validation even in test environment
     assert_emails 0 do
       post signup_url, params: {
         email_address: "newuser@example.com",
         first_name: "New",
         last_name: "User",
-        "cf-turnstile-response": "invalid_token"
+        "cf-turnstile-response": ""
       }
     end
 
@@ -67,9 +63,7 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not create user with invalid data" do
-    # Mock the CloudflareTurnstile.validate method to return true
-    CloudflareTurnstile.stubs(:validate).returns(true)
-
+    # In test environment, any non-empty token will validate as true
     assert_emails 0 do
       post signup_url, params: {
         email_address: "invalid-email",
@@ -89,9 +83,7 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
   test "should not create user with duplicate email" do
     existing_user = users(:test_user)
 
-    # Mock the CloudflareTurnstile.validate method to return true
-    CloudflareTurnstile.stubs(:validate).returns(true)
-
+    # In test environment, any non-empty token will validate as true
     assert_emails 0 do
       post signup_url, params: {
         email_address: existing_user.email_address,
