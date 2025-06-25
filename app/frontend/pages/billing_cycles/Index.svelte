@@ -99,7 +99,8 @@
       <div class="flex items-center gap-4">
         <button
           type="button"
-          onclick={goBack} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (goBack)}
+          onclick={goBack}
+          onkeydown={(e) => (e.key === "Enter" || e.key === " ") && goBack}
           class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-colors cursor-pointer"
         >
           <ArrowLeft class="h-4 w-4" />
@@ -111,15 +112,34 @@
     <!-- Project Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold tracking-tight mb-2">Billing Cycles</h1>
-      <p class="text-muted-foreground text-lg">
-        Manage billing cycles for <strong>{project.name}</strong>
-      </p>
+      <div class="space-y-2">
+        <p class="text-muted-foreground text-lg">
+          Manage billing cycles for <strong>{project.name}</strong>
+        </p>
+        <p class="text-sm text-muted-foreground">
+          Track recurring subscription payments, monitor due dates, and manage
+          member contributions. Each billing cycle represents a payment period
+          where members can submit their portion of shared costs.
+          {#if user_permissions?.can_manage}
+            As a project owner, you can create new cycles, generate upcoming
+            periods, and review payment submissions.
+          {:else if user_permissions?.is_member}
+            As a project member, you can view billing cycles and submit payment
+            evidence when due.
+          {/if}
+        </p>
+      </div>
     </div>
 
     <!-- Action Buttons - Only for owners -->
     {#if user_permissions?.can_manage}
       <div class="flex flex-col sm:flex-row gap-2 mb-8">
-        <Button onclick={generateUpcomingCycles} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (generateUpcomingCycles)} variant="outline">
+        <Button
+          onclick={generateUpcomingCycles}
+          onkeydown={(e) =>
+            (e.key === "Enter" || e.key === " ") && generateUpcomingCycles}
+          variant="outline"
+        >
           <Calendar class="w-4 h-4 mr-2" />
           Generate Upcoming
         </Button>
@@ -141,6 +161,36 @@
         </p>
       </div>
     {/if}
+
+    <!-- Quick Info -->
+    <Card class="mb-6 border-l-4 border-l-green-500 bg-green-50/50">
+      <CardContent class="pt-6">
+        <div class="flex items-start gap-3">
+          <div class="mt-0.5">
+            <Calendar class="h-5 w-5 text-green-600" />
+          </div>
+          <div>
+            <h3 class="font-medium text-green-900 mb-1">
+              How Billing Cycles Work
+            </h3>
+            <div class="text-sm text-green-800 space-y-1">
+              <p><strong>Upcoming:</strong> Cycles ready for member payments</p>
+              <p>
+                <strong>Due Soon:</strong> Payment deadlines approaching within 3
+                days
+              </p>
+              <p>
+                <strong>Overdue:</strong> Past due date - members should submit payments
+                urgently
+              </p>
+              <p>
+                <strong>Fully Paid:</strong> All members have contributed their share
+              </p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -258,7 +308,12 @@
             >
           </select>
 
-          <Button onclick={handleSearch} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (handleSearch)} variant="outline">
+          <Button
+            onclick={handleSearch}
+            onkeydown={(e) =>
+              (e.key === "Enter" || e.key === " ") && handleSearch}
+            variant="outline"
+          >
             <Search class="w-4 h-4 mr-2" />
             Search
           </Button>

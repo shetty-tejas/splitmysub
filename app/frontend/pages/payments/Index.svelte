@@ -120,10 +120,44 @@
     <!-- Project Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold tracking-tight mb-2">My Payments</h1>
-      <p class="text-muted-foreground text-lg">
-        View and manage all your payment submissions
-      </p>
+      <div class="space-y-2">
+        <p class="text-muted-foreground text-lg">
+          Track and manage all your payment submissions across projects
+        </p>
+        <p class="text-sm text-muted-foreground">
+          Upload payment evidence, monitor approval status, and keep records of
+          your shared subscription costs. Click on any payment to view details,
+          download receipts, or check approval status.
+        </p>
+      </div>
     </div>
+
+    <!-- Quick Actions Info -->
+    <Card class="mb-6 border-l-4 border-l-blue-500 bg-blue-50/50">
+      <CardContent class="pt-6">
+        <div class="flex items-start gap-3">
+          <div class="mt-0.5">
+            <CreditCard class="h-5 w-5 text-blue-600" />
+          </div>
+          <div>
+            <h3 class="font-medium text-blue-900 mb-1">Payment Status Guide</h3>
+            <div class="text-sm text-blue-800 space-y-1">
+              <p>
+                <strong>Pending:</strong> Your payment evidence is under review by
+                the project owner
+              </p>
+              <p>
+                <strong>Confirmed:</strong> Your payment has been approved and recorded
+              </p>
+              <p>
+                <strong>Rejected:</strong> Payment needs attention - check details
+                or resubmit
+              </p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
