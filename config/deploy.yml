@@ -99,7 +99,7 @@ asset_path: /rails/public/vite
 
 # Configure the image builder.
 builder:
-  arch: arm64
+  arch: amd64
   # Build with proper context for Rails + Vite
   context: .
   dockerfile: Dockerfile

@@ -1,5 +1,5 @@
 class TestMailer < ApplicationMailer
-  default from: "noreply@splitmysub.sabha.app"
+  default from: "noreply@splitmysubscription.xyz"
 
   def test_email(to_email)
     @message = "If you're reading this, your SMTP configuration is working!"
