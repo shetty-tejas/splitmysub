@@ -33,11 +33,6 @@
   export let filters;
   export let user_permissions;
 
-  // Debug: Log the stats object to see what we're receiving
-  console.log("Stats object:", stats);
-  console.log("Stats type:", typeof stats);
-  console.log("Stats keys:", stats ? Object.keys(stats) : "stats is falsy");
-
   // Provide a default stats object if stats is undefined or doesn't have expected properties
   $: safeStats =
     stats && typeof stats === "object" && "total_amount" in stats

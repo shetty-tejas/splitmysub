@@ -33,21 +33,6 @@
   export let filters;
   export let stats;
 
-  // Debug: Log the stats object to see what we're receiving
-  console.log("Payment stats object:", stats);
-  console.log("Payment stats type:", typeof stats);
-  console.log(
-    "Payment stats keys:",
-    stats ? Object.keys(stats) : "stats is falsy",
-  );
-
-  // Debug: Check if someone is trying to access total_amount
-  if (stats && "total_amount" in stats) {
-    console.warn(
-      "Payment confirmations received billing cycle stats instead of payment stats!",
-    );
-  }
-
   // Provide a default stats object if stats is undefined or doesn't have expected properties
   $: safeStats =
     stats && typeof stats === "object" && "total" in stats

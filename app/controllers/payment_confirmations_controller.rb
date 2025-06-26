@@ -249,7 +249,6 @@ class PaymentConfirmationsController < ApplicationController
         with_evidence: all_payments.with_evidence.count,
         without_evidence: all_payments.without_evidence.count
       }
-      Rails.logger.info "Payment stats calculated: #{stats.inspect}"
       stats
     rescue => e
       Rails.logger.error "Error calculating payment stats: #{e.message}"

@@ -44,7 +44,6 @@ class BillingCyclesController < ApplicationController
 
     begin
       stats = billing_cycle_stats
-      Rails.logger.info "Billing cycle stats calculated: #{stats.inspect}"
     rescue => e
       Rails.logger.error "Error calculating billing cycle stats: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
