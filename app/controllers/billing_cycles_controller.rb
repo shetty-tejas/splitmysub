@@ -42,10 +42,19 @@ class BillingCyclesController < ApplicationController
       @billing_cycles = @billing_cycles.order(due_date: :desc)
     end
 
+    begin
+      stats = billing_cycle_stats
+      Rails.logger.info "Billing cycle stats calculated: #{stats.inspect}"
+    rescue => e
+      Rails.logger.error "Error calculating billing cycle stats: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      stats = {} # Provide empty hash as fallback
+    end
+
     render inertia: "billing_cycles/Index", props: {
       project: project_props(@project),
       billing_cycles: @billing_cycles.map { |cycle| billing_cycle_props(cycle) },
-      stats: billing_cycle_stats,
+      stats: stats,
       filters: {
         filter: params[:filter],
         search: params[:search],

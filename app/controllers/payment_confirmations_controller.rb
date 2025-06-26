@@ -5,7 +5,7 @@ class PaymentConfirmationsController < ApplicationController
 
   def index
     @payments = @project.payments
-                       .includes(:user, :billing_cycle, :confirmed_by, :evidence_attachment)
+                       .includes(:user, :confirmed_by, :evidence_attachment, billing_cycle: { project: :project_memberships })
                        .order(created_at: :desc)
 
     # Apply filters
@@ -203,6 +203,11 @@ class PaymentConfirmationsController < ApplicationController
         email_address: payment.user.email_address,
         name: payment.user.full_name
       } : nil,
+      billing_cycle: payment.billing_cycle ? {
+        id: payment.billing_cycle.id,
+        total_amount: payment.billing_cycle.total_amount,
+        due_date: payment.billing_cycle.due_date
+      } : nil,
       expected_amount: payment.expected_amount,
       overpaid: payment.overpaid?,
       underpaid: payment.underpaid?
@@ -233,15 +238,32 @@ class PaymentConfirmationsController < ApplicationController
   end
 
   def payment_stats
-    all_payments = @project.payments
-    {
-      total: all_payments.count,
-      pending: all_payments.pending.count,
-      confirmed: all_payments.confirmed.count,
-      rejected: all_payments.rejected.count,
-      disputed: all_payments.disputed.count,
-      with_evidence: all_payments.with_evidence.count,
-      without_evidence: all_payments.without_evidence.count
-    }
+    begin
+      all_payments = @project.payments
+      stats = {
+        total: all_payments.count,
+        pending: all_payments.pending.count,
+        confirmed: all_payments.confirmed.count,
+        rejected: all_payments.rejected.count,
+        disputed: all_payments.disputed.count,
+        with_evidence: all_payments.with_evidence.count,
+        without_evidence: all_payments.without_evidence.count
+      }
+      Rails.logger.info "Payment stats calculated: #{stats.inspect}"
+      stats
+    rescue => e
+      Rails.logger.error "Error calculating payment stats: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      # Provide empty stats as fallback
+      {
+        total: 0,
+        pending: 0,
+        confirmed: 0,
+        rejected: 0,
+        disputed: 0,
+        with_evidence: 0,
+        without_evidence: 0
+      }
+    end
   end
 end

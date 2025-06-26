@@ -33,6 +33,32 @@
   export let filters;
   export let user_permissions;
 
+  // Debug: Log the stats object to see what we're receiving
+  console.log("Stats object:", stats);
+  console.log("Stats type:", typeof stats);
+  console.log("Stats keys:", stats ? Object.keys(stats) : "stats is falsy");
+
+  // Provide a default stats object if stats is undefined or doesn't have expected properties
+  $: safeStats =
+    stats && typeof stats === "object" && "total_amount" in stats
+      ? stats
+      : {
+          total: 0,
+          active: 0,
+          archived: 0,
+          upcoming: 0,
+          overdue: 0,
+          due_soon: 0,
+          fully_paid: 0,
+          partially_paid: 0,
+          unpaid: 0,
+          adjusted: 0,
+          archivable: 0,
+          total_amount: 0,
+          total_paid: 0,
+          total_remaining: 0,
+        };
+
   let searchTerm = filters.search || "";
   let selectedFilter = filters.filter || FILTER_OPTIONS.ALL;
   let selectedSort = filters.sort || SORT_OPTIONS.DUE_DATE_DESC;
@@ -202,9 +228,9 @@
           <Calendar class="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div class="text-2xl font-bold">{stats.total}</div>
+          <div class="text-2xl font-bold">{safeStats.total}</div>
           <p class="text-xs text-muted-foreground">
-            {stats.upcoming} upcoming, {stats.overdue} overdue
+            {safeStats.upcoming} upcoming, {safeStats.overdue} overdue
           </p>
         </CardContent>
       </Card>
@@ -218,10 +244,10 @@
         </CardHeader>
         <CardContent>
           <div class="text-2xl font-bold">
-            {formatCurrency(stats.total_amount, project.currency)}
+            {formatCurrency(safeStats.total_amount, project.currency)}
           </div>
           <p class="text-xs text-muted-foreground">
-            {formatCurrency(stats.total_paid, project.currency)} collected
+            {formatCurrency(safeStats.total_paid, project.currency)} collected
           </p>
         </CardContent>
       </Card>
@@ -235,10 +261,10 @@
         </CardHeader>
         <CardContent>
           <div class="text-2xl font-bold text-green-600">
-            {stats.fully_paid}
+            {safeStats.fully_paid}
           </div>
           <p class="text-xs text-muted-foreground">
-            {stats.partially_paid} partial, {stats.unpaid} unpaid
+            {safeStats.partially_paid} partial, {safeStats.unpaid} unpaid
           </p>
         </CardContent>
       </Card>
@@ -252,10 +278,10 @@
         </CardHeader>
         <CardContent>
           <div class="text-2xl font-bold text-red-600">
-            {formatCurrency(stats.total_remaining, project.currency)}
+            {formatCurrency(safeStats.total_remaining, project.currency)}
           </div>
           <p class="text-xs text-muted-foreground">
-            {stats.due_soon} due soon
+            {safeStats.due_soon} due soon
           </p>
         </CardContent>
       </Card>

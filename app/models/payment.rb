@@ -37,7 +37,7 @@ class Payment < ApplicationRecord
   # Scopes for common queries
   scope :pending, -> { where(status: "pending") }
   scope :confirmed, -> { where(status: "confirmed") }
-  scope :disputed, -> { where(status: "disputed") }
+  scope :disputed, -> { where(disputed: true) }
   scope :rejected, -> { where(status: "rejected") }
   scope :for_user, ->(user) { where(user: user) }
   scope :for_billing_cycle, ->(cycle) { where(billing_cycle: cycle) }

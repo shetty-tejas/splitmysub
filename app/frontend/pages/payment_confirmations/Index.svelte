@@ -33,6 +33,35 @@
   export let filters;
   export let stats;
 
+  // Debug: Log the stats object to see what we're receiving
+  console.log("Payment stats object:", stats);
+  console.log("Payment stats type:", typeof stats);
+  console.log(
+    "Payment stats keys:",
+    stats ? Object.keys(stats) : "stats is falsy",
+  );
+
+  // Debug: Check if someone is trying to access total_amount
+  if (stats && "total_amount" in stats) {
+    console.warn(
+      "Payment confirmations received billing cycle stats instead of payment stats!",
+    );
+  }
+
+  // Provide a default stats object if stats is undefined or doesn't have expected properties
+  $: safeStats =
+    stats && typeof stats === "object" && "total" in stats
+      ? stats
+      : {
+          total: 0,
+          pending: 0,
+          confirmed: 0,
+          rejected: 0,
+          disputed: 0,
+          with_evidence: 0,
+          without_evidence: 0,
+        };
+
   let selectedPayments = [];
   let batchAction = "";
   let batchNotes = "";
@@ -212,7 +241,7 @@
           <div class="flex items-center gap-2">
             <FileText class="h-4 w-4 text-muted-foreground" />
             <div>
-              <p class="text-2xl font-bold">{stats.total}</p>
+              <p class="text-2xl font-bold">{safeStats.total}</p>
               <p class="text-xs text-muted-foreground">Total</p>
             </div>
           </div>
@@ -224,7 +253,7 @@
           <div class="flex items-center gap-2">
             <AlertTriangle class="h-4 w-4 text-yellow-600" />
             <div>
-              <p class="text-2xl font-bold">{stats.pending}</p>
+              <p class="text-2xl font-bold">{safeStats.pending}</p>
               <p class="text-xs text-muted-foreground">Pending</p>
             </div>
           </div>
@@ -236,7 +265,7 @@
           <div class="flex items-center gap-2">
             <Check class="h-4 w-4 text-green-600" />
             <div>
-              <p class="text-2xl font-bold">{stats.confirmed}</p>
+              <p class="text-2xl font-bold">{safeStats.confirmed}</p>
               <p class="text-xs text-muted-foreground">Confirmed</p>
             </div>
           </div>
@@ -248,7 +277,7 @@
           <div class="flex items-center gap-2">
             <X class="h-4 w-4 text-red-600" />
             <div>
-              <p class="text-2xl font-bold">{stats.rejected}</p>
+              <p class="text-2xl font-bold">{safeStats.rejected}</p>
               <p class="text-xs text-muted-foreground">Rejected</p>
             </div>
           </div>
@@ -260,7 +289,7 @@
           <div class="flex items-center gap-2">
             <AlertTriangle class="h-4 w-4 text-orange-600" />
             <div>
-              <p class="text-2xl font-bold">{stats.disputed}</p>
+              <p class="text-2xl font-bold">{safeStats.disputed}</p>
               <p class="text-xs text-muted-foreground">Disputed</p>
             </div>
           </div>
@@ -272,7 +301,7 @@
           <div class="flex items-center gap-2">
             <FileText class="h-4 w-4 text-blue-600" />
             <div>
-              <p class="text-2xl font-bold">{stats.with_evidence}</p>
+              <p class="text-2xl font-bold">{safeStats.with_evidence}</p>
               <p class="text-xs text-muted-foreground">With Evidence</p>
             </div>
           </div>
@@ -284,7 +313,7 @@
           <div class="flex items-center gap-2">
             <FileText class="h-4 w-4 text-gray-600" />
             <div>
-              <p class="text-2xl font-bold">{stats.without_evidence}</p>
+              <p class="text-2xl font-bold">{safeStats.without_evidence}</p>
               <p class="text-xs text-muted-foreground">No Evidence</p>
             </div>
           </div>
@@ -471,8 +500,10 @@
                         </p>
                         <p class="text-sm text-muted-foreground">
                           Expected: {formatCurrency(
-                            payment.billing_cycle.total_amount /
-                              (project.cost / project.cost_per_member),
+                            payment.billing_cycle?.total_amount
+                              ? payment.billing_cycle.total_amount /
+                                  (project.cost / project.cost_per_member)
+                              : project.cost_per_member || 0,
                             payment.currency,
                           )}
                         </p>
@@ -521,7 +552,9 @@
                     </td>
                     <td class="p-4">
                       <span class="text-sm">
-                        {formatDate(payment.billing_cycle.due_date)}
+                        {payment.billing_cycle?.due_date
+                          ? formatDate(payment.billing_cycle.due_date)
+                          : "N/A"}
                       </span>
                     </td>
                     <td class="p-4">
