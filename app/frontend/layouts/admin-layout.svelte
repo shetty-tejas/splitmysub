@@ -50,6 +50,15 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <nav class="flex space-x-8 py-4">
         <a
+          href="/admin/projects"
+          class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium border-b-2
+                 {$page.url.startsWith('/admin/projects')
+            ? 'border-red-500 text-red-600'
+            : 'border-transparent'}"
+        >
+          📋 Projects
+        </a>
+        <a
           href="/admin/billing_configuration"
           class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium border-b-2
                  {$page.url.startsWith('/admin/billing_configuration')

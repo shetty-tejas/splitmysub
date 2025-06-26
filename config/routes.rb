@@ -89,6 +89,7 @@ Rails.application.routes.draw do
 
   # Admin routes (protected by admin authentication)
   namespace :admin do
+    resources :projects, only: [ :index ]
     resource :billing_configuration, only: [ :show, :edit, :update ] do
       member do
         post :reset
