@@ -37,6 +37,7 @@ env:
     - RAILS_MASTER_KEY
     - SMTP_USERNAME
     - SMTP_PASSWORD
+    - RESEND_API_KEY
   clear:
     # Rails environment
     RAILS_ENV: production
