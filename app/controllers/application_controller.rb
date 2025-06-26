@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Authentication
   include Authorization
+  include MetaTags
 
   # CSRF Protection
   protect_from_forgery with: :exception
