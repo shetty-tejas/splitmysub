@@ -365,6 +365,7 @@ class InvitationsController < ApplicationController
   def project_with_details(project)
     {
       id: project.id,
+      slug: project.slug,
       name: project.name,
       description: project.description,
       cost: project.cost,

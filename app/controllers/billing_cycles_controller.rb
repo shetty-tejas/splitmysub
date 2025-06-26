@@ -19,7 +19,10 @@ class BillingCyclesController < ApplicationController
     # Apply filters
     @billing_cycles = @billing_cycles.upcoming if params[:filter] == "upcoming"
     @billing_cycles = @billing_cycles.overdue if params[:filter] == "overdue"
-    @billing_cycles = @billing_cycles.due_soon(params[:days]&.to_i || 7) if params[:filter] == "due_soon"
+    if params[:filter] == "due_soon"
+      days = params[:days]&.to_i || 7
+      @billing_cycles = @billing_cycles.where(id: BillingCycle.due_soon(days).pluck(:id))
+    end
 
     # Apply search
     if params[:search].present?
@@ -287,7 +290,7 @@ class BillingCyclesController < ApplicationController
       archived: archived_cycles.count,
       upcoming: active_cycles.upcoming.count,
       overdue: active_cycles.overdue.count,
-      due_soon: active_cycles.due_soon.count,
+      due_soon: BillingCycle.due_soon.where(id: active_cycles.pluck(:id)).count,
       fully_paid: active_cycles.select(&:fully_paid?).count,
       partially_paid: active_cycles.select(&:partially_paid?).count,
       unpaid: active_cycles.select(&:unpaid?).count,

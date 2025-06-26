@@ -32,6 +32,12 @@
   async function generateInviteUrl() {
     if (isGeneratingUrl) return;
 
+    // Debug: Check if project prop is available
+    if (!project || !project.slug) {
+      console.error("Project not available or missing slug:", project);
+      return;
+    }
+
     isGeneratingUrl = true;
 
     try {
@@ -91,6 +97,12 @@
 
   async function sendInvitationEmail() {
     if (isSubmitting) return;
+
+    // Debug: Check if project prop is available
+    if (!project || !project.slug) {
+      console.error("Project not available or missing slug:", project);
+      return;
+    }
 
     isSubmitting = true;
 
@@ -211,14 +223,20 @@
     <DialogHeader>
       <DialogTitle class="flex items-center gap-2">
         <Mail class="h-5 w-5" />
-        Invite Member to {project.name}
+        Invite Member to {project?.name || "Project"}
       </DialogTitle>
       <DialogDescription>
         Share this invitation link or enter an email address to send directly.
       </DialogDescription>
     </DialogHeader>
 
-    <form onsubmit={(e) => { e.preventDefault(); handleSubmit(e); }} class="space-y-4">
+    <form
+      onsubmit={(e) => {
+        e.preventDefault();
+        handleSubmit(e);
+      }}
+      class="space-y-4"
+    >
       <div class="space-y-2">
         <Label for="email">Email Address (Optional)</Label>
         <Input
@@ -253,7 +271,9 @@
             type="button"
             variant="outline"
             size="sm"
-            onclick={copyInviteUrl} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (copyInviteUrl)}
+            onclick={copyInviteUrl}
+            onkeydown={(e) =>
+              (e.key === "Enter" || e.key === " ") && copyInviteUrl}
             disabled={!inviteUrl || isGeneratingUrl}
             class="flex-shrink-0"
           >
