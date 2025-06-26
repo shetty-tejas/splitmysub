@@ -8,7 +8,7 @@
 </script>
 
 <!-- Desktop Table -->
-<div class="hidden {mobileStackBreakpoint}:block overflow-x-auto">
+<div class="hidden md:block overflow-x-auto">
   <table class="min-w-full divide-y divide-gray-200">
     {#if columns.length > 0}
       <thead class="bg-gray-50">
@@ -38,7 +38,7 @@
 </div>
 
 <!-- Mobile Stack -->
-<div class="{mobileStackBreakpoint}:hidden space-y-4">
+<div class="md:hidden space-y-4">
   {#each data as item, index}
     <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
       {#each columns as column}
