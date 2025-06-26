@@ -116,7 +116,7 @@ class InvitationMailerTest < ActionMailer::TestCase
   test "invite email from address is correct" do
     email = InvitationMailer.invite(@invitation)
 
-    assert_equal [ "noreply@splitmysub.com" ], email.from
+    assert_equal [ "noreply@splitmysubscription.xyz" ], email.from
   end
 
   test "invite email reply-to is inviter's email" do

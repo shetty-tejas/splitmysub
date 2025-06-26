@@ -1,0 +1,16 @@
+default:
+  generation_months_ahead: 3
+  archiving_months_threshold: 6
+  due_soon_days: 7
+  auto_archiving_enabled: true
+  auto_generation_enabled: true
+  default_billing_frequencies: '["monthly"]'
+  supported_billing_frequencies: '["monthly", "quarterly", "yearly"]'
+  reminder_schedule: '[7, 3, 1]'
+  payment_grace_period_days: 5
+  reminders_enabled: true
+  gentle_reminder_days_before: 3
+  standard_reminder_days_overdue: 1
+  urgent_reminder_days_overdue: 7
+  final_notice_days_overdue: 14
+  default_frequency: "monthly" 

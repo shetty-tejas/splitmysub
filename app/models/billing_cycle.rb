@@ -3,13 +3,10 @@ class BillingCycle < ApplicationRecord
 
   belongs_to :project
   has_many :payments, dependent: :destroy
-  has_many :payment_confirmations, through: :payments
 
   # Validations
-  validates :cycle_month, :cycle_year, :total_amount, :due_date, presence: true
+  validates :total_amount, :due_date, presence: true
   validates :total_amount, numericality: { greater_than: 0 }
-  validates :cycle_month, inclusion: { in: 1..12 }
-  validates :cycle_year, numericality: { greater_than: 2020 }
 
   # Ensure due_date is in the future when created
   validate :due_date_cannot_be_in_past, on: :create
@@ -38,10 +35,12 @@ class BillingCycle < ApplicationRecord
 
   # Simple status methods
   def overdue?
+    return false unless due_date
     Date.current > due_date && payment_status != "paid"
   end
 
   def days_until_due
+    return 0 unless due_date
     (due_date - Date.current).to_i
   end
 
@@ -79,7 +78,16 @@ class BillingCycle < ApplicationRecord
 
   # Currency is inherited from project
   def currency
-    project.currency
+    project&.currency
+  end
+
+  # Virtual attributes derived from due_date
+  def cycle_month
+    due_date&.month
+  end
+
+  def cycle_year
+    due_date&.year
   end
 
   # Member relationship methods
@@ -184,11 +192,15 @@ class BillingCycle < ApplicationRecord
   end
 
   def cycle_name
+    return "Invalid Date" unless cycle_year && cycle_month
     Date.new(cycle_year, cycle_month).strftime("%B %Y")
   end
 
   def self.for_month_year(month, year)
-    where(cycle_month: month, cycle_year: year)
+    # Since cycle_month and cycle_year are now virtual, we need to filter by due_date
+    start_date = Date.new(year, month, 1)
+    end_date = start_date.end_of_month
+    where(due_date: start_date..end_date)
   end
 
   def self.overdue

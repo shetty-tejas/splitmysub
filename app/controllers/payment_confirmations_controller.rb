@@ -201,7 +201,7 @@ class PaymentConfirmationsController < ApplicationController
       user: payment.user ? {
         id: payment.user.id,
         email_address: payment.user.email_address,
-        name: payment.user.name
+        name: payment.user.full_name
       } : nil,
       expected_amount: payment.expected_amount,
       overpaid: payment.overpaid?,
@@ -213,7 +213,7 @@ class PaymentConfirmationsController < ApplicationController
     payment_confirmation_props(payment).merge(
       status_history: payment.status_changes,
       dispute_resolved_at: payment.dispute_resolved_at,
-      exact_amount: payment.exact_amount?
+      exact_amount: payment.correct_amount?
     )
   end
 

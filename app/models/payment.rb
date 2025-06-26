@@ -4,7 +4,6 @@ class Payment < ApplicationRecord
   belongs_to :billing_cycle
   belongs_to :user
   belongs_to :confirmed_by, class_name: "User", optional: true
-  has_many :payment_confirmations, dependent: :destroy
   has_many_attached :evidence_files
 
   # ActiveStorage for payment evidence
@@ -16,7 +15,7 @@ class Payment < ApplicationRecord
   # Validations
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :status, presence: true, inclusion: {
-    in: %w[pending confirmed disputed],
+    in: %w[pending confirmed disputed rejected],
     message: "%{value} is not a valid status"
   }
   validates :user_id, uniqueness: {
@@ -34,12 +33,12 @@ class Payment < ApplicationRecord
   # Callbacks
   after_update :send_confirmation_email, if: :saved_change_to_status?
   after_update :track_status_change, if: :saved_change_to_status?
-  before_save :update_status_history
 
   # Scopes for common queries
   scope :pending, -> { where(status: "pending") }
   scope :confirmed, -> { where(status: "confirmed") }
   scope :disputed, -> { where(status: "disputed") }
+  scope :rejected, -> { where(status: "rejected") }
   scope :for_user, ->(user) { where(user: user) }
   scope :for_billing_cycle, ->(cycle) { where(billing_cycle: cycle) }
   scope :recent, -> { order(created_at: :desc) }
@@ -58,7 +57,11 @@ class Payment < ApplicationRecord
   end
 
   def disputed?
-    status == "disputed"
+    disputed
+  end
+
+  def rejected?
+    status == "rejected"
   end
 
   def has_evidence?
@@ -242,16 +245,7 @@ class Payment < ApplicationRecord
 
 
 
-  def update_status_history
-    return unless status_changed?
 
-    self.status_history ||= []
-    self.status_history << {
-      status: status,
-      changed_at: Time.current,
-      changed_by: confirmed_by&.id
-    }
-  end
 
   def status_changed_from_pending_to_confirmed?
     status_was == "pending" && status == "confirmed"

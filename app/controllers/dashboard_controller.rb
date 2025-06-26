@@ -265,9 +265,9 @@ class DashboardController < ApplicationController
       user: payment.user ? {
         id: payment.user.id,
         email_address: payment.user.email_address,
-        name: payment.user.name
+        name: payment.user.full_name
       } : nil,
-      project: project_props(payment.project),
+      project: project_json(payment.project),
       billing_cycle: billing_cycle_props(payment.billing_cycle)
     }
   end
