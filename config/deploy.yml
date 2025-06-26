@@ -38,6 +38,7 @@ env:
     - SMTP_USERNAME
     - SMTP_PASSWORD
     - RESEND_API_KEY
+    - ADMIN_PASSWORD
   clear:
     # Rails environment
     RAILS_ENV: production

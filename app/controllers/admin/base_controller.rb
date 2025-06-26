@@ -5,25 +5,16 @@ class Admin::BaseController < ApplicationController
   private
 
   def require_admin_access
-    # For now, we'll use a simple check. In production, you'd want proper role-based access
-    # This could be based on user roles, specific admin users, or environment-based access
-    unless admin_access_allowed?
-      redirect_to root_path, alert: "Access denied. Administrator privileges required."
+    return true if Rails.env.development?
+
+    # Ensure ADMIN_PASSWORD is configured in non-development environments
+    if ENV["ADMIN_PASSWORD"].blank?
+      raise "ADMIN_PASSWORD environment variable must be set for admin access in #{Rails.env} environment"
     end
-  end
 
-    def admin_access_allowed?
-    # Implement your admin access logic here
-    # Options:
-    # 1. Check for specific admin users by email
-    # 2. Check for admin role in user model
-    # 3. Environment-based access (development only)
-    # 4. Feature flag or configuration-based access
-
-    # For now, allowing access in development/test or for specific email patterns
-    Rails.env.development? || Rails.env.test? ||
-    Current.user&.email_address&.match?(/admin@.*/) ||
-    Current.user&.email_address&.match?(/@(splitmysub|admin)\./)
+    authenticate_or_request_with_http_basic("Admin Area") do |username, password|
+      username == "superadmin" && password == ENV["ADMIN_PASSWORD"]
+    end
   end
 
   def admin_layout

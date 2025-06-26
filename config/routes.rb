@@ -84,6 +84,9 @@ Rails.application.routes.draw do
   get "unsubscribe/:token" => "unsubscribe#show", as: :unsubscribe
   post "unsubscribe/:token" => "unsubscribe#create", as: :process_unsubscribe
 
+  # Admin root redirect
+  get "admin" => redirect("/admin/billing_configuration")
+
   # Admin routes (protected by admin authentication)
   namespace :admin do
     resource :billing_configuration, only: [ :show, :edit, :update ] do
