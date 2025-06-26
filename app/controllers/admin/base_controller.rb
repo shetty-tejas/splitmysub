@@ -22,8 +22,8 @@ class Admin::BaseController < ApplicationController
 
     # For now, allowing access in development/test or for specific email patterns
     Rails.env.development? || Rails.env.test? ||
-    current_user&.email_address&.match?(/admin@.*/) ||
-    current_user&.email_address&.match?(/@(splitmysub|admin)\./)
+    Current.user&.email_address&.match?(/admin@.*/) ||
+    Current.user&.email_address&.match?(/@(splitmysub|admin)\./)
   end
 
   def admin_layout
