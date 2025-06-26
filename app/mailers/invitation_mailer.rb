@@ -4,7 +4,9 @@ class InvitationMailer < ApplicationMailer
   #
   #   en.invitation_mailer.invite.subject
   #
-  default from: "noreply@splitmysub.com"
+  # Using verified domain splitmysubscription.xyz until splitmysub.com is verified
+  # TODO: Change to "noreply@splitmysub.com" once domain is verified in Resend
+  default from: "noreply@splitmysubscription.xyz"
 
   def invite(invitation)
     @invitation = invitation

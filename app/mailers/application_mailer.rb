@@ -1,4 +1,6 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  # Using verified domain splitmysubscription.xyz until splitmysub.com is verified
+  # TODO: Change to "noreply@splitmysub.com" once domain is verified in Resend
+  default from: "noreply@splitmysubscription.xyz"
   layout "mailer"
 end

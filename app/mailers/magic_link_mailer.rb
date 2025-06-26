@@ -4,7 +4,9 @@ class MagicLinkMailer < ApplicationMailer
   #
   #   en.magic_link_mailer.send_magic_link.subject
   #
-  default from: "noreply@splitmysub.com"
+  # Using verified domain splitmysubscription.xyz until splitmysub.com is verified
+  # TODO: Change to "noreply@splitmysub.com" once domain is verified in Resend
+  default from: "noreply@splitmysubscription.xyz"
 
   def send_magic_link(user, magic_link)
     @user = user
