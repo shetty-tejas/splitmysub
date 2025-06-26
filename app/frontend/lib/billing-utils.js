@@ -3,7 +3,7 @@
  * Consolidates formatting, badge logic, and status calculations
  */
 
-import { formatCurrency as formatCurrencyUtil, getCurrencySymbol, isValidCurrency } from './currency-utils.js';
+import { formatCurrency as formatCurrencyUtil, getCurrencySymbol, isSupportedCurrency } from './currency-utils.js';
 
 // ========================================
 // FORMATTING UTILITIES
@@ -101,6 +101,24 @@ export function getPaymentStatusBadgeVariant(status) {
 }
 
 /**
+ * Get icon name for payment status
+ * @param {string} status - Payment status
+ * @returns {string} Icon name
+ */
+export function getPaymentStatusIcon(status) {
+  const icons = {
+    'confirmed': 'CheckCircle',
+    'paid': 'CheckCircle',
+    'pending': 'Clock',
+    'partial': 'Clock',
+    'rejected': 'XCircle',
+    'unpaid': 'XCircle'
+  };
+
+  return icons[status] || 'AlertCircle';
+}
+
+/**
  * Get badge variant for billing cycle status
  * @param {string} status - Billing cycle status
  * @returns {string} Badge variant class
@@ -116,6 +134,44 @@ export function getBillingCycleStatusBadgeVariant(status) {
   };
 
   return variants[status] || 'outline';
+}
+
+/**
+ * Get badge variant for billing cycle frequency
+ * @param {string} frequency - Billing cycle frequency (e.g., 'monthly', 'weekly')
+ * @returns {string} Badge variant class
+ */
+export function getBillingCycleBadgeVariant(frequency) {
+  const variants = {
+    'weekly': 'secondary',
+    'monthly': 'default',
+    'quarterly': 'secondary',
+    'yearly': 'outline'
+  };
+
+  return variants[frequency] || 'outline';
+}
+
+/**
+ * Get color class for billing cycle status
+ * @param {Object} billingCycle - Billing cycle object
+ * @returns {string} Color class
+ */
+export function getBillingCycleStatusColor(billingCycle) {
+  if (!billingCycle) return 'text-gray-500';
+
+  const status = calculateBillingCycleStatus(billingCycle);
+
+  const colors = {
+    'paid': 'text-green-600',
+    'partial': 'text-yellow-600',
+    'upcoming': 'text-blue-600',
+    'due_soon': 'text-orange-600',
+    'overdue': 'text-red-600',
+    'unpaid': 'text-red-600'
+  };
+
+  return colors[status] || 'text-gray-500';
 }
 
 /**
@@ -147,6 +203,25 @@ export function getProjectStatusBadgeVariant(status) {
   };
 
   return variants[status] || 'outline';
+}
+
+/**
+ * Get human-readable text for project status
+ * @param {Object} project - Project object
+ * @returns {string} Status text
+ */
+export function getProjectStatusText(project) {
+  if (!project) return 'Unknown';
+
+  const status = calculateProjectStatus(project);
+
+  const statusTexts = {
+    'active': 'Active',
+    'expired': 'Expired',
+    'expiring_soon': 'Expiring Soon'
+  };
+
+  return statusTexts[status] || 'Unknown';
 }
 
 // ========================================
@@ -537,4 +612,4 @@ export function formatCurrencyAuto(amount, obj) {
 }
 
 // Export currency utilities for convenience
-export { getCurrencySymbol, isValidCurrency };
+export { getCurrencySymbol, isSupportedCurrency };
