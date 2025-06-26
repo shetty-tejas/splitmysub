@@ -17,6 +17,9 @@
   export let validation_errors = [];
   export let preview_data;
 
+  // Loading state for preview data
+  let loading_preview = false;
+
   const resetToDefaults = () => {
     if (
       confirm(
