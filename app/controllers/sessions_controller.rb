@@ -6,6 +6,12 @@ class SessionsController < ApplicationController
     if authenticated?
       redirect_to root_path, flash: { notice: "You are already signed in." }
     else
+      # Set meta tags for login page
+      content_for :title, "Sign In - SplitMySub"
+      content_for :description, "Sign in to your SplitMySub account to manage your shared subscriptions and split costs with friends."
+      content_for :og_title, "Sign In - SplitMySub"
+      content_for :og_description, "Access your SplitMySub account to track shared subscriptions and payments."
+
       render inertia: "sessions/login"
     end
   end

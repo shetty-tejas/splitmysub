@@ -89,13 +89,7 @@
   ];
 </script>
 
-<svelte:head>
-  <title>SplitMySub - Split Subscription Costs with Friends</title>
-  <meta
-    name="description"
-    content="Share and manage recurring subscriptions with friends and family. Split costs automatically and never miss a payment with SplitMySub."
-  />
-</svelte:head>
+<!-- Meta tags are now handled server-side in the Rails layout for better OpenGraph support -->
 
 <Layout>
   <!-- Hero Section -->

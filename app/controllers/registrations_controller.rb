@@ -5,6 +5,12 @@ class RegistrationsController < ApplicationController
     if authenticated?
       redirect_to root_path, flash: { alert: "You are already signed in." }
     else
+      # Set meta tags for signup page
+      content_for :title, "Sign Up - SplitMySub"
+      content_for :description, "Create your free SplitMySub account and start sharing subscription costs with friends and family today."
+      content_for :og_title, "Sign Up - SplitMySub"
+      content_for :og_description, "Join SplitMySub to share Netflix, Spotify, and other subscriptions. Start saving money today!"
+
       render inertia: "registrations/signup"
     end
   end

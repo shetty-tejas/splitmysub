@@ -1,10 +1,40 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Inertia Rails Svelte Shadcn Template" %></title>
+    <title><%= content_for(:title) || "SplitMySub - Split Subscription Costs with Friends" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="<%= content_for(:description) || 'Share and manage recurring subscriptions with friends and family. Split costs automatically and never miss a payment with SplitMySub.' %>">
+    <meta name="keywords" content="subscription sharing, split subscriptions, shared billing, Netflix sharing, Spotify family, subscription management">
+    
+    <!-- OpenGraph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SplitMySub">
+    <meta property="og:title" content="<%= content_for(:og_title) || content_for(:title) || 'SplitMySub - Split Subscription Costs with Friends' %>">
+    <meta property="og:description" content="<%= content_for(:og_description) || content_for(:description) || 'Share and manage recurring subscriptions with friends and family. Split costs automatically and never miss a payment with SplitMySub.' %>">
+    <meta property="og:url" content="<%= content_for(:og_url) || request.original_url %>">
+    <meta property="og:image" content="<%= content_for(:og_image) || asset_url('icon.png') %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="SplitMySub - Split subscription costs with friends">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@SplitMySub">
+    <meta name="twitter:title" content="<%= content_for(:twitter_title) || content_for(:og_title) || content_for(:title) || 'SplitMySub - Split Subscription Costs with Friends' %>">
+    <meta name="twitter:description" content="<%= content_for(:twitter_description) || content_for(:og_description) || content_for(:description) || 'Share and manage recurring subscriptions with friends and family. Split costs automatically and never miss a payment with SplitMySub.' %>">
+    <meta name="twitter:image" content="<%= content_for(:twitter_image) || content_for(:og_image) || asset_url('icon.png') %>">
+    <meta name="twitter:image:alt" content="SplitMySub - Split subscription costs with friends">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="application-name" content="SplitMySub">
+    <meta name="author" content="SplitMySub">
+    <link rel="canonical" href="<%= content_for(:canonical_url) || request.original_url %>">
+    
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= cloudflare_turnstile_script_tag %>

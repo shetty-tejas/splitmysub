@@ -5,9 +5,7 @@
   import AuthLayout from "../../layouts/auth-layout.svelte";
 </script>
 
-<svelte:head>
-  <title>Sign In - SplitMySub</title>
-</svelte:head>
+<!-- Meta tags are now handled server-side in the Rails layout for better OpenGraph support -->
 
 <AuthLayout>
   <div class="flex flex-col h-screen w-full items-center justify-center px-4">
