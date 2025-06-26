@@ -74,21 +74,26 @@ Rails.application.configure do
 
   # Enable email delivery in production
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
 
-  # Specify outgoing SMTP server using environment variables
-  # Flexible SMTP configuration for self-hosting
-  config.action_mailer.smtp_settings = {
-    user_name: ENV["SMTP_USERNAME"],
-    password: ENV["SMTP_PASSWORD"],
-    address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
-    port: ENV.fetch("SMTP_PORT", 587).to_i,
-    domain: ENV.fetch("SMTP_DOMAIN", ENV.fetch("APP_HOST", "localhost")),
-    authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
-    enable_starttls_auto: ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true") == "true",
-    openssl_verify_mode: ENV.fetch("SMTP_OPENSSL_VERIFY_MODE", "peer")
-  }.compact # Remove nil values for optional settings
+  # Email delivery method is configured in config/initializers/resend.rb
+  # Falls back to SMTP if Resend is not configured
+  unless ENV["RESEND_API_KEY"].present?
+    config.action_mailer.delivery_method = :smtp
+
+    # Specify outgoing SMTP server using environment variables
+    # Flexible SMTP configuration for self-hosting
+    config.action_mailer.smtp_settings = {
+      user_name: ENV["SMTP_USERNAME"],
+      password: ENV["SMTP_PASSWORD"],
+      address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
+      port: ENV.fetch("SMTP_PORT", 587).to_i,
+      domain: ENV.fetch("SMTP_DOMAIN", ENV.fetch("APP_HOST", "localhost")),
+      authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
+      enable_starttls_auto: ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true") == "true",
+      openssl_verify_mode: ENV.fetch("SMTP_OPENSSL_VERIFY_MODE", "peer")
+    }.compact # Remove nil values for optional settings
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

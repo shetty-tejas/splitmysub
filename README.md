@@ -85,6 +85,40 @@ This application is configured for deployment with [Kamal](https://kamal-deploy.
    kamal deploy
    ```
 
+## Email Configuration
+
+SplitMySub supports two email delivery methods:
+
+### Resend API (Recommended)
+For reliable email delivery with analytics:
+1. Sign up at [Resend](https://resend.com)
+2. Get your API key from the [dashboard](https://resend.com/api-keys)
+3. Add to your environment:
+   ```bash
+   RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxx
+   ```
+
+### SMTP (Fallback)
+Traditional SMTP configuration:
+```bash
+SMTP_USERNAME=your-username
+SMTP_PASSWORD=your-password
+SMTP_ADDRESS=smtp.gmail.com
+SMTP_PORT=587
+```
+
+### Testing Email
+Test your email configuration:
+```bash
+# Test current configuration
+rails "email:test[your-email@example.com]"
+
+# Test Resend specifically
+rails "email:test_resend[your-email@example.com]"
+```
+
+See [docs/EMAIL_CONFIGURATION.md](docs/EMAIL_CONFIGURATION.md) for detailed setup instructions.
+
 ## Usage
 
 SplitMySub makes it easy to share subscription costs:

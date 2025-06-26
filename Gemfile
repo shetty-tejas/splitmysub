@@ -77,3 +77,6 @@ gem "rack-attack", "~> 6.7"
 
 # Load environment variables from .env files
 gem "dotenv-rails", groups: [ :development, :test ]
+
+# Email delivery via Resend API
+gem "resend"

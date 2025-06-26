@@ -13,12 +13,13 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>🎉 SMTP Configuration Test</h1>
+        <h1>🎉 <%= @delivery_method %> Configuration Test</h1>
       </div>
       <div class="content">
         <h2>Hello from SplitMySub!</h2>
         <p class="success"><%= @message %></p>
         <p>Your email configuration is properly set up and ready to send emails in production.</p>
+        <p><strong>Delivery Method:</strong> <%= @delivery_method %></p>
         <p>Best regards,<br>The SplitMySub Team</p>
       </div>
     </div>
