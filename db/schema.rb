@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_26_060428) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_26_102245) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -201,6 +201,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_060428) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "solid_errors", force: :cascade do |t|
+    t.text "exception_class", null: false
+    t.text "message", null: false
+    t.text "severity", null: false
+    t.text "source"
+    t.datetime "resolved_at"
+    t.string "fingerprint", limit: 64, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fingerprint"], name: "index_solid_errors_on_fingerprint", unique: true
+    t.index ["resolved_at"], name: "index_solid_errors_on_resolved_at"
+  end
+
+  create_table "solid_errors_occurrences", force: :cascade do |t|
+    t.integer "error_id", null: false
+    t.text "backtrace"
+    t.json "context"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["error_id"], name: "index_solid_errors_occurrences_on_error_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.datetime "created_at", null: false
@@ -228,4 +250,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_060428) do
   add_foreign_key "projects", "users"
   add_foreign_key "reminder_schedules", "projects"
   add_foreign_key "sessions", "users"
+  add_foreign_key "solid_errors_occurrences", "solid_errors", column: "error_id"
 end

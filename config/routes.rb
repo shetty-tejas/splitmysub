@@ -91,9 +91,10 @@ Rails.application.routes.draw do
         post :reset
       end
     end
+
+    # Mount SolidErrors dashboard for admins only
+    mount SolidErrors::Engine, at: "/errors"
   end
-
-
 
   # CSP violation reporting
   post "csp-violation-report-endpoint" => "csp_reports#create"

@@ -24,6 +24,10 @@ module SplitMySub
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     #
+
+    # Configure SolidErrors to use the primary database
+    # config.solid_errors.connects_to = { database: { writing: :errors } }
+
     ## Disable unnecessary files when generating
     config.generators do |g|
       g.helper false               # No helper files

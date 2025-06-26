@@ -355,6 +355,12 @@ GEM
       activejob (>= 7.2)
       activerecord (>= 7.2)
       railties (>= 7.2)
+    solid_errors (0.7.0)
+      actionpack (>= 7.0)
+      actionview (>= 7.0)
+      activerecord (>= 7.0)
+      activesupport (>= 7.0)
+      railties (>= 7.0)
     solid_queue (1.1.4)
       activejob (>= 7.1)
       activerecord (>= 7.1)
@@ -452,6 +458,7 @@ DEPENDENCIES
   selenium-webdriver
   solid_cable
   solid_cache
+  solid_errors
   solid_queue
   sqlite3 (>= 2.1)
   thruster
