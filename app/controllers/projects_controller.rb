@@ -15,7 +15,10 @@ class ProjectsController < ApplicationController
 
   def new
     @project = Current.user.projects.build
-    render inertia: "projects/new"
+    render inertia: "projects/new", props: {
+      currency_options: Project.currency_options_for_select,
+      user_preferred_currency: Current.user.preferred_currency
+    }
   end
 
   def create
@@ -25,14 +28,17 @@ class ProjectsController < ApplicationController
       redirect_to @project, notice: "Project created successfully!"
     else
       redirect_to new_project_path, inertia: {
-        errors: @project.errors.to_hash(true)
+        errors: @project.errors.to_hash(true),
+        currency_options: Project.currency_options_for_select,
+        user_preferred_currency: Current.user.preferred_currency
       }
     end
   end
 
   def edit
     render inertia: "projects/edit", props: {
-      project: detailed_project_json(@project)
+      project: detailed_project_json(@project),
+      currency_options: Project.currency_options_for_select
     }
   end
 
@@ -41,7 +47,8 @@ class ProjectsController < ApplicationController
       redirect_to @project, notice: "Project updated successfully!"
     else
       redirect_to edit_project_path(@project), inertia: {
-        errors: @project.errors.to_hash(true)
+        errors: @project.errors.to_hash(true),
+        currency_options: Project.currency_options_for_select
       }
     end
   end
@@ -157,7 +164,7 @@ class ProjectsController < ApplicationController
 
   def project_params
     params.require(:project).permit(
-      :name, :description, :cost, :billing_cycle, :renewal_date,
+      :name, :description, :cost, :currency, :billing_cycle, :renewal_date,
       :reminder_days, :payment_instructions, :subscription_url
     )
   end
@@ -169,6 +176,7 @@ class ProjectsController < ApplicationController
       name: project.name,
       description: project.description,
       cost: project.cost,
+      currency: project.currency,
       billing_cycle: project.billing_cycle,
       renewal_date: project.renewal_date,
       reminder_days: project.reminder_days,

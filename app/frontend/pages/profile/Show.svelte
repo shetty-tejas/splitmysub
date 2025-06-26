@@ -11,7 +11,11 @@
   } from "$lib/components/ui/card";
   import { Button } from "$lib/components/ui/button";
   import { Separator } from "$lib/components/ui/separator";
-  import { Edit, User, Mail, Calendar } from "lucide-svelte";
+  import {
+    getCurrencySymbol,
+    SUPPORTED_CURRENCIES,
+  } from "$lib/currency-utils.js";
+  import { Edit, User, Mail, Calendar, DollarSign } from "lucide-svelte";
 
   export let user;
 
@@ -25,6 +29,10 @@
 
   function editProfile() {
     router.get(editProfilePath());
+  }
+
+  function getCurrencyName(code) {
+    return SUPPORTED_CURRENCIES[code]?.name || code;
   }
 </script>
 
@@ -73,6 +81,32 @@
               <dd class="text-sm font-medium">
                 {user.first_name}
                 {user.last_name}
+              </dd>
+            </div>
+          </div>
+
+          <Separator />
+
+          <!-- Currency Preferences -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold">Currency Preferences</h3>
+
+            <div class="space-y-2">
+              <dt
+                class="text-sm font-medium text-muted-foreground flex items-center gap-2"
+              >
+                <DollarSign class="h-4 w-4" />
+                Preferred Currency
+              </dt>
+              <dd class="text-sm font-medium flex items-center gap-2">
+                <span class="font-mono"
+                  >{getCurrencySymbol(user.preferred_currency)}</span
+                >
+                <span
+                  >{user.preferred_currency} - {getCurrencyName(
+                    user.preferred_currency,
+                  )}</span
+                >
               </dd>
             </div>
           </div>

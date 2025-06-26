@@ -12,15 +12,18 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Separator } from "$lib/components/ui/separator";
+  import { CurrencySelect } from "$lib/components/ui/currency-select";
   import { ArrowLeft, Save, User } from "lucide-svelte";
 
   export let user;
+  export let currency_options = [];
   export let errors = {};
 
   let form = {
     first_name: user.first_name || "",
     last_name: user.last_name || "",
     email_address: user.email_address || "",
+    preferred_currency: user.preferred_currency || "USD",
   };
 
   let isSubmitting = false;
@@ -124,6 +127,34 @@
                     </p>
                   {/if}
                 </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            <!-- Currency Preferences -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold">Currency Preferences</h3>
+
+              <div class="space-y-2">
+                <Label for="preferred_currency">Preferred Currency *</Label>
+                <CurrencySelect
+                  bind:value={form.preferred_currency}
+                  currencyOptions={currency_options}
+                  placeholder="Select your preferred currency"
+                  className={errors.preferred_currency
+                    ? "border-destructive"
+                    : ""}
+                />
+                {#if errors.preferred_currency}
+                  <p class="text-sm text-destructive">
+                    {errors.preferred_currency[0]}
+                  </p>
+                {/if}
+                <p class="text-sm text-muted-foreground">
+                  This currency will be used as the default for new projects you
+                  create.
+                </p>
               </div>
             </div>
 

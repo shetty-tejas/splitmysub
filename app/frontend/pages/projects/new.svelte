@@ -13,13 +13,18 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
+  import { CurrencySelect } from "$lib/components/ui/currency-select";
 
   import { ArrowLeft, Save } from "lucide-svelte";
+
+  export let currency_options = [];
+  export let user_preferred_currency = "USD";
 
   let form = {
     name: "",
     description: "",
     cost: "",
+    currency: user_preferred_currency || "USD",
     billing_cycle: "",
     renewal_date: "",
     reminder_days: "7",
@@ -213,6 +218,23 @@
                 </div>
 
                 <div class="space-y-2">
+                  <Label for="currency" class="text-sm font-medium"
+                    >Currency *</Label
+                  >
+                  <CurrencySelect
+                    bind:value={form.currency}
+                    currencyOptions={currency_options}
+                    placeholder="Select currency"
+                    className={errors.currency ? "border-destructive" : ""}
+                  />
+                  {#if errors.currency}
+                    <p class="text-sm text-destructive">{errors.currency[0]}</p>
+                  {/if}
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-2">
                   <Label for="billing_cycle" class="text-sm font-medium"
                     >Billing Cycle *</Label
                   >
@@ -234,6 +256,10 @@
                       {errors.billing_cycle[0]}
                     </p>
                   {/if}
+                </div>
+
+                <div class="space-y-2">
+                  <!-- Placeholder for potential future field -->
                 </div>
               </div>
 

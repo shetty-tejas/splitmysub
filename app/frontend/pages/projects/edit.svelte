@@ -13,15 +13,18 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
+  import { CurrencySelect } from "$lib/components/ui/currency-select";
 
   import { ArrowLeft, Save } from "lucide-svelte";
 
   export let project;
+  export let currency_options = [];
 
   let form = {
     name: project.name || "",
     description: project.description || "",
     cost: project.cost || "",
+    currency: project.currency || "USD",
     billing_cycle: project.billing_cycle || "",
     renewal_date: project.renewal_date || "",
     reminder_days: project.reminder_days || "7",
@@ -188,6 +191,21 @@
                   {/if}
                 </div>
 
+                <div class="space-y-2">
+                  <Label for="currency">Currency *</Label>
+                  <CurrencySelect
+                    bind:value={form.currency}
+                    currencyOptions={currency_options}
+                    placeholder="Select currency"
+                    className={errors.currency ? "border-destructive" : ""}
+                  />
+                  {#if errors.currency}
+                    <p class="text-sm text-destructive">{errors.currency[0]}</p>
+                  {/if}
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-2">
                   <Label for="billing_cycle">Billing Cycle *</Label>
                   <select
