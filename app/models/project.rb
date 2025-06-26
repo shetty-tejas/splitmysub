@@ -1,4 +1,6 @@
 class Project < ApplicationRecord
+  include CurrencySupport
+
   belongs_to :user
   has_many :project_memberships, dependent: :destroy
   has_many :members, through: :project_memberships, source: :user
@@ -9,6 +11,7 @@ class Project < ApplicationRecord
 
   # Callbacks
   before_validation :generate_slug, on: :create
+  before_validation :set_default_currency, on: :create
 
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
@@ -20,6 +23,7 @@ class Project < ApplicationRecord
     greater_than_or_equal_to: 1,
     less_than_or_equal_to: 30
   }
+  validates :currency, presence: true
 
   # Dynamic validation for billing_cycle based on BillingConfig
   validate :validate_billing_cycle_frequency
@@ -28,6 +32,7 @@ class Project < ApplicationRecord
   scope :active, -> { where("renewal_date >= ?", Date.current) }
   scope :expiring_soon, ->(days = 7) { where(renewal_date: Date.current..days.days.from_now) }
   scope :by_billing_cycle, ->(cycle) { where(billing_cycle: cycle) }
+  scope :by_currency, ->(currency) { where(currency: currency) }
   scope :with_members, -> { joins(:project_memberships).distinct }
 
   # Business logic methods
@@ -155,6 +160,23 @@ class Project < ApplicationRecord
     slug
   end
 
+  # Currency formatting methods
+  def format_currency(amount)
+    format_amount(amount)
+  end
+
+  def format_cost
+    format_amount(cost)
+  end
+
+  def format_cost_per_member
+    format_amount(cost_per_member)
+  end
+
+  def format_annual_cost
+    format_amount(annual_cost)
+  end
+
   private
 
   def generate_slug
@@ -169,6 +191,12 @@ class Project < ApplicationRecord
   def generate_numeric_slug
     # Generate a 10-character numeric string
     10.times.map { rand(10) }.join
+  end
+
+  def set_default_currency
+    return if currency.present?
+
+    self.currency = user&.default_currency || "USD"
   end
 
   def validate_billing_cycle_frequency

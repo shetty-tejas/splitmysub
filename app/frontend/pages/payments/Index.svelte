@@ -36,12 +36,7 @@
     return matchesStatus && matchesSearch;
   });
 
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
+  import { formatCurrency } from "$lib/billing-utils";
 
   function formatDate(dateString) {
     if (!dateString) return "Not set";
@@ -332,7 +327,7 @@
                     <div>
                       <span class="font-medium">Amount:</span>
                       <div class="text-lg font-semibold text-gray-900">
-                        {formatCurrency(payment.amount)}
+                        {formatCurrency(payment.amount, payment.currency)}
                       </div>
                     </div>
                     <div>

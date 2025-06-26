@@ -1,17 +1,12 @@
 <script>
   import { router } from "@inertiajs/svelte";
 
+  import { formatCurrency } from "$lib/billing-utils";
+
   export let payment;
   export let billing_cycle;
   export let project;
   export let errors = [];
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
 
   function formatDate(dateString) {
     if (!dateString) return "Not set";
@@ -126,12 +121,17 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="info-label">Amount Paid:</span>
-            <span class="amount">{formatCurrency(payment.amount)}</span>
+            <span class="amount"
+              >{formatCurrency(payment.amount, payment.currency)}</span
+            >
           </div>
           <div class="info-item">
             <span class="info-label">Expected Amount:</span>
             <span
-              >{formatCurrency(billing_cycle.expected_payment_per_member)}</span
+              >{formatCurrency(
+                billing_cycle.expected_payment_per_member,
+                billing_cycle.currency,
+              )}</span
             >
           </div>
           <div class="info-item">
@@ -178,12 +178,20 @@
           </div>
           <div class="info-item">
             <span class="info-label">Total Amount:</span>
-            <span>{formatCurrency(billing_cycle.total_amount)}</span>
+            <span
+              >{formatCurrency(
+                billing_cycle.total_amount,
+                billing_cycle.currency,
+              )}</span
+            >
           </div>
           <div class="info-item">
             <span class="info-label">Expected Per Member:</span>
             <span
-              >{formatCurrency(billing_cycle.expected_payment_per_member)}</span
+              >{formatCurrency(
+                billing_cycle.expected_payment_per_member,
+                billing_cycle.currency,
+              )}</span
             >
           </div>
         </div>

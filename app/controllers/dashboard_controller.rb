@@ -194,6 +194,7 @@ class DashboardController < ApplicationController
       {
         name: project.name,
         cost: user_cost,
+        currency: project.currency,
         billing_cycle: project.billing_cycle,
         role: owned_project_ids.include?(project.id) ? "owner" : "member"
       }
@@ -224,6 +225,7 @@ class DashboardController < ApplicationController
       name: project.name,
       description: project.description,
       cost: project.cost,
+      currency: project.currency,
       billing_cycle: project.billing_cycle,
       renewal_date: project.renewal_date,
       cost_per_member: project.cost_per_member,
@@ -257,51 +259,31 @@ class DashboardController < ApplicationController
       id: payment.id,
       amount: payment.amount,
       status: payment.status,
-      created_at: payment.created_at,
-      confirmation_date: payment.confirmation_date,
-      confirmation_notes: payment.confirmation_notes,
       transaction_id: payment.transaction_id,
-      evidence_file_name: payment.evidence.attached? ? payment.evidence.filename.to_s : nil,
-      has_evidence: payment.evidence.attached?,
-      billing_cycle: {
-        id: payment.billing_cycle.id,
-        due_date: payment.billing_cycle.due_date,
-        total_amount: payment.billing_cycle.total_amount
-      },
-      project: {
-        id: payment.billing_cycle.project.id,
-        slug: payment.billing_cycle.project.slug,
-        name: payment.billing_cycle.project.name,
-        billing_cycle: payment.billing_cycle.project.billing_cycle
-      }
+      notes: payment.notes,
+      created_at: payment.created_at,
+      user: payment.user ? {
+        id: payment.user.id,
+        email_address: payment.user.email_address,
+        name: payment.user.name
+      } : nil,
+      project: project_props(payment.project),
+      billing_cycle: billing_cycle_props(payment.billing_cycle)
     }
   end
 
-  def billing_cycle_props(cycle)
-    user_payment = Current.user.payments.find_by(billing_cycle: cycle)
-    # Cache owned project IDs to avoid repeated queries
-    @owned_project_ids ||= Current.user.projects.pluck(:id)
-
+  def billing_cycle_props(billing_cycle)
     {
-      id: cycle.id,
-      due_date: cycle.due_date,
-      total_amount: cycle.total_amount,
-      total_paid: cycle.total_paid,
-      amount_remaining: cycle.amount_remaining,
-      payment_status: cycle.payment_status,
-      overdue: cycle.overdue?,
-      due_soon: cycle.due_soon?,
-      days_until_due: cycle.days_until_due,
-      expected_payment: cycle.expected_payment_per_member,
-      user_payment_status: user_payment&.status || "unpaid",
-      user_payment_amount: user_payment&.amount,
-      project: {
-        id: cycle.project.id,
-        slug: cycle.project.slug,
-        name: cycle.project.name,
-        billing_cycle: cycle.project.billing_cycle,
-        is_owner: @owned_project_ids.include?(cycle.project.id)
-      }
+      id: billing_cycle.id,
+      cycle_month: billing_cycle.cycle_month,
+      cycle_year: billing_cycle.cycle_year,
+      total_amount: billing_cycle.total_amount,
+      due_date: billing_cycle.due_date,
+      total_paid: billing_cycle.total_paid,
+      amount_remaining: billing_cycle.amount_remaining,
+      payment_status: billing_cycle.payment_status,
+      overdue: billing_cycle.overdue?,
+      days_until_due: billing_cycle.days_until_due
     }
   end
 

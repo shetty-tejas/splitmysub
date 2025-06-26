@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include CurrencySupport
+
   has_many :sessions, dependent: :destroy
 
   # SplitMySub associations
@@ -36,5 +38,27 @@ class User < ApplicationRecord
     Project.joins("LEFT JOIN project_memberships ON projects.id = project_memberships.project_id")
            .where("projects.user_id = ? OR project_memberships.user_id = ?", id, id)
            .distinct
+  end
+
+  # Currency preference methods
+  def default_currency
+    preferred_currency || "USD"
+  end
+
+  def format_currency(amount, currency_code = nil)
+    currency_code ||= default_currency
+    locale = self.class.currency_locale(currency_code) || "en-US"
+    symbol = self.class.currency_symbol(currency_code) || "$"
+
+    return "0.00" if amount.nil?
+
+    case currency_code
+    when "JPY", "KRW", "VND", "IDR"
+      # These currencies typically don't use decimal places
+      "#{symbol}#{amount.to_i}"
+    else
+      formatted_amount = sprintf("%.2f", amount)
+      "#{symbol}#{formatted_amount}"
+    end
   end
 end

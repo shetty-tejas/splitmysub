@@ -26,6 +26,7 @@
     Users,
     Eye,
   } from "lucide-svelte";
+  import { formatCurrency } from "$lib/billing-utils";
 
   export let project;
   export let payments;
@@ -40,13 +41,6 @@
   let statusFilter = filters.status || "";
   let disputedFilter = filters.disputed || "";
   let sortBy = filters.sort || "date_desc";
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
 
   function formatDate(dateString) {
     if (!dateString) return "Not set";
@@ -473,12 +467,13 @@
                     <td class="p-4">
                       <div>
                         <p class="font-medium">
-                          {formatCurrency(payment.amount)}
+                          {formatCurrency(payment.amount, payment.currency)}
                         </p>
                         <p class="text-sm text-muted-foreground">
                           Expected: {formatCurrency(
                             payment.billing_cycle.total_amount /
                               (project.cost / project.cost_per_member),
+                            payment.currency,
                           )}
                         </p>
                       </div>

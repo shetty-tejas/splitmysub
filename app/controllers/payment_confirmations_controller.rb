@@ -183,6 +183,7 @@ class PaymentConfirmationsController < ApplicationController
       name: project.name,
       description: project.description,
       cost: project.cost,
+      currency: project.currency,
       cost_per_member: project.cost_per_member,
       is_owner: project.is_owner?(Current.user)
     }
@@ -192,33 +193,19 @@ class PaymentConfirmationsController < ApplicationController
     {
       id: payment.id,
       amount: payment.amount,
+      status: payment.status,
       transaction_id: payment.transaction_id,
       notes: payment.notes,
-      status: payment.status,
-      disputed: payment.disputed?,
-      dispute_reason: payment.dispute_reason,
-      confirmation_date: payment.confirmation_date,
-      confirmation_notes: payment.confirmation_notes,
       created_at: payment.created_at,
-      updated_at: payment.updated_at,
-      has_evidence: payment.has_evidence?,
-      evidence_url: payment.evidence.attached? ? rails_blob_path(payment.evidence) : nil,
-      evidence_filename: payment.evidence.attached? ? payment.evidence.filename.to_s : nil,
-      evidence_content_type: payment.evidence.attached? ? payment.evidence.content_type : nil,
-      evidence_byte_size: payment.evidence.attached? ? payment.evidence.byte_size : nil,
-      user: {
+      confirmation_date: payment.confirmation_date,
+      user: payment.user ? {
         id: payment.user.id,
-        email_address: payment.user.email_address
-      },
-      confirmed_by: payment.confirmed_by ? {
-        id: payment.confirmed_by.id,
-        email_address: payment.confirmed_by.email_address
+        email_address: payment.user.email_address,
+        name: payment.user.name
       } : nil,
-      billing_cycle: {
-        id: payment.billing_cycle.id,
-        due_date: payment.billing_cycle.due_date,
-        total_amount: payment.billing_cycle.total_amount
-      }
+      expected_amount: payment.expected_amount,
+      overpaid: payment.overpaid?,
+      underpaid: payment.underpaid?
     }
   end
 
@@ -226,9 +213,6 @@ class PaymentConfirmationsController < ApplicationController
     payment_confirmation_props(payment).merge(
       status_history: payment.status_changes,
       dispute_resolved_at: payment.dispute_resolved_at,
-      expected_amount: payment.expected_amount,
-      overpaid: payment.overpaid?,
-      underpaid: payment.underpaid?,
       exact_amount: payment.exact_amount?
     )
   end
@@ -236,12 +220,15 @@ class PaymentConfirmationsController < ApplicationController
   def billing_cycle_props(billing_cycle)
     {
       id: billing_cycle.id,
-      due_date: billing_cycle.due_date,
+      cycle_month: billing_cycle.cycle_month,
+      cycle_year: billing_cycle.cycle_year,
       total_amount: billing_cycle.total_amount,
-      expected_payment_per_member: billing_cycle.expected_payment_per_member,
+      due_date: billing_cycle.due_date,
       total_paid: billing_cycle.total_paid,
       amount_remaining: billing_cycle.amount_remaining,
-      fully_paid: billing_cycle.fully_paid?
+      payment_status: billing_cycle.payment_status,
+      overdue: billing_cycle.overdue?,
+      days_until_due: billing_cycle.days_until_due
     }
   end
 

@@ -9,6 +9,7 @@
   import CardHeader from "$lib/components/ui/card/card-header.svelte";
   import CardTitle from "$lib/components/ui/card/card-title.svelte";
   import { ArrowLeft, Calendar, DollarSign, Save } from "lucide-svelte";
+  import { formatCurrency } from "$lib/billing-utils";
 
   export let project;
   export let billing_cycle;
@@ -36,13 +37,6 @@
         },
       },
     );
-  }
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
   }
 
   function formatDate(dateString) {
@@ -224,7 +218,8 @@
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Default Cost:</span>
-                  <span class="font-medium">{formatCurrency(project.cost)}</span
+                  <span class="font-medium"
+                    >{formatCurrency(project.cost, project.currency)}</span
                   >
                 </div>
               </div>
@@ -246,16 +241,19 @@
                   <span class="text-gray-600">Total Amount:</span>
                   <span class="font-medium text-lg">
                     {form.total_amount
-                      ? formatCurrency(parseFloat(form.total_amount))
-                      : "$0.00"}
+                      ? formatCurrency(
+                          parseFloat(form.total_amount),
+                          project.currency,
+                        )
+                      : formatCurrency(0, project.currency)}
                   </span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Per Member:</span>
                   <span class="font-medium">
                     {perMemberAmount > 0
-                      ? formatCurrency(perMemberAmount)
-                      : "$0.00"}
+                      ? formatCurrency(perMemberAmount, project.currency)
+                      : formatCurrency(0, project.currency)}
                   </span>
                 </div>
               </div>

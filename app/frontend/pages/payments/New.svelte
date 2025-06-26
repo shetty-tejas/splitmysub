@@ -57,12 +57,7 @@
     });
   }
 
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
+  import { formatCurrency } from "$lib/billing-utils";
 </script>
 
 <div class="payment-form-container">
@@ -82,12 +77,20 @@
       </div>
       <div class="info-item">
         <span class="info-label">Total Amount:</span>
-        <span>{formatCurrency(billing_cycle.total_amount)}</span>
+        <span
+          >{formatCurrency(
+            billing_cycle.total_amount,
+            billing_cycle.currency,
+          )}</span
+        >
       </div>
       <div class="info-item">
         <span class="info-label">Expected Amount:</span>
         <span class="amount"
-          >{formatCurrency(billing_cycle.expected_payment_per_member)}</span
+          >{formatCurrency(
+            billing_cycle.expected_payment_per_member,
+            billing_cycle.currency,
+          )}</span
         >
       </div>
     </div>
@@ -132,6 +135,7 @@
         <p class="help-text">
           Expected amount: {formatCurrency(
             billing_cycle.expected_payment_per_member,
+            billing_cycle.currency,
           )}
         </p>
       </div>

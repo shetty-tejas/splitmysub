@@ -215,6 +215,7 @@ class BillingCyclesController < ApplicationController
       name: project.name,
       description: project.description,
       cost: project.cost,
+      currency: project.currency,
       billing_cycle: project.billing_cycle,
       renewal_date: project.renewal_date,
       cost_per_member: project.cost_per_member,
@@ -226,30 +227,18 @@ class BillingCyclesController < ApplicationController
   def billing_cycle_props(billing_cycle)
     {
       id: billing_cycle.id,
-      due_date: billing_cycle.due_date,
+      cycle_month: billing_cycle.cycle_month,
+      cycle_year: billing_cycle.cycle_year,
       total_amount: billing_cycle.total_amount,
-      total_paid: billing_cycle.total_paid,
-      amount_remaining: billing_cycle.amount_remaining,
-      payment_status: billing_cycle.payment_status,
-      overdue: billing_cycle.overdue?,
-      due_soon: billing_cycle.due_soon?,
-      days_until_due: billing_cycle.days_until_due,
-      fully_paid: billing_cycle.fully_paid?,
-      partially_paid: billing_cycle.partially_paid?,
-      unpaid: billing_cycle.unpaid?,
-      expected_payment_per_member: billing_cycle.expected_payment_per_member,
-      payments_count: billing_cycle.payments.count,
+      due_date: billing_cycle.due_date,
       created_at: billing_cycle.created_at,
       updated_at: billing_cycle.updated_at,
-      archived: billing_cycle.archived?,
-      archived_at: billing_cycle.archived_at,
-      archivable: billing_cycle.archivable?,
-      adjusted: billing_cycle.adjusted?,
-      adjusted_at: billing_cycle.adjusted_at,
-      adjustment_reason: billing_cycle.adjustment_reason,
-      adjustment_summary: billing_cycle.adjustment_summary,
-      original_amount: billing_cycle.original_amount,
-      original_due_date: billing_cycle.original_due_date
+      total_paid: billing_cycle.total_paid,
+      amount_remaining: billing_cycle.amount_remaining,
+      expected_payment_per_member: billing_cycle.expected_payment_per_member,
+      payment_status: billing_cycle.payment_status,
+      overdue: billing_cycle.overdue?,
+      days_until_due: billing_cycle.days_until_due
     }
   end
 
@@ -264,14 +253,19 @@ class BillingCyclesController < ApplicationController
     {
       id: payment.id,
       amount: payment.amount,
+      status: payment.status,
       transaction_id: payment.transaction_id,
       notes: payment.notes,
-      status: payment.status,
-      confirmation_date: payment.confirmation_date,
       created_at: payment.created_at,
-      has_evidence: payment.has_evidence?,
-      evidence_url: payment.evidence.attached? ? rails_blob_path(payment.evidence) : nil,
-      user: user_props(payment.user)
+      confirmation_date: payment.confirmation_date,
+      user: payment.user ? {
+        id: payment.user.id,
+        email_address: payment.user.email_address,
+        name: payment.user.name
+      } : nil,
+      expected_amount: payment.expected_amount,
+      overpaid: payment.overpaid?,
+      underpaid: payment.underpaid?
     }
   end
 

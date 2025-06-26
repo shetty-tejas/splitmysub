@@ -9,6 +9,7 @@
   import CardHeader from "$lib/components/ui/card/card-header.svelte";
   import CardTitle from "$lib/components/ui/card/card-title.svelte";
   import { ArrowLeft, Calendar, DollarSign, Save } from "lucide-svelte";
+  import { formatCurrency } from "$lib/billing-utils";
 
   export let project;
   export let billing_cycle;
@@ -36,13 +37,6 @@
         },
       },
     );
-  }
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
   }
 
   function formatDate(dateString) {
@@ -238,7 +232,10 @@
                 <div class="flex justify-between">
                   <span class="text-gray-600">Total Amount:</span>
                   <span class="font-medium"
-                    >{formatCurrency(billing_cycle.total_amount)}</span
+                    >{formatCurrency(
+                      billing_cycle.total_amount,
+                      billing_cycle.currency,
+                    )}</span
                   >
                 </div>
                 <div class="flex justify-between">
@@ -246,6 +243,7 @@
                   <span class="font-medium"
                     >{formatCurrency(
                       billing_cycle.expected_payment_per_member,
+                      billing_cycle.currency,
                     )}</span
                   >
                 </div>
@@ -281,8 +279,11 @@
                       : ''}"
                   >
                     {form.total_amount
-                      ? formatCurrency(parseFloat(form.total_amount))
-                      : "$0.00"}
+                      ? formatCurrency(
+                          parseFloat(form.total_amount),
+                          billing_cycle.currency,
+                        )
+                      : formatCurrency(0, billing_cycle.currency)}
                   </span>
                 </div>
                 <div class="flex justify-between">
@@ -294,8 +295,8 @@
                       : ''}"
                   >
                     {perMemberAmount > 0
-                      ? formatCurrency(perMemberAmount)
-                      : "$0.00"}
+                      ? formatCurrency(perMemberAmount, billing_cycle.currency)
+                      : formatCurrency(0, billing_cycle.currency)}
                   </span>
                 </div>
               </div>
@@ -308,13 +309,19 @@
                 <div class="flex justify-between">
                   <span class="text-gray-600">Amount Paid:</span>
                   <span class="font-medium text-green-600"
-                    >{formatCurrency(billing_cycle.total_paid)}</span
+                    >{formatCurrency(
+                      billing_cycle.total_paid,
+                      billing_cycle.currency,
+                    )}</span
                   >
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Remaining:</span>
                   <span class="font-medium text-red-600"
-                    >{formatCurrency(billing_cycle.amount_remaining)}</span
+                    >{formatCurrency(
+                      billing_cycle.amount_remaining,
+                      billing_cycle.currency,
+                    )}</span
                   >
                 </div>
                 <div class="flex justify-between">

@@ -22,6 +22,7 @@
     Eye,
     Download,
   } from "lucide-svelte";
+  import { formatCurrency } from "$lib/billing-utils";
 
   export let project;
   export let payments;
@@ -45,13 +46,6 @@
 
     return matchesStatus && matchesSearch;
   });
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
 
   function formatDate(dateString) {
     if (!dateString) return "Not set";
@@ -258,7 +252,7 @@
                     />
                     <div>
                       <h3 class="font-semibold text-lg">
-                        {formatCurrency(payment.amount)}
+                        {formatCurrency(payment.amount, payment.currency)}
                       </h3>
                       <p class="text-sm text-muted-foreground">
                         by {payment.user?.email_address || "Unknown User"}

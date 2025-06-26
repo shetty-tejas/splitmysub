@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_22_104318) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_26_060428) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -171,11 +171,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_104318) do
     t.text "description"
     t.string "subscription_url"
     t.string "slug", null: false
+    t.string "currency", default: "USD", null: false
     t.index ["billing_cycle"], name: "index_projects_on_billing_cycle"
+    t.index ["currency"], name: "index_projects_on_currency"
     t.index ["renewal_date"], name: "index_projects_on_renewal_date"
     t.index ["slug"], name: "index_projects_on_slug", unique: true
     t.index ["user_id", "renewal_date"], name: "index_projects_on_user_id_and_renewal_date"
     t.index ["user_id"], name: "index_projects_on_user_id"
+    t.check_constraint "currency IN ('USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'CNY', 'INR', 'BRL', 'MXN', 'KRW', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'PLN', 'CZK', 'HUF', 'BGN', 'RON', 'HRK', 'RUB', 'TRY', 'ZAR', 'THB', 'MYR', 'IDR', 'PHP', 'VND')", name: "projects_currency_valid"
   end
 
   create_table "reminder_schedules", force: :cascade do |t|
@@ -205,7 +208,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_104318) do
     t.text "preferences"
     t.string "first_name"
     t.string "last_name"
+    t.string "preferred_currency", default: "USD", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["preferred_currency"], name: "index_users_on_preferred_currency"
+    t.check_constraint "preferred_currency IN ('USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'CNY', 'INR', 'BRL', 'MXN', 'KRW', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'PLN', 'CZK', 'HUF', 'BGN', 'RON', 'HRK', 'RUB', 'TRY', 'ZAR', 'THB', 'MYR', 'IDR', 'PHP', 'VND')", name: "users_preferred_currency_valid"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

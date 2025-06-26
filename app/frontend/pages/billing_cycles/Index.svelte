@@ -218,10 +218,10 @@
         </CardHeader>
         <CardContent>
           <div class="text-2xl font-bold">
-            {formatCurrency(stats.total_amount)}
+            {formatCurrency(stats.total_amount, project.currency)}
           </div>
           <p class="text-xs text-muted-foreground">
-            {formatCurrency(stats.total_paid)} collected
+            {formatCurrency(stats.total_paid, project.currency)} collected
           </p>
         </CardContent>
       </Card>
@@ -252,7 +252,7 @@
         </CardHeader>
         <CardContent>
           <div class="text-2xl font-bold text-red-600">
-            {formatCurrency(stats.total_remaining)}
+            {formatCurrency(stats.total_remaining, project.currency)}
           </div>
           <p class="text-xs text-muted-foreground">
             {stats.due_soon} due soon
@@ -383,19 +383,22 @@
                     <div>
                       <span class="font-medium">Total Amount:</span>
                       <div class="text-lg font-semibold text-gray-900">
-                        {formatCurrency(cycle.total_amount)}
+                        {formatCurrency(cycle.total_amount, project.currency)}
                       </div>
                     </div>
                     <div>
                       <span class="font-medium">Paid:</span>
                       <div class="text-lg font-semibold text-green-600">
-                        {formatCurrency(cycle.total_paid)}
+                        {formatCurrency(cycle.total_paid, project.currency)}
                       </div>
                     </div>
                     <div>
                       <span class="font-medium">Remaining:</span>
                       <div class="text-lg font-semibold text-red-600">
-                        {formatCurrency(cycle.amount_remaining)}
+                        {formatCurrency(
+                          cycle.amount_remaining,
+                          project.currency,
+                        )}
                       </div>
                     </div>
                     <div>

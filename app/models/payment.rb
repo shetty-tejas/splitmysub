@@ -1,7 +1,11 @@
 class Payment < ApplicationRecord
+  include CurrencySupport
+
   belongs_to :billing_cycle
   belongs_to :user
   belongs_to :confirmed_by, class_name: "User", optional: true
+  has_many :payment_confirmations, dependent: :destroy
+  has_many_attached :evidence_files
 
   # ActiveStorage for payment evidence
   has_one_attached :evidence
@@ -12,13 +16,14 @@ class Payment < ApplicationRecord
   # Validations
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :status, presence: true, inclusion: {
-    in: %w[pending confirmed rejected],
+    in: %w[pending confirmed disputed],
     message: "%{value} is not a valid status"
   }
   validates :user_id, uniqueness: {
     scope: :billing_cycle_id,
     message: "has already made a payment for this billing cycle"
   }
+  validates :transaction_id, uniqueness: { scope: :billing_cycle_id }, allow_blank: true
 
   # Validate confirmation_date is present when status is confirmed
   validates :confirmation_date, presence: true, if: :confirmed?
@@ -29,17 +34,19 @@ class Payment < ApplicationRecord
   # Callbacks
   after_update :send_confirmation_email, if: :saved_change_to_status?
   after_update :track_status_change, if: :saved_change_to_status?
+  before_save :update_status_history
 
   # Scopes for common queries
   scope :pending, -> { where(status: "pending") }
   scope :confirmed, -> { where(status: "confirmed") }
-  scope :rejected, -> { where(status: "rejected") }
-  scope :disputed, -> { where(disputed: true) }
+  scope :disputed, -> { where(status: "disputed") }
   scope :for_user, ->(user) { where(user: user) }
   scope :for_billing_cycle, ->(cycle) { where(billing_cycle: cycle) }
   scope :recent, -> { order(created_at: :desc) }
   scope :with_evidence, -> { joins(:evidence_attachment) }
   scope :without_evidence, -> { left_joins(:evidence_attachment).where(active_storage_attachments: { id: nil }) }
+  scope :by_status, ->(status) { where(status: status) }
+  scope :for_project, ->(project) { joins(:billing_cycle).where(billing_cycles: { project: project }) }
 
   # Business logic methods
   def pending?
@@ -50,12 +57,8 @@ class Payment < ApplicationRecord
     status == "confirmed"
   end
 
-  def rejected?
-    status == "rejected"
-  end
-
   def disputed?
-    disputed
+    status == "disputed"
   end
 
   def has_evidence?
@@ -106,8 +109,24 @@ class Payment < ApplicationRecord
     update!(confirmation_notes: updated_notes)
   end
 
+  def currency
+    billing_cycle.currency
+  end
+
+  def format_currency(amount)
+    billing_cycle.project.format_amount(amount)
+  end
+
+  def format_amount
+    format_currency(amount)
+  end
+
   def expected_amount
     billing_cycle.expected_payment_per_member
+  end
+
+  def format_expected_amount
+    format_currency(expected_amount)
   end
 
   def overpaid?
@@ -118,12 +137,30 @@ class Payment < ApplicationRecord
     amount < expected_amount
   end
 
-  def exact_amount?
+  def correct_amount?
     amount == expected_amount
   end
 
   def project
     billing_cycle.project
+  end
+
+  def overdue?
+    billing_cycle.overdue? && status != "confirmed"
+  end
+
+  def days_until_due
+    billing_cycle.days_until_due
+  end
+
+  def payment_type
+    if overpaid?
+      "overpayment"
+    elsif underpaid?
+      "partial"
+    else
+      "full"
+    end
   end
 
   def days_since_payment
@@ -141,6 +178,18 @@ class Payment < ApplicationRecord
 
   def last_status_change
     status_changes.last
+  end
+
+  def evidence_filename
+    evidence.filename.to_s if has_evidence?
+  end
+
+  def evidence_url
+    evidence.url if has_evidence?
+  end
+
+  def status_changed?
+    status_changed_from_pending_to_confirmed? || status_changed_from_pending_to_disputed?
   end
 
   private
@@ -189,5 +238,26 @@ class Payment < ApplicationRecord
     current_history = status_history || []
     # Use update_column to avoid triggering callbacks again
     update_column(:status_history, current_history + [ change_record ])
+  end
+
+
+
+  def update_status_history
+    return unless status_changed?
+
+    self.status_history ||= []
+    self.status_history << {
+      status: status,
+      changed_at: Time.current,
+      changed_by: confirmed_by&.id
+    }
+  end
+
+  def status_changed_from_pending_to_confirmed?
+    status_was == "pending" && status == "confirmed"
+  end
+
+  def status_changed_from_pending_to_disputed?
+    status_was == "pending" && status == "disputed"
   end
 end

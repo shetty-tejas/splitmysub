@@ -27,6 +27,8 @@
     Eye,
   } from "lucide-svelte";
 
+  import { formatCurrency } from "$lib/billing-utils";
+
   export let project;
   export let payment;
   export let billing_cycle;
@@ -37,13 +39,6 @@
   let newNote = "";
   let showActionModal = false;
   let showNoteModal = false;
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
 
   function formatDate(dateString) {
     if (!dateString) return "Not set";
@@ -242,7 +237,7 @@
               <div>
                 <span class="text-muted-foreground text-sm">Amount Paid</span>
                 <p class="text-2xl font-bold text-green-600">
-                  {formatCurrency(payment.amount)}
+                  {formatCurrency(payment.amount, payment.currency)}
                 </p>
               </div>
               <div>
@@ -250,7 +245,7 @@
                   >Expected Amount</span
                 >
                 <p class="text-lg font-medium">
-                  {formatCurrency(payment.expected_amount)}
+                  {formatCurrency(payment.expected_amount, payment.currency)}
                 </p>
               </div>
               <div>
@@ -311,7 +306,10 @@
               <div>
                 <span class="text-muted-foreground text-sm">Total Amount</span>
                 <p class="font-medium">
-                  {formatCurrency(billing_cycle.total_amount)}
+                  {formatCurrency(
+                    billing_cycle.total_amount,
+                    billing_cycle.currency,
+                  )}
                 </p>
               </div>
               <div>
@@ -319,7 +317,10 @@
                   >Amount Remaining</span
                 >
                 <p class="font-medium">
-                  {formatCurrency(billing_cycle.amount_remaining)}
+                  {formatCurrency(
+                    billing_cycle.amount_remaining,
+                    billing_cycle.currency,
+                  )}
                 </p>
               </div>
             </div>

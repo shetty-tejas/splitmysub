@@ -17,6 +17,7 @@
     Calendar,
     AlertTriangle,
   } from "lucide-svelte";
+  import { formatCurrency } from "$lib/billing-utils";
 
   export let project;
   export let billing_cycle;
@@ -29,13 +30,6 @@
 
   let errors = [];
   let processing = false;
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  }
 
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -109,7 +103,7 @@
           <Label class="text-sm font-medium text-gray-600">Current Amount</Label
           >
           <div class="text-2xl font-bold text-gray-900">
-            {formatCurrency(billing_cycle.total_amount)}
+            {formatCurrency(billing_cycle.total_amount, project.currency)}
           </div>
         </div>
         <div class="space-y-2">
@@ -138,7 +132,7 @@
             >Payments Received</Label
           >
           <div class="text-lg font-semibold text-green-600">
-            {formatCurrency(billing_cycle.total_paid)}
+            {formatCurrency(billing_cycle.total_paid, project.currency)}
           </div>
         </div>
       </div>
