@@ -55,15 +55,10 @@ group :development do
   gem "letter_opener_web"
 end
 
-group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
-  gem "capybara"
-  gem "selenium-webdriver"
-end
 
-gem "inertia_rails", "~> 3.8"
+gem "inertia_rails", "~> 3.9"
 
-gem "vite_rails", "~> 3.0"
+gem "vite_rails", "~> 3.0", ">= 3.0.19"
 
 gem "bcrypt", "~> 3.1"
 
