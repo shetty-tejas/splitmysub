@@ -236,8 +236,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_102245) do
     t.check_constraint "preferred_currency IN ('USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'CNY', 'INR', 'BRL', 'MXN', 'KRW', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'PLN', 'CZK', 'HUF', 'BGN', 'RON', 'HRK', 'RUB', 'TRY', 'ZAR', 'THB', 'MYR', 'IDR', 'PHP', 'VND')", name: "users_preferred_currency_valid"
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "billing_cycles", "projects"
   add_foreign_key "invitations", "projects"
   add_foreign_key "invitations", "users", column: "invited_by_id"

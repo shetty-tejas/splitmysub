@@ -62,7 +62,7 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-        run: bin/rails db:test:prepare test
+        run: bin/rails db:create db:migrate test
 
   deploy:
     needs: [scan_ruby, lint, test]
