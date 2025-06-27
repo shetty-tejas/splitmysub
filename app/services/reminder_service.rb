@@ -26,7 +26,8 @@ class ReminderService
   end
 
   def process_project_reminders(project)
-    upcoming_billing_cycles = project.billing_cycles.upcoming.due_soon(30)
+    # Get upcoming billing cycles that are due within the next 30 days
+    upcoming_billing_cycles = project.billing_cycles.upcoming(30)
 
     upcoming_billing_cycles.each do |billing_cycle|
       next if billing_cycle.fully_paid?

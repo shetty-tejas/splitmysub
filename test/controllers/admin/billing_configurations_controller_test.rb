@@ -1,13 +1,16 @@
 require "test_helper"
 
 class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTest
-      def setup
+  def setup
     # Create test user for admin access (in development mode, all users have admin access)
     @user = User.new(email_address: "admin@splitmysub.test", first_name: "Admin", last_name: "User")
     @user.save!(validate: false)
 
     # Sign in using the same method as other tests
     sign_in_as(@user)
+
+    # Set up admin authentication for non-development environments
+    @auth_headers = admin_authenticate
 
     # Ensure we have a billing config (don't destroy existing ones, just get current)
     @config = BillingConfig.current
@@ -21,10 +24,10 @@ class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTe
   end
 
   test "should show billing configuration" do
-    get admin_billing_configuration_path, headers: {
+    get admin_billing_configuration_path, headers: @auth_headers.merge({
       "X-Inertia" => "true",
       "X-Inertia-Version" => "1.0"
-    }
+    })
 
     # For Inertia.js, success can be 200 or 409 (redirect)
     assert_includes [ 200, 409 ], response.status
@@ -49,10 +52,10 @@ class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTe
   end
 
   test "should show edit billing configuration" do
-    get edit_admin_billing_configuration_path, headers: {
+    get edit_admin_billing_configuration_path, headers: @auth_headers.merge({
       "X-Inertia" => "true",
       "X-Inertia-Version" => "1.0"
-    }
+    })
     assert_includes [ 200, 409 ], response.status
 
     if response.status == 200
@@ -66,7 +69,7 @@ class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTe
     end
   end
 
-    test "should update billing configuration with valid params" do
+  test "should update billing configuration with valid params" do
     patch admin_billing_configuration_path, params: {
       billing_config: {
         generation_months_ahead: 4,
@@ -82,7 +85,7 @@ class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTe
         final_notice_days_overdue: 20,
         default_frequency: "quarterly"
       }
-    }
+    }, headers: @auth_headers
 
     assert_redirected_to admin_billing_configuration_path
 
@@ -109,7 +112,7 @@ class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTe
       billing_config: {
         generation_months_ahead: -5  # Invalid negative value
       }
-    }
+    }, headers: @auth_headers
 
     assert_response :success  # Returns to edit form with errors
 
@@ -126,7 +129,7 @@ class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTe
     # First, modify the configuration
     @config.update!(generation_months_ahead: 10, archiving_months_threshold: 12)
 
-    post reset_admin_billing_configuration_path
+    post reset_admin_billing_configuration_path, headers: @auth_headers
     assert_redirected_to admin_billing_configuration_path
 
     # Verify a new default configuration was created
@@ -135,8 +138,6 @@ class Admin::BillingConfigurationsControllerTest < ActionDispatch::IntegrationTe
     assert_equal 3, new_config.generation_months_ahead  # Default value
     assert_equal 6, new_config.archiving_months_threshold  # Default value
   end
-
-
 
   test "should deny access to non-admin users in production-like environment" do
     # This test simulates production environment restrictions
