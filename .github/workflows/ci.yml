@@ -59,10 +59,16 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Prepare database
+        run: |
+            bin/rails db:create
+            bin/rails db:schema:load
+
       - name: Run tests
         env:
           RAILS_ENV: test
-        run: bin/rails db:create db:migrate test
+        run: |
+          bin/rails test
 
   deploy:
     needs: [scan_ruby, lint, test]
@@ -72,6 +78,12 @@ jobs:
     env:
       RAILS_ENV: production
       DOCKER_BUILDKIT: 1
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
       - name: Checkout code
