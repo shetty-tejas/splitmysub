@@ -67,6 +67,15 @@
         >
           💰 Billing Configuration
         </a>
+        <a
+          href="/admin/errors"
+          class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium border-b-2
+                 {$page.url.startsWith('/admin/errors')
+            ? 'border-red-500 text-red-600'
+            : 'border-transparent'}"
+        >
+          🚨 Errors
+        </a>
       </nav>
     </div>
   </div>
