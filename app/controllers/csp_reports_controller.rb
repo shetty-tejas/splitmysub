@@ -5,7 +5,15 @@ class CspReportsController < ApplicationController
 
   def create
     # Log CSP violations for security monitoring
-    violation_report = params.permit!.to_h
+    # Only permit expected CSP violation report keys for security
+    violation_report = params.permit(
+      :blocked_uri, :disposition, :document_uri, :effective_directive,
+      :original_policy, :referrer, :script_sample, :status_code, :violated_directive,
+      'csp-report': [
+        :blocked_uri, :disposition, :document_uri, :effective_directive,
+        :original_policy, :referrer, :script_sample, :status_code, :violated_directive
+      ]
+    ).to_h
 
     Rails.logger.warn "CSP Violation Report: #{violation_report.to_json}"
 

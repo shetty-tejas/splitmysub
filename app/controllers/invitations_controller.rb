@@ -80,6 +80,7 @@ class InvitationsController < ApplicationController
   def create
     @invitation = @project.invitations.build(invitation_params)
     @invitation.invited_by = Current.user
+    @invitation.role = "member" # Explicitly set role for security
 
     if @invitation.save
       # Don't send invitation email automatically anymore
@@ -342,7 +343,8 @@ class InvitationsController < ApplicationController
   end
 
   def invitation_params
-    params.require(:invitation).permit(:email, :role)
+    # Only permit email for security - role is always 'member' and set automatically
+    params.require(:invitation).permit(:email)
   end
 
   def invitation_props(invitation)

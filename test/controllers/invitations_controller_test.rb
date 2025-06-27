@@ -494,19 +494,24 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "member_role_test@example.com", json_response["invitation"]["email"]
   end
 
-  test "should reject invalid role" do
-    assert_no_difference "Invitation.count" do
+  test "should ignore invalid role parameter and use default member role" do
+    assert_difference "Invitation.count", 1 do
       post project_invitations_path(@project), params: {
         invitation: {
           email: "user@example.com",
-          role: "invalid"
+          role: "invalid"  # This should be ignored
         }
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :success
     json_response = JSON.parse(response.body)
-    assert json_response["errors"].present?
+    assert json_response["invitation"]["token"].present?
+    assert_equal "user@example.com", json_response["invitation"]["email"]
+
+    # Verify the invitation was created with member role (default)
+    invitation = Invitation.last
+    assert_equal "member", invitation.role
   end
 
   private
