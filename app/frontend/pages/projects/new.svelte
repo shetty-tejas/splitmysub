@@ -34,6 +34,9 @@
 
   let errors = $page.props.errors || {};
   let isSubmitting = false;
+  
+  // Reactively update errors when page props change
+  $: errors = $page.props.errors || {};
 
   function handleSubmit() {
     if (isSubmitting) return;

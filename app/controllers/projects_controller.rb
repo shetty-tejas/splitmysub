@@ -27,11 +27,7 @@ class ProjectsController < ApplicationController
     if @project.save
       redirect_to @project, notice: "Project created successfully!"
     else
-      redirect_to new_project_path, inertia: {
-        errors: @project.errors.to_hash(true),
-        currency_options: Project.currency_options_for_select,
-        user_preferred_currency: Current.user.preferred_currency
-      }
+      redirect_to new_project_path, inertia: { errors: @project.errors.as_json }
     end
   end
 
@@ -46,9 +42,8 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       redirect_to @project, notice: "Project updated successfully!"
     else
-      redirect_to edit_project_path(@project), inertia: {
-        errors: @project.errors.to_hash(true),
-        currency_options: Project.currency_options_for_select
+      redirect_to edit_project_path(@project), inertia: { 
+        errors: @project.errors.as_json 
       }
     end
   end
