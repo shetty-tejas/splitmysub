@@ -25,7 +25,7 @@
     description: project.description || "",
     cost: project.cost || "",
     currency: project.currency || "USD",
-    billing_cycle: project.billing_cycle || "",
+    billing_cycle: project.billing_cycle || "monthly",
     renewal_date: project.renewal_date || "",
     reminder_days: project.reminder_days || "7",
     payment_instructions: project.payment_instructions || "",

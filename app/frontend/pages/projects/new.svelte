@@ -25,7 +25,7 @@
     description: "",
     cost: "",
     currency: user_preferred_currency || "USD",
-    billing_cycle: "",
+    billing_cycle: "monthly",
     renewal_date: "",
     reminder_days: "7",
     payment_instructions: "",
