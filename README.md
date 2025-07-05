@@ -120,7 +120,7 @@ SplitMySub is a comprehensive subscription cost-sharing platform that eliminates
 
 ### 1. Clone and Install
 ```bash
-git clone https://github.com/your-username/splitmysub.git
+git clone https://github.com/ashwin47/splitmysub.git
 cd splitmysub
 bundle install
 npm install
@@ -145,7 +145,7 @@ Visit `http://localhost:3100` to see the application running.
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/your-username/splitmysub.git
+git clone https://github.com/ashwin47/splitmysub.git
 cd splitmysub
 
 # 2. Install dependencies
@@ -320,7 +320,7 @@ We welcome contributions!
 
 ### Development Setup
 ```bash
-git clone https://github.com/your-username/splitmysub.git
+git clone https://github.com/ashwin47/splitmysub.git
 cd splitmysub
 bundle install && npm install
 rails db:setup
@@ -343,8 +343,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
   <p>Made with ❤️ for the subscription-sharing community</p>
   <p>
-    <a href="https://github.com/your-username/splitmysub/issues">Report Bug</a> •
-    <a href="https://github.com/your-username/splitmysub/issues">Request Feature</a>
+    <a href="https://github.com/ashwin47/splitmysub/issues">Report Bug</a> •
+    <a href="https://github.com/ashwin47/splitmysub/issues">Request Feature</a>
   </p>
 </div>
 
