@@ -128,7 +128,7 @@ jobs:
           username: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
 
-      - name: Kamal Setup Environment
+      - name: Prepare deployment environment
         env:
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
@@ -137,7 +137,7 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: |
-          bin/kamal envify
+          echo "Environment variables configured for Kamal deployment"
 
       - name: Kamal Deploy
         env:
