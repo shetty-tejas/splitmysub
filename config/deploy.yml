@@ -24,7 +24,6 @@ proxy:
 # Credentials for your image host.
 registry:
   # Specify the registry server, if you're not using Docker Hub
-registry:
   server: registry.digitalocean.com/super-registry
   username:
     - DOCKER_REGISTRY_TOKEN
