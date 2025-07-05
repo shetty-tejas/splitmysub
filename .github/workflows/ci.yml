@@ -59,6 +59,23 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Generate JS routes
+        run: bin/rails js:routes
+
+      - name: Build frontend assets
+        run: bin/rails assets:precompile
+        env:
+          SECRET_KEY_BASE_DUMMY: 1
+
       - name: Prepare database
         run: |
           bin/rails db:test:prepare
