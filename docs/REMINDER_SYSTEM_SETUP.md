@@ -32,7 +32,7 @@ The reminder system automatically sends payment reminders to project members bas
 ## Setup Instructions
 
 ### 1. Database Setup
-The reminder system uses existing models. Ensure your database is migrated:
+The reminder system uses existing models. Ensure your SQLite database is migrated:
 
 ```bash
 rails db:migrate
@@ -206,7 +206,7 @@ rake reminders:process
 ## Performance Optimization
 
 1. **Batch processing**: Process reminders in batches for large user bases
-2. **Database indexing**: Ensure proper indexes on date and status fields
+2. **SQLite indexing**: Ensure proper indexes on date and status fields
 3. **Email queuing**: Use background jobs for all email sending
 4. **Caching**: Cache frequently accessed project and user data
 
