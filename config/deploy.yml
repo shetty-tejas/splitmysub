@@ -25,9 +25,10 @@ proxy:
 registry:
   # GitHub Container Registry
   server: ghcr.io
-  username: ashwin47
+  username:
+    - KAMAL_REGISTRY_USERNAME
   password:
-    - GITHUB_TOKEN
+    - KAMAL_REGISTRY_PASSWORD
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
