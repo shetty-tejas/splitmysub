@@ -27,7 +27,7 @@ The fastest way to get SplitMySub running is with Docker.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/splitmysub.git
+git clone https://github.com/ashwin47/splitmysub.git
 cd splitmysub
 
 # Copy environment template
@@ -131,7 +131,7 @@ brew install ruby@3.4 node yarn sqlite3
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/splitmysub.git
+git clone https://github.com/ashwin47/splitmysub.git
 cd splitmysub
 
 # Install Ruby gems

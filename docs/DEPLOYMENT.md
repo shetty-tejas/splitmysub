@@ -35,34 +35,37 @@ proxy:
   host: your-domain.com      # Replace with actual domain
 ```
 
-### 2. Set Up Container Registry
+### 2. Container Registry Configuration
 
-Choose one of these options:
+**GitHub Container Registry (Default - FREE for public repositories)**
+
+The application is pre-configured to use GitHub Container Registry:
+
+```yaml
+registry:
+  server: ghcr.io
+  username: ashwin47
+  password:
+    - GITHUB_TOKEN
+```
+
+**Alternative Options:**
 
 #### Option A: Docker Hub
 ```yaml
 registry:
   username: your-dockerhub-username
   password:
-    - KAMAL_REGISTRY_PASSWORD
+    - DOCKER_HUB_TOKEN
 ```
 
-#### Option B: GitHub Container Registry
-```yaml
-registry:
-  server: ghcr.io
-  username: your-github-username
-  password:
-    - KAMAL_REGISTRY_PASSWORD
-```
-
-#### Option C: DigitalOcean Container Registry
+#### Option B: DigitalOcean Container Registry
 ```yaml
 registry:
   server: registry.digitalocean.com
   username: your-do-username
   password:
-    - KAMAL_REGISTRY_PASSWORD
+    - DOCKER_REGISTRY_TOKEN
 ```
 
 ### 3. Configure Environment Variables
@@ -70,8 +73,8 @@ registry:
 Set up your environment variables in `.kamal/secrets`. **All secret variables must be configured for production deployment:**
 
 ```bash
-# Registry password (Docker Hub token, GitHub token, etc.)
-export KAMAL_REGISTRY_PASSWORD="your-registry-token"
+# GitHub token for container registry (automatic in GitHub Actions)
+export GITHUB_TOKEN="your-github-personal-access-token"
 
 # Rails master key (from config/master.key)
 export RAILS_MASTER_KEY="$(cat config/master.key)"
@@ -92,12 +95,24 @@ export CLOUDFLARE_TURNSTILE_SITE_KEY="your-turnstile-site-key"
 export CLOUDFLARE_TURNSTILE_SECRET_KEY="your-turnstile-secret-key"
 ```
 
-### 4. Update Image Name
+**Note:** When deploying via GitHub Actions, the `GITHUB_TOKEN` is automatically provided - no manual configuration needed!
 
-In `config/deploy.yml`, update the image name:
+### 4. Image Name Configuration
+
+The application is pre-configured to use GitHub Container Registry:
 
 ```yaml
-image: your-registry-username/splitmysub
+image: ghcr.io/ashwin47/splitmysub
+```
+
+**For alternative registries:**
+
+```yaml
+# Docker Hub
+image: your-dockerhub-username/splitmysub
+
+# DigitalOcean
+image: registry.digitalocean.com/your-registry/splitmysub
 ```
 
 ## Environment Variables Reference
@@ -154,7 +169,19 @@ The following environment variables are configured in the `env.clear` section:
 
 ## Deployment Commands
 
-### First-Time Deployment
+### GitHub Actions Deployment (Recommended)
+
+The repository is configured with GitHub Actions for automatic deployment:
+
+1. **Push to main branch** triggers automatic deployment
+2. **GitHub Container Registry** authentication is handled automatically
+3. **No manual deployment commands** needed
+
+### Manual Deployment
+
+For manual deployment from your local machine:
+
+#### First-Time Deployment
 
 1. **Setup the server:**
    ```bash
@@ -166,7 +193,7 @@ The following environment variables are configured in the `env.clear` section:
    bin/kamal deploy
    ```
 
-### Regular Deployments
+#### Regular Deployments
 
 ```bash
 bin/kamal deploy
