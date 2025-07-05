@@ -126,6 +126,19 @@ jobs:
           echo "${{ secrets.RAILS_MASTER_KEY }}" > config/master.key
           chmod 600 config/master.key
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Kamal Registry Login
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bin/kamal registry login --verbose
+
       - name: Kamal Deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -134,8 +147,5 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: |
-          # Login to GitHub Container Registry manually
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          
-          # Run Kamal deployment
-          bin/kamal deploy 
+          bin/kamal lock release --verbose
+          bin/kamal redeploy --verbose 
