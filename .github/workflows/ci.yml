@@ -61,8 +61,7 @@ jobs:
 
       - name: Prepare database
         run: |
-            bin/rails db:create
-            bin/rails db:schema:load
+          bin/rails db:test:prepare
 
       - name: Run tests
         env:
