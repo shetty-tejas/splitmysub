@@ -2,7 +2,7 @@
 service: splitmysub
 
 # Name of the container image.
-image: ghcr.io/ashwin47/splitmysub
+image: ashwinmk2016/splitmysub
 
 # Deploy to these servers.
 servers:
@@ -23,12 +23,11 @@ proxy:
 
 # Credentials for your image host.
 registry:
-  # GitHub Container Registry
-  server: ghcr.io
+  server: registry.digitalocean.com/super-registry
   username:
-    - KAMAL_REGISTRY_USERNAME
+    - DOCKER_REGISTRY_TOKEN
   password:
-    - KAMAL_REGISTRY_PASSWORD
+    - DOCKER_REGISTRY_TOKEN
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
