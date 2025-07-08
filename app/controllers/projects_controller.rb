@@ -42,8 +42,8 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       redirect_to @project, notice: "Project updated successfully!"
     else
-      redirect_to edit_project_path(@project), inertia: { 
-        errors: @project.errors.as_json 
+      redirect_to edit_project_path(@project), inertia: {
+        errors: @project.errors.as_json
       }
     end
   end
