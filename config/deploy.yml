@@ -37,6 +37,7 @@ env:
     - SMTP_PASSWORD
     - RESEND_API_KEY
     - ADMIN_PASSWORD
+    - DOCKER_REGISTRY_TOKEN
   clear:
     # Rails environment
     RAILS_ENV: production
