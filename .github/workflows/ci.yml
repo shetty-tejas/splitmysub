@@ -126,24 +126,13 @@ jobs:
           echo "${{ secrets.RAILS_MASTER_KEY }}" > config/master.key
           chmod 600 config/master.key
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Kamal Registry Login
-        env:
-          KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
+      - name: Login to DigitalOcean Container Registry
         run: |
-          bin/kamal registry login --verbose
+          echo "${{ secrets.DOCKER_REGISTRY_TOKEN }}" | docker login registry.digitalocean.com/super-registry -u ${{ secrets.DOCKER_REGISTRY_TOKEN }} --password-stdin
 
       - name: Kamal Deploy
         env:
-          KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
+          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
