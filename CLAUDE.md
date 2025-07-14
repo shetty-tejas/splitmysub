@@ -5,9 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Development Server
-- `bin/dev` - Start the development server using foreman/overmind (runs Rails server + Vite)
+- `bin/dev` - Start the development server using foreman/overmind (runs Rails server + Vite + Telegram polling)
 - `bin/rails s` - Start Rails server only
 - `bin/vite dev` - Start Vite development server only
+
+**Important**: Do NOT run `bin/dev` or `bin/rails s` - assume the development server is already running. Only use these commands if explicitly asked to start the server.
 
 ### Testing
 - `bin/rails test` - Run all tests
@@ -33,6 +35,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bin/rails "invitations:cleanup"` - Clean up expired invitations
 - `bin/rails "reminders:send_daily"` - Send daily payment reminders
 
+### Telegram Bot
+- `ruby telegram_polling.rb` - Start Telegram bot polling (runs automatically with `bin/dev`)
+- Bot responds to commands: `/start`, `/help`, `/status`, `/payments`, `/pay`, `/settings`
+
 ## Application Architecture
 
 ### Stack Overview
@@ -46,9 +52,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Project**: Main subscription entity with cost splitting logic (`app/models/project.rb:158`)
 - **BillingCycle**: Represents billing periods with payment tracking (`app/models/billing_cycle.rb:68`) 
 - **Payment**: Individual payment records with evidence uploads
-- **User**: Authentication and profile management with magic links
+- **User**: Authentication and profile management with magic links and Telegram integration
 - **ProjectMembership**: Join table for project access control
 - **Invitation**: Email-based invitation system for project members
+- **TelegramMessage**: Telegram notification tracking and delivery status
 
 ### Key Business Logic
 - **Currency Support**: Multi-currency support via `CurrencySupport` concern
@@ -75,11 +82,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Development**: Letter Opener for email preview at `/letter_opener`
 - **Templates**: ERB templates in `app/views/*_mailer/` with both HTML and text versions
 
+### Telegram Bot Integration
+- **Bot Framework**: telegram-bot-ruby gem for Telegram API integration
+- **Account Linking**: Users can link Telegram accounts via verification tokens in profile settings
+- **Notifications**: Payment reminders, billing cycle alerts, and payment confirmations via Telegram
+- **Bot Commands**: Interactive commands for payment management and status checking
+- **Services**: `TelegramBotService` for API interactions, `TelegramNotificationService` for message formatting
+- **Jobs**: `TelegramNotificationJob` for asynchronous delivery
+- **Models**: `TelegramMessage` for delivery tracking and status
+- **Polling**: Continuous webhook processing via `telegram_polling.rb`
+
 ### Background Jobs
 - **Queue**: SolidQueue for job processing
 - **Billing Jobs**: Automatic billing cycle generation and archiving
 - **Reminder Jobs**: Automated payment reminder system
 - **Email Jobs**: Asynchronous email delivery
+- **Telegram Jobs**: Asynchronous Telegram notification delivery
 
 ### File Storage
 - **Active Storage**: For payment evidence uploads
@@ -97,6 +115,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Content Security Policy**: Configured CSP headers
 - **Parameter Filtering**: Sensitive data excluded from logs
 - **Error Handling**: Comprehensive exception handling with notifications
+
+### Configuration & Environment
+- **Credentials**: Telegram bot token stored in Rails credentials (`telegram_bot_token`)
+- **Routes**: Telegram-specific routes in `config/routes.rb` for profile integration
+- **Initializers**: Telegram configuration in `config/initializers/telegram.rb`
+- **Development**: Telegram polling runs automatically with `bin/dev` via Procfile.dev
 
 ### Development Tools
 - **Letter Opener**: Email preview in development
