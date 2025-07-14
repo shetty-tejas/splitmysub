@@ -130,6 +130,17 @@ jobs:
         run: |
           echo "${{ secrets.DOCKER_REGISTRY_TOKEN }}" | docker login registry.digitalocean.com/super-registry -u ${{ secrets.DOCKER_REGISTRY_TOKEN }} --password-stdin
 
+      - name: Set up SSH key manually (alternative to webfactory/ssh-agent)
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/my_key
+          chmod 600 ~/.ssh/my_key
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/my_key
+          # Optionally add your server to known_hosts to avoid host verification prompts
+          ssh-keyscan -t rsa your.server.ip >> ~/.ssh/known_hosts
+
       - name: Kamal Deploy
         env:
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
