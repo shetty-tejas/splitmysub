@@ -31,23 +31,23 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
     end
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
-    
+
     result = @service.send_payment_reminder(@billing_cycle.id, @reminder_schedule.id, @user.id)
     assert result
-    
+
     mock_bot_service.verify
   end
 
   test "send_payment_reminder returns false when user has no telegram_user_id" do
     @user.update!(telegram_user_id: nil)
-    
+
     result = @service.send_payment_reminder(@billing_cycle.id, @reminder_schedule.id, @user.id)
     assert_not result
   end
 
   test "send_payment_reminder returns false when telegram notifications disabled" do
     @user.update!(telegram_notifications_enabled: false)
-    
+
     result = @service.send_payment_reminder(@billing_cycle.id, @reminder_schedule.id, @user.id)
     assert_not result
   end
@@ -63,13 +63,13 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
     @service.send_payment_reminder(@billing_cycle.id, @reminder_schedule.id, @user.id)
-    
+
     mock_bot_service.verify
   end
 
   test "send_payment_reminder includes urgency for overdue payments" do
     @billing_cycle.update!(due_date: 2.days.ago)
-    
+
     expected_content = nil
     mock_bot_service = Minitest::Mock.new
     mock_bot_service.expect :send_notification, true do |user:, message_type:, content:|
@@ -80,13 +80,13 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
     @service.send_payment_reminder(@billing_cycle.id, @reminder_schedule.id, @user.id)
-    
+
     mock_bot_service.verify
   end
 
   test "send_payment_reminder includes due date for upcoming payments" do
     @billing_cycle.update!(due_date: 1.day.from_now)
-    
+
     expected_content = nil
     mock_bot_service = Minitest::Mock.new
     mock_bot_service.expect :send_notification, true do |user:, message_type:, content:|
@@ -97,7 +97,7 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
     @service.send_payment_reminder(@billing_cycle.id, @reminder_schedule.id, @user.id)
-    
+
     mock_bot_service.verify
   end
 
@@ -108,10 +108,10 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
     end
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
-    
+
     result = @service.send_billing_cycle_notification(@billing_cycle.id, @user.id)
     assert result
-    
+
     mock_bot_service.verify
   end
 
@@ -127,7 +127,7 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
     @service.send_billing_cycle_notification(@billing_cycle.id, @user.id)
-    
+
     mock_bot_service.verify
   end
 
@@ -138,10 +138,10 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
     end
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
-    
+
     result = @service.send_payment_confirmation(@billing_cycle.id, @user.id)
     assert result
-    
+
     mock_bot_service.verify
   end
 
@@ -157,13 +157,13 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
     @service.send_payment_confirmation(@billing_cycle.id, @user.id)
-    
+
     mock_bot_service.verify
   end
 
   test "send_account_link_verification always succeeds" do
     token = "test_token_123"
-    
+
     result = @service.send_account_link_verification(@user.id, token)
     assert result
   end
@@ -175,10 +175,10 @@ class TelegramNotificationServiceTest < ActiveSupport::TestCase
     end
 
     @service.instance_variable_set(:@bot_service, mock_bot_service)
-    
+
     result = @service.send_payment_reminder(@billing_cycle.id, @reminder_schedule.id, @user.id)
     assert_not result
-    
+
     mock_bot_service.verify
   end
 

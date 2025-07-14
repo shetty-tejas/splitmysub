@@ -173,7 +173,7 @@ class UserTelegramTest < ActiveSupport::TestCase
       first_name: "Test",
       last_name: "User"
     )
-    
+
     message = TelegramMessage.create!(
       user: test_user,
       message_type: "payment_reminder",
@@ -182,10 +182,10 @@ class UserTelegramTest < ActiveSupport::TestCase
     )
 
     message_id = message.id
-    
+
     # Ensure the message exists before deletion
     assert TelegramMessage.exists?(message_id)
-    
+
     # Destroy the user (should cascade to telegram_messages)
     test_user.destroy!
 

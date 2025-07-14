@@ -16,7 +16,7 @@ class TelegramNotificationJobTest < ActiveJob::TestCase
 
   test "enqueues job with correct arguments" do
     reminder_schedule = reminder_schedules(:netflix_reminder_1)
-    
+
     assert_enqueued_with(
       job: TelegramNotificationJob,
       args: [
@@ -87,7 +87,7 @@ class TelegramNotificationJobTest < ActiveJob::TestCase
 
   test "performs account_link_verification notification" do
     token = "test_token_123"
-    
+
     mock_service = Minitest::Mock.new
     mock_service.expect :send_account_link_verification, true, [ @user.id, token ]
 

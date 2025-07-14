@@ -326,7 +326,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_redirected_to invitation_path(@invitation.token)
+    assert_response :unprocessable_entity
   end
 
   test "should not confirm expired invitation" do
@@ -355,7 +355,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_redirected_to invitation_path(@invitation.token)
+    assert_response :unprocessable_entity
   end
 
   # Decline tests
