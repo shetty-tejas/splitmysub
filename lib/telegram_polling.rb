@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'bundler/setup'
-require 'telegram/bot'
+require "bundler/setup"
+require "telegram/bot"
 
 # Load Rails environment
-require_relative 'config/environment'
+require_relative "config/environment"
 
 # Setup logging
 puts "Starting Telegram bot polling..."
@@ -21,12 +21,12 @@ puts "Bot: @SplitMySubBot"
 Rails.logger.info "Bot: @SplitMySubBot"
 
 # Graceful shutdown handling
-Signal.trap('INT') do
+Signal.trap("INT") do
   puts "Shutting down Telegram bot polling..."
   exit 0
 end
 
-Signal.trap('TERM') do
+Signal.trap("TERM") do
   puts "Shutting down Telegram bot polling..."
   exit 0
 end
@@ -41,13 +41,13 @@ begin
 
         # Create a fake webhook update to process through our service
         update = {
-          'message' => {
-            'text' => message.text,
-            'chat' => { 'id' => message.chat.id },
-            'from' => {
-              'id' => message.from.id,
-              'username' => message.from.username,
-              'first_name' => message.from.first_name
+          "message" => {
+            "text" => message.text,
+            "chat" => { "id" => message.chat.id },
+            "from" => {
+              "id" => message.from.id,
+              "username" => message.from.username,
+              "first_name" => message.from.first_name
             }
           }
         }
