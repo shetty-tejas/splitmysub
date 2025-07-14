@@ -1,5 +1,5 @@
 class InvitationsController < ApplicationController
-  allow_unauthenticated_access only: [ :show, :accept, :confirm, :decline ]
+  allow_unauthenticated_access only: [ :show, :accept, :confirm, :decline, :redirect_accept_to_show, :redirect_to_invitation ]
   before_action :set_project, only: [ :index, :create, :update, :send_email, :destroy ]
   before_action :set_invitation, only: [ :show, :accept, :confirm, :decline, :update, :send_email, :destroy ]
   before_action :authorize_invitation_management, only: [ :index, :create, :destroy ]
@@ -225,8 +225,14 @@ class InvitationsController < ApplicationController
 
     # Check if user already exists
     if User.exists?(email_address: user_email)
-      redirect_to invitation_path(@invitation.token),
-                 alert: "An account with this email already exists. Please sign in instead."
+      render inertia: "invitations/confirm", 
+             props: {
+               invitation: invitation_props(@invitation),
+               project: project_with_details(@invitation.project),
+               user_email: @invitation.email,
+               errors: { email: ["An account with this email already exists. Please sign in instead."] }
+             }, 
+             status: :unprocessable_entity
       return
     end
 
@@ -234,55 +240,99 @@ class InvitationsController < ApplicationController
     begin
       # Double-check if user exists right before creation to handle race conditions
       if User.exists?(email_address: user_email)
-        redirect_to invitation_path(@invitation.token),
-                   alert: "An account with this email already exists. Please sign in instead."
+        render inertia: "invitations/confirm", 
+               props: {
+                 invitation: invitation_props(@invitation),
+                 project: project_with_details(@invitation.project),
+                 user_email: @invitation.email,
+                 errors: { email: ["An account with this email already exists. Please sign in instead."] }
+               }, 
+               status: :unprocessable_entity
         return
       end
 
-      user = User.create!(
+      user = User.new(
         email_address: user_email,
         first_name: params[:first_name],
         last_name: params[:last_name]
       )
 
-      Rails.logger.info "User created successfully: #{user.id}"
+      if user.save
+        Rails.logger.info "User created successfully: #{user.id}"
 
-      # Accept the invitation
-      if @invitation.accept!(user)
-        # Log the user in using the same method as the authentication system
-        start_new_session_for(user)
+        # Accept the invitation
+        if @invitation.accept!(user)
+          # Log the user in using the same method as the authentication system
+          start_new_session_for(user)
 
-        redirect_to project_path(@invitation.project),
-                   notice: "Welcome to SplitMySub! Your account has been created and you've joined #{@invitation.project.name}."
+          redirect_to project_path(@invitation.project),
+                     notice: "Welcome to SplitMySub! Your account has been created and you've joined #{@invitation.project.name}."
+        else
+          Rails.logger.error "Failed to accept invitation for user: #{user.id}"
+          user.destroy # Clean up if invitation acceptance fails
+          render inertia: "invitations/confirm", 
+                 props: {
+                   invitation: invitation_props(@invitation),
+                   project: project_with_details(@invitation.project),
+                   user_email: @invitation.email,
+                   errors: { message: "Unable to accept invitation. Please try again." }
+                 }, 
+                 status: :unprocessable_entity
+        end
       else
-        Rails.logger.error "Failed to accept invitation for user: #{user.id}"
-        user.destroy # Clean up if invitation acceptance fails
-        redirect_to invitation_path(@invitation.token),
-                   alert: "Unable to accept invitation. Please try again."
+        # Return validation errors
+        Rails.logger.error "User validation failed: #{user.errors.full_messages}"
+        render inertia: "invitations/confirm", 
+               props: {
+                 invitation: invitation_props(@invitation),
+                 project: project_with_details(@invitation.project),
+                 user_email: @invitation.email,
+                 errors: user.errors.as_json
+               }, 
+               status: :unprocessable_entity
       end
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.error "RecordInvalid error: #{e.message}"
-      Rails.logger.error "Validation errors: #{e.record.errors.full_messages}"
-      redirect_to invitation_path(@invitation.token),
-                 alert: "Unable to create account: #{e.record.errors.full_messages.join(', ')}"
     rescue ActiveRecord::RecordNotUnique => e
       Rails.logger.error "RecordNotUnique error: #{e.message}"
-      redirect_to invitation_path(@invitation.token),
-                 alert: "An account with this email already exists. Please contact the project owner."
+      render inertia: "invitations/confirm", 
+             props: {
+               invitation: invitation_props(@invitation),
+               project: project_with_details(@invitation.project),
+               user_email: @invitation.email,
+               errors: { email: ["An account with this email already exists. Please contact the project owner."] }
+             }, 
+             status: :unprocessable_entity
     rescue ActiveRecord::StatementInvalid => e
       Rails.logger.error "StatementInvalid error: #{e.message}"
       if e.message.include?("UNIQUE constraint failed") || e.message.include?("duplicate key")
-        redirect_to invitation_path(@invitation.token),
-                   alert: "An account with this email already exists. Please contact the project owner."
+        render inertia: "invitations/confirm", 
+               props: {
+                 invitation: invitation_props(@invitation),
+                 project: project_with_details(@invitation.project),
+                 user_email: @invitation.email,
+                 errors: { email: ["An account with this email already exists. Please contact the project owner."] }
+               }, 
+               status: :unprocessable_entity
       else
-        redirect_to invitation_path(@invitation.token),
-                   alert: "Something went wrong while creating your account. Please try again or contact support."
+        render inertia: "invitations/confirm", 
+               props: {
+                 invitation: invitation_props(@invitation),
+                 project: project_with_details(@invitation.project),
+                 user_email: @invitation.email,
+                 errors: { message: "Something went wrong while creating your account. Please try again or contact support." }
+               }, 
+               status: :unprocessable_entity
       end
     rescue StandardError => e
       Rails.logger.error "Error in invitation confirmation: #{e.class.name} - #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
-      redirect_to invitation_path(@invitation.token),
-                 alert: "Something went wrong while creating your account. Please try again or contact support."
+      render inertia: "invitations/confirm", 
+             props: {
+               invitation: invitation_props(@invitation),
+               project: project_with_details(@invitation.project),
+               user_email: @invitation.email,
+               errors: { message: "Something went wrong while creating your account. Please try again or contact support." }
+             }, 
+             status: :unprocessable_entity
     end
   end
 
@@ -318,6 +368,21 @@ class InvitationsController < ApplicationController
 
     redirect_back(fallback_location: project_invitations_path(@project),
                  notice: "Invitation cancelled")
+  end
+
+  # GET /accept
+  def redirect_to_invitation
+    token = params[:token]
+    if token.present?
+      redirect_to invitation_path(token)
+    else
+      redirect_to root_path, alert: "Invalid invitation link. Please check your email for the correct link."
+    end
+  end
+
+  # GET /invitations/:token/accept
+  def redirect_accept_to_show
+    redirect_to invitation_path(params[:token])
   end
 
   private

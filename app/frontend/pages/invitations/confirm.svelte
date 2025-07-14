@@ -11,20 +11,51 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Separator } from "$lib/components/ui/separator";
-  import { CheckCircle, Mail, ArrowLeft } from "lucide-svelte";
+  import { CheckCircle, Mail, ArrowLeft } from "@lucide/svelte";
+  import { toast } from "svelte-sonner";
 
   export let invitation;
   export let project;
   export let user_email;
+  export let errors = {};
 
   let firstName = "";
   let lastName = "";
   let email = user_email || ""; // Use invitation email or empty string
   let isSubmitting = false;
   let emailError = "";
+  let firstNameError = "";
+  let lastNameError = "";
+  let generalError = "";
+
+  // Set initial errors from server
+  $: {
+    if (errors.first_name) {
+      firstNameError = Array.isArray(errors.first_name)
+        ? errors.first_name[0]
+        : errors.first_name;
+    }
+    if (errors.last_name) {
+      lastNameError = Array.isArray(errors.last_name)
+        ? errors.last_name[0]
+        : errors.last_name;
+    }
+    if (errors.email) {
+      emailError = Array.isArray(errors.email) ? errors.email[0] : errors.email;
+    }
+    if (errors.message) {
+      generalError = errors.message;
+      toast.error(errors.message);
+    }
+  }
 
   // Check if this is a link-only invitation (no email provided)
   $: isLinkOnlyInvitation = !user_email;
+
+  // Reactive form validation - only validate email on client side
+  $: formIsValid = isLinkOnlyInvitation
+    ? email.trim().length > 0 && validateEmail(email.trim())
+    : true;
 
   function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,18 +63,17 @@
   }
 
   function isFormValid() {
-    // Pure validation function - no state mutations
-    const hasFirstName = firstName.trim();
-    const hasLastName = lastName.trim();
+    const hasFirstName = firstName.trim().length > 0;
+    const hasLastName = lastName.trim().length > 0;
     const hasValidEmail = isLinkOnlyInvitation
-      ? email.trim() && validateEmail(email.trim())
+      ? email.trim().length > 0 && validateEmail(email.trim())
       : true;
 
     return hasFirstName && hasLastName && hasValidEmail;
   }
 
   function validateAndSetErrors() {
-    // Separate function for setting errors - only call from event handlers
+    // Only validate email on client side
     emailError = "";
 
     if (isLinkOnlyInvitation && email.trim() && !validateEmail(email.trim())) {
@@ -56,7 +86,7 @@
       return false;
     }
 
-    return isFormValid();
+    return true; // Always return true since we only validate email now
   }
 
   function confirmAcceptance() {
@@ -64,6 +94,10 @@
       return;
     }
 
+    // Clear previous errors
+    firstNameError = "";
+    lastNameError = "";
+    generalError = "";
     isSubmitting = true;
 
     router.post(
@@ -80,6 +114,29 @@
         onError: (errors) => {
           console.error("Error confirming invitation:", errors);
           isSubmitting = false;
+
+          // Handle validation errors
+          if (errors.first_name) {
+            firstNameError = Array.isArray(errors.first_name)
+              ? errors.first_name[0]
+              : errors.first_name;
+          }
+          if (errors.last_name) {
+            lastNameError = Array.isArray(errors.last_name)
+              ? errors.last_name[0]
+              : errors.last_name;
+          }
+          if (errors.email) {
+            emailError = Array.isArray(errors.email)
+              ? errors.email[0]
+              : errors.email;
+          }
+
+          // Handle general errors
+          if (errors.message || errors.error) {
+            generalError = errors.message || errors.error;
+            toast.error(generalError);
+          }
         },
       },
     );
@@ -127,6 +184,12 @@
         </CardDescription>
       </CardHeader>
       <CardContent class="space-y-4">
+        {#if generalError}
+          <div class="bg-red-50 border border-red-200 rounded-md p-3">
+            <p class="text-sm text-red-600">{generalError}</p>
+          </div>
+        {/if}
+
         <div class="space-y-2">
           <Label for="email">Email Address</Label>
           {#if isLinkOnlyInvitation}
@@ -170,7 +233,11 @@
               bind:value={firstName}
               placeholder="Enter your first name"
               required
+              class={firstNameError ? "border-red-500" : ""}
             />
+            {#if firstNameError}
+              <p class="text-sm text-red-600">{firstNameError}</p>
+            {/if}
           </div>
           <div class="space-y-2">
             <Label for="lastName">Last Name</Label>
@@ -180,7 +247,11 @@
               bind:value={lastName}
               placeholder="Enter your last name"
               required
+              class={lastNameError ? "border-red-500" : ""}
             />
+            {#if lastNameError}
+              <p class="text-sm text-red-600">{lastNameError}</p>
+            {/if}
           </div>
         </div>
 
@@ -203,7 +274,7 @@
             onclick={confirmAcceptance}
             onkeydown={(e) =>
               (e.key === "Enter" || e.key === " ") && confirmAcceptance}
-            disabled={isSubmitting || !isFormValid()}
+            disabled={isSubmitting || !formIsValid}
           >
             <CheckCircle class="h-4 w-4 mr-2" />
             {isSubmitting ? "Creating Account..." : "Join Project"}
