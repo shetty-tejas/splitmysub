@@ -386,8 +386,8 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
       }
     end
 
-    # Should redirect back to invitation page
-    assert_redirected_to invitation_path(invitation.token)
+    # Should return unprocessable entity for existing user
+    assert_response :unprocessable_entity
   end
 
   private

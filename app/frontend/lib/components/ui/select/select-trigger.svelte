@@ -1,6 +1,6 @@
 <script>
   import { cn } from "$lib/utils.js";
-  import { ChevronDown } from "lucide-svelte";
+  import { ChevronDown } from "@lucide/svelte";
 
   export let className = "";
 </script>

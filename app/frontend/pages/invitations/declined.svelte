@@ -7,7 +7,7 @@
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
-  import { CheckCircle, Home } from "lucide-svelte";
+  import { CheckCircle, Home } from "@lucide/svelte";
 
   export let invitation;
   export let project;

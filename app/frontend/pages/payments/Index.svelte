@@ -18,7 +18,7 @@
     XCircle,
     Clock,
     Filter,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
 
   export let payments;
 

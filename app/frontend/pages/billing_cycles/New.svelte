@@ -8,7 +8,7 @@
   import CardContent from "$lib/components/ui/card/card-content.svelte";
   import CardHeader from "$lib/components/ui/card/card-header.svelte";
   import CardTitle from "$lib/components/ui/card/card-title.svelte";
-  import { ArrowLeft, Calendar, DollarSign, Save } from "lucide-svelte";
+  import { ArrowLeft, Calendar, DollarSign, Save } from "@lucide/svelte";
   import { formatCurrency } from "$lib/billing-utils";
 
   export let project;

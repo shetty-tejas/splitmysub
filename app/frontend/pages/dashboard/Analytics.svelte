@@ -13,7 +13,7 @@
     PieChart,
     Calendar,
     Percent,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
   import { formatCurrency } from "$lib/billing-utils";
 
   export let analytics = {};

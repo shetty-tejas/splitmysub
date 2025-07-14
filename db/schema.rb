@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_26_102245) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_14_104257) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -223,6 +223,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_102245) do
     t.index ["error_id"], name: "index_solid_errors_occurrences_on_error_id"
   end
 
+  create_table "telegram_messages", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "message_type", null: false
+    t.string "telegram_message_id"
+    t.text "content"
+    t.datetime "sent_at"
+    t.string "status", default: "pending"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_type"], name: "index_telegram_messages_on_message_type"
+    t.index ["status"], name: "index_telegram_messages_on_status"
+    t.index ["telegram_message_id"], name: "index_telegram_messages_on_telegram_message_id"
+    t.index ["user_id"], name: "index_telegram_messages_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.datetime "created_at", null: false
@@ -231,8 +246,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_102245) do
     t.string "first_name"
     t.string "last_name"
     t.string "preferred_currency", default: "USD", null: false
+    t.string "telegram_user_id"
+    t.string "telegram_username"
+    t.boolean "telegram_notifications_enabled", default: true
+    t.string "telegram_verification_token"
+    t.datetime "telegram_verification_token_expires_at"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["preferred_currency"], name: "index_users_on_preferred_currency"
+    t.index ["telegram_user_id"], name: "index_users_on_telegram_user_id", unique: true
+    t.index ["telegram_verification_token"], name: "index_users_on_telegram_verification_token", unique: true
     t.check_constraint "preferred_currency IN ('USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'CNY', 'INR', 'BRL', 'MXN', 'KRW', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'PLN', 'CZK', 'HUF', 'BGN', 'RON', 'HRK', 'RUB', 'TRY', 'ZAR', 'THB', 'MYR', 'IDR', 'PHP', 'VND')", name: "users_preferred_currency_valid"
   end
 
@@ -249,4 +271,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_102245) do
   add_foreign_key "reminder_schedules", "projects"
   add_foreign_key "sessions", "users"
   add_foreign_key "solid_errors_occurrences", "solid_errors", column: "error_id"
+  add_foreign_key "telegram_messages", "users"
 end

@@ -13,7 +13,7 @@
     DollarSign,
     Calendar,
     Zap,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
   import { Link } from "@inertiajs/svelte";
   import * as Card from "$lib/components/ui/card/index.js";
   import Badge from "$lib/components/ui/badge/badge.svelte";

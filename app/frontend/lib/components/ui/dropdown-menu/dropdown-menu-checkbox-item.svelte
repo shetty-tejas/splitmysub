@@ -1,6 +1,6 @@
 <script>
   import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
-  import { Check, Minus } from "lucide-svelte";
+  import { Check, Minus } from "@lucide/svelte";
   import { cn } from "$lib/utils.js";
   let {
     ref = $bindable(null),
