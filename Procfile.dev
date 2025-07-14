@@ -1,4 +1,4 @@
 
 vite: bin/vite dev
 web: bin/rails s
-telegram: ruby telegram_polling.rb
+telegram: ruby lib/telegram_polling.rb

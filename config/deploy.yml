@@ -141,7 +141,7 @@ accessories:
   telegram:
     image: ashwinmk2016/splitmysub
     host: 146.190.118.95
-    cmd: ruby telegram_polling.rb
+    cmd: ruby lib/telegram_polling.rb
     env:
       secret:
         - RAILS_MASTER_KEY

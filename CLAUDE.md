@@ -36,7 +36,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bin/rails "reminders:send_daily"` - Send daily payment reminders
 
 ### Telegram Bot
-- `ruby telegram_polling.rb` - Start Telegram bot polling (runs automatically with `bin/dev`)
+- `ruby lib/telegram_polling.rb` - Start Telegram bot polling (runs automatically with `bin/dev`)
 - Bot responds to commands: `/start`, `/help`, `/status`, `/payments`, `/pay`, `/settings`
 
 ## Application Architecture
@@ -90,7 +90,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Services**: `TelegramBotService` for API interactions, `TelegramNotificationService` for message formatting
 - **Jobs**: `TelegramNotificationJob` for asynchronous delivery
 - **Models**: `TelegramMessage` for delivery tracking and status
-- **Polling**: Continuous webhook processing via `telegram_polling.rb`
+- **Polling**: Continuous webhook processing via `lib/telegram_polling.rb`
 
 ### Background Jobs
 - **Queue**: SolidQueue for job processing
