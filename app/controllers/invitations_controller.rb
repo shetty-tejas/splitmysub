@@ -225,13 +225,13 @@ class InvitationsController < ApplicationController
 
     # Check if user already exists
     if User.exists?(email_address: user_email)
-      render inertia: "invitations/confirm", 
+      render inertia: "invitations/confirm",
              props: {
                invitation: invitation_props(@invitation),
                project: project_with_details(@invitation.project),
                user_email: @invitation.email,
-               errors: { email: ["An account with this email already exists. Please sign in instead."] }
-             }, 
+               errors: { email: [ "An account with this email already exists. Please sign in instead." ] }
+             },
              status: :unprocessable_entity
       return
     end
@@ -240,13 +240,13 @@ class InvitationsController < ApplicationController
     begin
       # Double-check if user exists right before creation to handle race conditions
       if User.exists?(email_address: user_email)
-        render inertia: "invitations/confirm", 
+        render inertia: "invitations/confirm",
                props: {
                  invitation: invitation_props(@invitation),
                  project: project_with_details(@invitation.project),
                  user_email: @invitation.email,
-                 errors: { email: ["An account with this email already exists. Please sign in instead."] }
-               }, 
+                 errors: { email: [ "An account with this email already exists. Please sign in instead." ] }
+               },
                status: :unprocessable_entity
         return
       end
@@ -270,68 +270,68 @@ class InvitationsController < ApplicationController
         else
           Rails.logger.error "Failed to accept invitation for user: #{user.id}"
           user.destroy # Clean up if invitation acceptance fails
-          render inertia: "invitations/confirm", 
+          render inertia: "invitations/confirm",
                  props: {
                    invitation: invitation_props(@invitation),
                    project: project_with_details(@invitation.project),
                    user_email: @invitation.email,
                    errors: { message: "Unable to accept invitation. Please try again." }
-                 }, 
+                 },
                  status: :unprocessable_entity
         end
       else
         # Return validation errors
         Rails.logger.error "User validation failed: #{user.errors.full_messages}"
-        render inertia: "invitations/confirm", 
+        render inertia: "invitations/confirm",
                props: {
                  invitation: invitation_props(@invitation),
                  project: project_with_details(@invitation.project),
                  user_email: @invitation.email,
                  errors: user.errors.as_json
-               }, 
+               },
                status: :unprocessable_entity
       end
     rescue ActiveRecord::RecordNotUnique => e
       Rails.logger.error "RecordNotUnique error: #{e.message}"
-      render inertia: "invitations/confirm", 
+      render inertia: "invitations/confirm",
              props: {
                invitation: invitation_props(@invitation),
                project: project_with_details(@invitation.project),
                user_email: @invitation.email,
-               errors: { email: ["An account with this email already exists. Please contact the project owner."] }
-             }, 
+               errors: { email: [ "An account with this email already exists. Please contact the project owner." ] }
+             },
              status: :unprocessable_entity
     rescue ActiveRecord::StatementInvalid => e
       Rails.logger.error "StatementInvalid error: #{e.message}"
       if e.message.include?("UNIQUE constraint failed") || e.message.include?("duplicate key")
-        render inertia: "invitations/confirm", 
+        render inertia: "invitations/confirm",
                props: {
                  invitation: invitation_props(@invitation),
                  project: project_with_details(@invitation.project),
                  user_email: @invitation.email,
-                 errors: { email: ["An account with this email already exists. Please contact the project owner."] }
-               }, 
+                 errors: { email: [ "An account with this email already exists. Please contact the project owner." ] }
+               },
                status: :unprocessable_entity
       else
-        render inertia: "invitations/confirm", 
+        render inertia: "invitations/confirm",
                props: {
                  invitation: invitation_props(@invitation),
                  project: project_with_details(@invitation.project),
                  user_email: @invitation.email,
                  errors: { message: "Something went wrong while creating your account. Please try again or contact support." }
-               }, 
+               },
                status: :unprocessable_entity
       end
     rescue StandardError => e
       Rails.logger.error "Error in invitation confirmation: #{e.class.name} - #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
-      render inertia: "invitations/confirm", 
+      render inertia: "invitations/confirm",
              props: {
                invitation: invitation_props(@invitation),
                project: project_with_details(@invitation.project),
                user_email: @invitation.email,
                errors: { message: "Something went wrong while creating your account. Please try again or contact support." }
-             }, 
+             },
              status: :unprocessable_entity
     end
   end
