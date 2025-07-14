@@ -15,6 +15,13 @@ class PaymentConfirmationJob < ApplicationJob
       payment.user.id
     ).deliver_now
 
+    # Send Telegram notification if user has it enabled
+    TelegramNotificationJob.perform_later(
+      notification_type: "payment_confirmation",
+      billing_cycle_id: payment.billing_cycle.id,
+      user_id: payment.user.id
+    )
+
     # Log the successful delivery
     Rails.logger.info "Sent payment confirmation email to #{payment.user.email_address} for project #{payment.billing_cycle.project.name}"
 

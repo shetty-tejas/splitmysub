@@ -23,7 +23,7 @@
     DollarSign,
     FileText,
     Settings,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
 
   export let project;
   export let currency_options = [];

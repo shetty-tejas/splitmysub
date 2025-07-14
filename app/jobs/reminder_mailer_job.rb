@@ -19,6 +19,14 @@ class ReminderMailerJob < ApplicationJob
       user_id
     ).deliver_now
 
+    # Send Telegram notification if user has it enabled
+    TelegramNotificationJob.perform_later(
+      notification_type: "payment_reminder",
+      billing_cycle_id: billing_cycle_id,
+      reminder_schedule_id: reminder_schedule_id,
+      user_id: user_id
+    )
+
     # Log the successful delivery
     Rails.logger.info "Sent #{reminder_schedule.escalation_description} reminder to #{user.email_address} for project #{billing_cycle.project.name}"
 

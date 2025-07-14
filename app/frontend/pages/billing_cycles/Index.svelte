@@ -18,7 +18,7 @@
     CheckCircle,
     Clock,
     ArrowLeft,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
   import {
     formatCurrency,
     formatDate,

@@ -12,7 +12,7 @@
     DialogTrigger,
     DialogClose,
   } from "$lib/components/ui/dialog";
-  import { UserPlus, Mail, Copy, Check } from "lucide-svelte";
+  import { UserPlus, Mail, Copy, Check } from "@lucide/svelte";
 
   export let project;
 

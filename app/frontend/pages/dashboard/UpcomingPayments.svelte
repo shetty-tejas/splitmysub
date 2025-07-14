@@ -13,7 +13,7 @@
     Users,
     Eye,
     CreditCard,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
   import { formatCurrency, formatDate } from "$lib/billing-utils";
 
   export let upcoming_cycles = [];

@@ -18,7 +18,7 @@
     XCircle,
     Trash2,
     UserPlus,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
   import InviteForm from "../../components/invitations/InviteForm.svelte";
 
   export let project;

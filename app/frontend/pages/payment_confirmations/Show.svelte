@@ -25,7 +25,7 @@
     DollarSign,
     Calendar,
     Eye,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
 
   import { formatCurrency } from "$lib/billing-utils";
 

@@ -25,7 +25,7 @@
     Clock,
     UserPlus,
     Settings,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
   import InviteForm from "../../components/invitations/InviteForm.svelte";
   import {
     formatCurrency,

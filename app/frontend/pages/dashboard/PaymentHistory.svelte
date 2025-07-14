@@ -25,7 +25,7 @@
     Eye,
     ChevronLeft,
     ChevronRight,
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
   import { formatCurrency, formatDate } from "$lib/billing-utils";
 
   export let payments = [];

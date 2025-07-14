@@ -20,6 +20,12 @@ Rails.application.routes.draw do
   # Profile routes
   resource :profile, only: [ :show, :edit, :update ], controller: "profiles"
 
+  # Profile Telegram routes
+  post "profile/telegram/generate_token", to: "profiles#generate_telegram_token"
+  get "profile/telegram/check_status", to: "profiles#check_telegram_status"
+  delete "profile/telegram/unlink", to: "profiles#unlink_telegram"
+  patch "profile/telegram/toggle_notifications", to: "profiles#toggle_telegram_notifications"
+
   # Dashboard routes
   get "dashboard" => "dashboard#index", as: :dashboard
   get "dashboard/payment_history" => "dashboard#payment_history", as: :dashboard_payment_history
@@ -102,6 +108,9 @@ Rails.application.routes.draw do
 
   # CSP violation reporting
   post "csp-violation-report-endpoint" => "csp_reports#create"
+
+  # Telegram webhook
+  post "telegram/webhook" => "telegram#webhook"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

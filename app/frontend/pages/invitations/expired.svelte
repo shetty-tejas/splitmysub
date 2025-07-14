@@ -9,7 +9,7 @@
     CardTitle,
   } from "$lib/components/ui/card";
   import { Button } from "$lib/components/ui/button";
-  import { AlertTriangle, Clock, Home } from "lucide-svelte";
+  import { AlertTriangle, Clock, Home } from "@lucide/svelte";
 
   export const invitation = null;
   export const project = null;

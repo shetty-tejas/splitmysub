@@ -15,7 +15,7 @@
     getCurrencySymbol,
     SUPPORTED_CURRENCIES,
   } from "$lib/currency-utils.js";
-  import { Edit, User, Mail, Calendar, DollarSign } from "lucide-svelte";
+  import { Edit, User, Mail, Calendar, DollarSign, MessageCircle } from "@lucide/svelte";
 
   export let user;
 
@@ -136,6 +136,57 @@
               </dt>
               <dd class="text-sm font-medium">{formatDate(user.created_at)}</dd>
             </div>
+          </div>
+
+          <Separator />
+
+          <!-- Telegram Integration -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold flex items-center gap-2">
+              <MessageCircle class="h-5 w-5" />
+              Telegram Integration
+            </h3>
+
+            {#if user.telegram_user_id}
+              <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium text-green-800">
+                      ✅ Account Linked
+                    </span>
+                  </div>
+                  <div class="space-y-1">
+                    <dt class="text-sm font-medium text-green-700">
+                      Connected Account
+                    </dt>
+                    <dd class="text-sm text-green-600">
+                      @{user.telegram_username || "Unknown"}
+                    </dd>
+                  </div>
+                  <div class="space-y-1">
+                    <dt class="text-sm font-medium text-green-700">
+                      Notifications
+                    </dt>
+                    <dd class="text-sm text-green-600">
+                      {user.telegram_notifications_enabled ? "✅ Enabled" : "🔕 Disabled"}
+                    </dd>
+                  </div>
+                </div>
+              </div>
+            {:else}
+              <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium text-gray-600">
+                      📱 Not Connected
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-500">
+                    Link your Telegram account to receive payment reminders and manage subscriptions through our bot.
+                  </p>
+                </div>
+              </div>
+            {/if}
           </div>
 
           <!-- Actions -->

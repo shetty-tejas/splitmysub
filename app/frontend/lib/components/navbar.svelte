@@ -2,7 +2,7 @@
   // grab page props from inertia
   import { page, Link, router } from "@inertiajs/svelte";
   import Logo from "$lib/components/logo.svelte";
-  import { Menu, LogOut, BarChart3, X, User } from "lucide-svelte";
+  import { Menu, LogOut, BarChart3, X, User } from "@lucide/svelte";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import { Separator } from "$lib/components/ui/separator/index.js";

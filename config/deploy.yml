@@ -84,8 +84,10 @@ aliases:
   logs: app logs -f
   dbc: app exec --interactive --reuse "bin/rails dbconsole"
   runner: app exec --interactive --reuse "bin/rails runner"
-  seed: app exec --reuse "bin/rails db:seed"
+  seed: app exec --reuse "bin/rails db:migrate"
   migrate: app exec --reuse "bin/rails db:migrate"
+  telegram-logs: accessory logs telegram -f
+  telegram-restart: accessory restart telegram
 
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
@@ -135,26 +137,16 @@ logging:
     max-file: "3"
 
 # Use accessory services (secrets come from .kamal/secrets).
-# Uncomment and configure these if you need external services
-# accessories:
-#   db:
-#     image: mysql:8.0
-#     host: 192.168.0.2
-#     # Change to 3306 to expose port to the world instead of just local network.
-#     port: "127.0.0.1:3306:3306"
-#     env:
-#       clear:
-#         MYSQL_ROOT_HOST: '%'
-#       secret:
-#         - MYSQL_ROOT_PASSWORD
-#     files:
-#       - config/mysql/production.cnf:/etc/mysql/my.cnf
-#       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
-#     directories:
-#       - data:/var/lib/mysql
-#   redis:
-#     image: redis:7.0
-#     host: 192.168.0.2
-#     port: 6379
-#     directories:
-#       - data:/data
+accessories:
+  telegram:
+    image: ashwinmk2016/splitmysub
+    host: 146.190.118.95
+    cmd: ruby telegram_polling.rb
+    env:
+      secret:
+        - RAILS_MASTER_KEY
+      clear:
+        RAILS_ENV: production
+    volumes:
+      - "splitmysub_storage:/rails/storage"
+      - "splitmysub_db:/rails/db"

@@ -11,7 +11,7 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Separator } from "$lib/components/ui/separator";
-  import { CheckCircle, Mail, ArrowLeft } from "lucide-svelte";
+  import { CheckCircle, Mail, ArrowLeft } from "@lucide/svelte";
 
   export let invitation;
   export let project;
