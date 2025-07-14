@@ -29,6 +29,12 @@ class TelegramNotificationService
     end
 
     success
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error "TelegramNotificationService error: #{e.message}"
+    false
+  rescue => e
+    Rails.logger.error "TelegramNotificationService error: #{e.message}"
+    false
   end
 
   def send_billing_cycle_notification(billing_cycle_id, user_id)
@@ -52,6 +58,12 @@ class TelegramNotificationService
     end
 
     success
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error "TelegramNotificationService error: #{e.message}"
+    false
+  rescue => e
+    Rails.logger.error "TelegramNotificationService error: #{e.message}"
+    false
   end
 
   def send_payment_confirmation(billing_cycle_id, user_id)
@@ -75,6 +87,12 @@ class TelegramNotificationService
     end
 
     success
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error "TelegramNotificationService error: #{e.message}"
+    false
+  rescue => e
+    Rails.logger.error "TelegramNotificationService error: #{e.message}"
+    false
   end
 
   def send_account_link_verification(user_id, token)
@@ -159,12 +177,18 @@ class TelegramNotificationService
     amount = user.format_currency(project.cost_per_member, project.currency)
     payment = billing_cycle.payments.where(user: user).last
 
+    confirmation_text = if payment&.confirmation_date
+      "Confirmed: #{payment.confirmation_date.strftime('%B %d, %Y')}"
+    else
+      "Payment confirmed!"
+    end
+
     <<~MESSAGE
       ✅ <b>Payment confirmed!</b>
 
       <b>#{project.name}</b>
       Amount: #{amount}
-      Confirmed: #{payment.confirmed_at.strftime('%B %d, %Y at %I:%M %p')}
+      #{confirmation_text}
 
       Thank you for your payment!
 

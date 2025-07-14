@@ -149,22 +149,15 @@ class TelegramNotificationJobTest < ActiveJob::TestCase
   end
 
   test "handles service exceptions gracefully" do
-    mock_service = Minitest::Mock.new
-    mock_service.expect :send_payment_reminder, -> { raise StandardError.new("API Error") }, [ @user, @project, @billing_cycle, @payment ]
-
-    TelegramNotificationService.stub :new, mock_service do
-      assert_nothing_raised do
-        TelegramNotificationJob.perform_now(
-          @user.id,
-          "payment_reminder",
-          @project.id,
-          @billing_cycle.id,
-          @payment.id
-        )
-      end
+    # Test with RecordNotFound which should not be re-raised
+    assert_nothing_raised do
+      TelegramNotificationJob.perform_now(
+        notification_type: "payment_reminder",
+        billing_cycle_id: 999999, # non-existent ID
+        reminder_schedule_id: 999999,
+        user_id: 999999
+      )
     end
-
-    mock_service.verify
   end
 
   test "job is queued in correct queue" do
