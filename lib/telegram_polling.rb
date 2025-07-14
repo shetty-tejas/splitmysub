@@ -12,9 +12,15 @@ Rails.logger.info "Starting Telegram bot polling..."
 
 token = Rails.application.credentials.telegram_bot_token
 if token.blank?
-  puts "ERROR: Telegram bot token not found in credentials"
-  Rails.logger.error "Telegram bot token not found in credentials"
-  exit 1
+  if Rails.env.test?
+    puts "Telegram bot token not found in credentials - skipping in test environment"
+    Rails.logger.info "Telegram bot token not found in credentials - skipping in test environment"
+    exit 0
+  else
+    puts "ERROR: Telegram bot token not found in credentials"
+    Rails.logger.error "Telegram bot token not found in credentials"
+    exit 1
+  end
 end
 
 puts "Bot: @SplitMySubBot"
