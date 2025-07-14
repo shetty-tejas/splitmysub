@@ -4,7 +4,7 @@ require "bundler/setup"
 require "telegram/bot"
 
 # Load Rails environment
-require_relative "config/environment"
+require_relative "../config/environment"
 
 # Setup logging
 puts "Starting Telegram bot polling..."
