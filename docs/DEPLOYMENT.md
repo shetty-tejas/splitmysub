@@ -10,7 +10,7 @@ This guide covers deploying SplitMySub using [Kamal](https://kamal-deploy.org/),
 - SSH access with sudo privileges
 
 ### 2. Local Requirements
-- Ruby 3.4+
+- Ruby 3.4.4
 - Node.js 20+
 - Docker (for local testing)
 - Git
@@ -500,7 +500,7 @@ bin/kamal app exec --reuse "bin/rails runner 'puts ActiveRecord::Base.connection
 3. **Regular updates:** Keep Docker images and dependencies updated
 4. **Firewall configuration:** Only expose necessary ports (80, 443, 22)
 5. **SSH key authentication:** Disable password authentication
-6. **Rate limiting:** Built-in via Rack::Attack (configured automatically)
+6. **Rate limiting:** Built-in via Rails 8 native rate limiting (configured automatically)
 7. **Security headers:** Automatically configured (HSTS, CSP, etc.)
 
 ## Performance Optimization

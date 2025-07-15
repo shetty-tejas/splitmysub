@@ -5,9 +5,10 @@
 The reminder system automatically sends payment reminders to project members based on configurable schedules and escalation levels. It includes:
 
 - Automated email reminders with escalation levels
+- Telegram notifications for users with linked accounts
 - Unsubscribe functionality for legal compliance
 - Payment confirmation emails
-- Background job processing with Solid Queue
+- Background job processing with SolidQueue
 - Time zone awareness
 - Bounce handling and delivery tracking
 
@@ -18,12 +19,14 @@ The reminder system automatically sends payment reminders to project members bas
 - `ReminderMailer` - Handles email generation and sending
 - `ReminderMailerJob` - Background job for sending individual reminders
 - `DailyReminderProcessorJob` - Daily job to process all reminders
+- `TelegramNotificationJob` - Sends Telegram notifications for reminders
 - `PaymentConfirmationJob` - Sends payment confirmation emails
 
 ### 2. Models
 - `ReminderSchedule` - Configures reminder timing and escalation levels
 - Enhanced `Payment` model with confirmation email callbacks
-- Enhanced `User` model with unsubscribe preferences
+- Enhanced `User` model with unsubscribe preferences and Telegram integration
+- `TelegramMessage` - Tracks Telegram notification delivery
 
 ### 3. Controllers
 - `UnsubscribeController` - Handles unsubscribe functionality
@@ -39,11 +42,11 @@ rails db:migrate
 ```
 
 ### 2. Background Job Processing
-The system uses Solid Queue (already configured in Gemfile). Start the background job processor:
+The system uses SolidQueue (already configured in Gemfile). Background jobs are processed automatically in production via the `SOLID_QUEUE_IN_PUMA=true` environment variable. For development:
 
 ```bash
-# In production, this should be managed by your process manager (systemd, etc.)
-rails solid_queue:start
+# Jobs are processed in-process with Puma in development
+# No additional setup needed
 ```
 
 ### 3. Daily Reminder Processing
@@ -51,7 +54,7 @@ Set up a cron job to run daily reminder processing. Add to your crontab:
 
 ```bash
 # Run daily at 9:00 AM
-0 9 * * * cd /path/to/your/app && rails reminders:process
+0 9 * * * cd /path/to/your/app && bin/rails "reminders:send_daily"
 ```
 
 Or use whenever gem for more sophisticated scheduling:
@@ -59,25 +62,26 @@ Or use whenever gem for more sophisticated scheduling:
 ```ruby
 # In config/schedule.rb (if using whenever gem)
 every 1.day, at: '9:00 am' do
-  rake 'reminders:process'
+  rake 'reminders:send_daily'
 end
 ```
 
-### 4. Email Configuration
-Ensure your email settings are configured in `config/environments/production.rb`:
+### 4. Email and Telegram Configuration
+Ensure your email settings are configured. The app supports Resend API (recommended) or SMTP:
 
-```ruby
-config.action_mailer.smtp_settings = {
-  address: 'smtp.gmail.com',
-  port: 587,
-  domain: 'yourdomain.com',
-  user_name: ENV['GMAIL_USERNAME'],
-  password: ENV['GMAIL_PASSWORD'],
-  authentication: 'plain',
-  enable_starttls_auto: true
-}
+```bash
+# Environment variables for email
+RESEND_API_KEY=your-resend-api-key
+# OR
+SMTP_USERNAME=your-smtp-username
+SMTP_PASSWORD=your-smtp-password
+```
 
-config.action_mailer.default_url_options = { host: 'yourdomain.com' }
+For Telegram notifications, configure the bot token in Rails credentials:
+
+```yaml
+# config/credentials.yml.enc
+telegram_bot_token: your-telegram-bot-token
 ```
 
 ## Usage
@@ -120,13 +124,13 @@ You can manually trigger reminder processing:
 
 ```bash
 # Process all reminders
-rake reminders:process
+bin/rails "reminders:send_daily"
 
-# Test reminders for a specific project
-rake reminders:test[PROJECT_ID]
+# Test email configuration
+bin/rails "email:test[your-email@example.com]"
 
-# View reminder statistics
-rake reminders:stats
+# Clean up expired invitations
+bin/rails "invitations:cleanup"
 ```
 
 ### 4. Preview Reminders
@@ -152,15 +156,17 @@ tail -f log/production.log | grep -i reminder
 ```
 
 ### 2. Job Queue Monitoring
-Monitor Solid Queue for failed jobs:
+Monitor SolidQueue for failed jobs:
 
 ```bash
 rails console
 SolidQueue::Job.failed.count
 ```
 
-### 3. Email Delivery Monitoring
-Monitor email delivery rates and bounces through your email provider's dashboard.
+### 3. Email and Telegram Delivery Monitoring
+- Monitor email delivery rates and bounces through your email provider's dashboard
+- Check Telegram message delivery status in the `telegram_messages` table
+- Monitor Telegram bot polling status in application logs
 
 ### 4. Database Cleanup
 Periodically clean up old reminder logs and expired tokens (if implemented).
@@ -187,11 +193,11 @@ Periodically clean up old reminder logs and expired tokens (if implemented).
 Test the reminder system in development:
 
 ```bash
-# Start letter opener for email preview
-rails server
+# Start development server with letter opener for email preview
+bin/dev
 
 # In another terminal, trigger reminders
-rake reminders:process
+bin/rails "reminders:send_daily"
 
 # View emails at http://localhost:3000/letter_opener
 ```
@@ -219,4 +225,6 @@ Potential improvements to consider:
 3. **Advanced scheduling**: Support for custom reminder schedules
 4. **Analytics**: Track reminder effectiveness and payment rates
 5. **A/B testing**: Test different reminder strategies
-6. **Integration**: Connect with payment processors for automatic confirmation 
+6. **Integration**: Connect with payment processors for automatic confirmation
+7. **Enhanced Telegram**: Rich media support, interactive buttons
+8. **Reminder logs**: Database tracking of sent reminders for better monitoring 

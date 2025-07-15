@@ -82,6 +82,7 @@ Rails.application.routes.draw do
 
   # Invitation acceptance routes (public, no authentication required)
   get "invitations/:token/accept" => "invitations#redirect_accept_to_show"
+  get "invitations/:token/confirm" => "invitations#redirect_accept_to_show"
   get "invitations/:token" => "invitations#show", as: :invitation
   post "invitations/:token/accept" => "invitations#accept", as: :accept_invitation
   post "invitations/:token/confirm" => "invitations#confirm", as: :confirm_invitation

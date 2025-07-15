@@ -29,6 +29,7 @@ erDiagram
     User ||--o{ Payment : makes
     User ||--o{ MagicLink : generates
     User ||--o{ Session : maintains
+    User ||--o{ TelegramMessage : receives
     
     Project ||--o{ ProjectMembership : contains
     Project ||--o{ BillingCycle : generates
@@ -46,6 +47,9 @@ erDiagram
     
     Invitation }o--|| Project : belongs_to
     Invitation }o--|| User : invited_by
+    
+    ReminderSchedule }o--|| Project : belongs_to
+    TelegramMessage }o--|| User : belongs_to
 ```
 
 #### **Entity Relationships**
@@ -103,23 +107,33 @@ SplitMySub implements service objects for complex business logic, keeping contro
 
 #### **Core Services**
 
-1. **ErrorNotificationService**
-   ```ruby
-   # Centralized error handling and notification
-   ErrorNotificationService.notify_critical_error(exception, context)
-   ```
+1. **Core Business Services**
+   - `ReminderService` - Processes payment reminders and escalation
+   - `BillingCycleGeneratorService` - Generates billing cycles automatically
+   - `BillingCycleManager` - Manages billing cycle lifecycle
+   - `TelegramBotService` - Handles Telegram bot interactions
+   - `ErrorNotificationService` - Centralized error handling and notification
 
-2. **Email Services**
+2. **Email and Notification Services**
    - `MagicLinkMailer` - Authentication emails
+   - `ReminderMailer` - Payment reminder emails with escalation levels
    - `PaymentConfirmationJob` - Asynchronous payment notifications
-   - `ReminderMailer` - Subscription reminders
+   - `ReminderMailerJob` - Background job for sending reminder emails
+   - `TelegramNotificationJob` - Telegram notifications
+   - `TelegramNotificationService` - Formats and sends Telegram messages
 
 3. **Background Jobs**
    ```ruby
    # Asynchronous payment processing
    PaymentConfirmationJob.perform_later(payment_id)
    
-   # Scheduled reminder generation
+   # Payment reminder emails
+   ReminderMailerJob.perform_later(billing_cycle_id: cycle.id, user_id: user.id)
+   
+   # Telegram notifications
+   TelegramNotificationJob.perform_later(notification_params)
+   
+   # Billing cycle generation
    BillingCycleGeneratorJob.perform_later
    ```
 
@@ -265,8 +279,10 @@ magic_link.use! if magic_link&.valid_for_use?
 #### **Security Features**
 - **Token Expiration**: 30-minute expiry for magic links
 - **Single Use**: Tokens invalidated after use
-- **Rate Limiting**: 10 requests per 3 minutes for magic link generation
+- **Rate Limiting**: Hybrid approach using both Rack::Attack (middleware-level) and Rails 8 native rate limiting (controller-specific)
 - **Secure Generation**: `SecureRandom.urlsafe_base64(32)`
+- **Email Verification**: Magic link verification for invitation security
+- **Audit Logging**: Security event logging for invitation and authentication flows
 
 ### **Authorization System**
 
@@ -423,12 +439,16 @@ scope :with_recent_payments, -> {
 
 ### **Background Processing**
 
-**Sidekiq** for asynchronous job processing:
+**SolidQueue** for asynchronous job processing:
 
 ```ruby
 # config/schedule.rb
 every 1.day, at: '6:00 am' do
   runner "BillingCycleGeneratorJob.perform_later"
+end
+
+every 1.day, at: '9:00 am' do
+  runner "ReminderService.process_all_reminders"
 end
 
 every 1.hour do
