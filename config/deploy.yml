@@ -86,8 +86,6 @@ aliases:
   runner: app exec --interactive --reuse "bin/rails runner"
   seed: app exec --reuse "bin/rails db:migrate"
   migrate: app exec --reuse "bin/rails db:migrate"
-  telegram-logs: accessory logs telegram -f
-  telegram-restart: accessory restart telegram
 
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
@@ -137,16 +135,16 @@ logging:
     max-file: "3"
 
 # Use accessory services (secrets come from .kamal/secrets).
-accessories:
-  telegram:
-    image: ashwinmk2016/splitmysub
-    host: 146.190.118.95
-    cmd: ruby lib/telegram_polling.rb
-    env:
-      secret:
-        - RAILS_MASTER_KEY
-      clear:
-        RAILS_ENV: production
-    volumes:
-      - "splitmysub_storage:/rails/storage"
-      - "splitmysub_db:/rails/db"
+# accessories:
+#   telegram:
+#     image: ashwinmk2016/splitmysub
+#     host: 146.190.118.95
+#     cmd: ruby lib/telegram_polling.rb
+#     env:
+#       secret:
+#         - RAILS_MASTER_KEY
+#       clear:
+#         RAILS_ENV: production
+#     volumes:
+#       - "splitmysub_storage:/rails/storage"
+#       - "splitmysub_db:/rails/db"
