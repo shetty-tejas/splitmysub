@@ -42,9 +42,10 @@ SplitMySub is a comprehensive subscription cost-sharing platform that eliminates
 
 ### 👥 **User & Invitation System**
 - **Magic Link Authentication** - No passwords required
-- Email-based user invitations with expiration
+- Email-based user invitations with email verification
 - Role-based access (Project Creator vs Member)
 - Seamless onboarding for new users
+- Secure invitation flow with audit logging
 
 ### 💳 **Payment Tracking**
 - Upload payment evidence (receipts, screenshots, transaction IDs)
@@ -54,6 +55,7 @@ SplitMySub is a comprehensive subscription cost-sharing platform that eliminates
 
 ### 🔔 **Smart Reminders**
 - Automated email reminders before payment due dates
+- Telegram notifications for users with linked accounts
 - Configurable reminder timing (default: 7 days before)
 - Escalating reminder sequence (gentle → follow-up → final notice)
 - Customizable reminder templates
@@ -67,8 +69,10 @@ SplitMySub is a comprehensive subscription cost-sharing platform that eliminates
 ### 🔒 **Security & Privacy**
 - Secure file handling for payment evidence
 - CSRF protection and security headers
-- Rate limiting for sensitive endpoints
+- Rails 8 native rate limiting for sensitive endpoints
 - Admin-only access controls
+- Email verification for invitations
+- Audit logging for security events
 
 ## 📸 Screenshots
 
@@ -114,7 +118,7 @@ SplitMySub is a comprehensive subscription cost-sharing platform that eliminates
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Ruby 3.4+
+- Ruby 3.4.4
 - Node.js 20+
 - Git
 
@@ -209,16 +213,17 @@ ADMIN_PASSWORD=your-admin-password
 
 ### For Project Members
 - **Payment Tracking**: Upload receipts and track approval status
-- **Reminder System**: Receive automated payment reminders
+- **Reminder System**: Receive automated payment reminders via email and Telegram
 - **Multi-Project**: Participate in multiple subscription projects
 
 ## 🏗 Architecture
 
 ### Key Technologies
-- **Rails 8**: Latest Rails with modern defaults
+- **Rails 8**: Latest Rails with modern defaults and native rate limiting
 - **Svelte 5**: Reactive frontend framework
 - **Inertia.js**: SPA experience without API complexity
 - **SQLite**: Embedded database (zero configuration required)
+- **SolidQueue**: Background job processing
 - **Tailwind CSS**: Utility-first CSS framework
 - **Kamal**: Modern deployment tool
 
@@ -288,6 +293,9 @@ For complete self-hosting instructions including Docker setup, manual installati
 - **[Self-Hosting Guide](docs/SELF_HOSTING.md)** - Complete self-hosting instructions
 - **[System Architecture](docs/SYSTEM_ARCHITECTURE.md)** - Technical architecture overview
 - **[Testing Scenarios](docs/TESTING_SCENARIOS.md)** - Manual testing procedures
+- **[Authentication Flow](docs/AUTHENTICATION_FLOW_DOCUMENTATION.md)** - Magic link authentication system
+- **[Invitation Flow](docs/INVITATION_FLOW_DOCUMENTATION.md)** - Secure invitation system
+- **[Reminder System](docs/REMINDER_SYSTEM_SETUP.md)** - Email and Telegram reminders
 
 ## 🔧 Development
 
