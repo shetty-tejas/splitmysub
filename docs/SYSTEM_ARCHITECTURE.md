@@ -279,7 +279,7 @@ magic_link.use! if magic_link&.valid_for_use?
 #### **Security Features**
 - **Token Expiration**: 30-minute expiry for magic links
 - **Single Use**: Tokens invalidated after use
-- **Rate Limiting**: Rails 8 native rate limiting (10 requests per 3 minutes for magic link generation)
+- **Rate Limiting**: Hybrid approach using both Rack::Attack (middleware-level) and Rails 8 native rate limiting (controller-specific)
 - **Secure Generation**: `SecureRandom.urlsafe_base64(32)`
 - **Email Verification**: Magic link verification for invitation security
 - **Audit Logging**: Security event logging for invitation and authentication flows
