@@ -110,7 +110,7 @@ builder:
   # Build arguments for multi-stage builds
   args:
     RUBY_VERSION: 3.4.4
-    NODE_VERSION: 20.18.1
+    NODE_VERSION: 22.12.0
 
   # # Build image via remote server (useful for faster amd64 builds on arm64 computers)
   # remote: ssh://docker@docker-builder-server

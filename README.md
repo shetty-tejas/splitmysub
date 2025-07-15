@@ -119,7 +119,7 @@ SplitMySub is a comprehensive subscription cost-sharing platform that eliminates
 
 ### Prerequisites
 - Ruby 3.4.4
-- Node.js 20+
+- Node.js 22.12
 - Git
 
 ### 1. Clone and Install
