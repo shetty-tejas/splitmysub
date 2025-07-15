@@ -390,6 +390,90 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "link only invitation requires email verification" do
+    sign_in @owner
+
+    # Create link-only invitation (no email)
+    assert_difference "Invitation.count", 1 do
+      post project_invitations_path(@project), params: {
+        invitation: {
+          # Don't include email parameter at all for link-only invitation
+          role: "member"
+        }
+      }, headers: { "Accept" => "application/json" }
+    end
+
+    assert_response :success
+    invitation = Invitation.last
+    assert_nil invitation.email
+    sign_out
+
+    # Visit invitation link
+    get invitation_path(invitation.token)
+    assert_response :success
+
+    # Accept invitation
+    post accept_invitation_path(invitation.token)
+    assert_response :success
+
+    # Confirm with new user email - should create user and send magic link
+    new_email = "linkonly@example.com"
+
+    assert_difference "User.count", 1 do
+      assert_difference "MagicLink.count", 1 do
+        post confirm_invitation_path(invitation.token), params: {
+          email: new_email,
+          first_name: "Link",
+          last_name: "User"
+        }
+      end
+    end
+
+    # Should render email verification page
+    assert_response :success
+
+    # User should be created but invitation not yet accepted
+    user = User.find_by(email_address: new_email)
+    assert_not_nil user
+    assert_equal "Link", user.first_name
+    assert_equal "User", user.last_name
+
+    # Invitation should still be pending
+    invitation.reload
+    assert_equal "pending", invitation.status
+
+    # Project membership should not exist yet
+    assert_no_difference "@project.project_memberships.count" do
+      @project.project_memberships.find_by(user: user)
+    end
+
+    # Magic link should exist and be valid
+    magic_link = MagicLink.find_by(user: user)
+    assert_not_nil magic_link
+    assert magic_link.active?
+
+    # Verify email with magic link
+    assert_difference "@project.project_memberships.count", 1 do
+      get verify_magic_link_path(token: magic_link.token)
+    end
+
+    # Should redirect to project page
+    assert_redirected_to project_path(@project)
+
+    # User should be logged in (session cookie should be set)
+    assert_not_nil cookies[:session_id]
+
+    # Invitation should be accepted and expired
+    invitation.reload
+    assert_equal "accepted", invitation.status
+    assert invitation.expires_at <= Time.current
+
+    # Project membership should exist
+    membership = @project.project_memberships.find_by(user: user)
+    assert_not_nil membership
+    assert_equal "member", membership.role
+  end
+
   private
 
   def sign_in(user)

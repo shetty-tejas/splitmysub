@@ -124,7 +124,7 @@ sudo apt update && sudo apt install -y yarn
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install dependencies
-brew install ruby@3.4 node yarn sqlite3
+brew install ruby@3.4.4 node yarn sqlite3
 ```
 
 #### 2. Clone and Setup Application
@@ -271,21 +271,16 @@ end
 
 #### Rate Limiting
 
-Configure Rack::Attack for rate limiting:
+SplitMySub uses Rails 8 native rate limiting, configured automatically:
 
 ```ruby
-# config/initializers/rack_attack.rb
-Rack::Attack.configure do |config|
-  # Throttle login attempts
-  config.throttle('login/email', limit: 5, period: 60.seconds) do |req|
-    req.params['email'] if req.path == '/login' && req.post?
-  end
+# Example rate limiting in controllers
+rate_limit to: 10, within: 3.minutes, only: :magic_link, 
+           with: -> { redirect_to new_session_url, alert: "Try again later." }
 
-  # Throttle password reset attempts
-  config.throttle('password_reset/email', limit: 3, period: 60.seconds) do |req|
-    req.params['email'] if req.path == '/password/reset' && req.post?
-  end
-end
+# Rate limiting for invitations
+rate_limit to: 5, within: 1.hour, only: [:create, :send_email],
+           with: -> { redirect_to @invitation, alert: "Too many attempts. Try again later." }
 ```
 
 ---

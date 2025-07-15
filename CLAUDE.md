@@ -110,11 +110,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Project Management**: Admin oversight of all projects
 
 ### Security Features
-- **Rate Limiting**: Rack::Attack for API protection
+- **Rate Limiting**: Rails 8 native rate limiting for magic link requests and invitations
 - **CSRF Protection**: Standard Rails CSRF tokens
 - **Content Security Policy**: Configured CSP headers
 - **Parameter Filtering**: Sensitive data excluded from logs
 - **Error Handling**: Comprehensive exception handling with notifications
+- **Email Verification**: Magic link verification for invitation security
+- **Audit Logging**: Security event logging for invitation and authentication flows
 
 ### Configuration & Environment
 - **Credentials**: Telegram bot token stored in Rails credentials (`telegram_bot_token`)
@@ -133,3 +135,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Fixtures**: Test data in `test/fixtures/`
 - **Integration Tests**: Full workflow testing in `test/integration/`
 - **Authentication Helpers**: `sign_in_as(user)` and `admin_authenticate` helpers
+
+### Documentation
+- **Invitation Flow**: Complete documentation in `docs/INVITATION_FLOW_DOCUMENTATION.md`
+- **Authentication Flow**: Complete documentation in `docs/AUTHENTICATION_FLOW_DOCUMENTATION.md`
