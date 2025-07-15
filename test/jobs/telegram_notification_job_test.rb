@@ -52,7 +52,7 @@ class TelegramNotificationJobTest < ActiveJob::TestCase
       )
     end
 
-    mock_service.verify
+    assert mock_service.verify
   end
 
   test "performs billing_cycle_notification" do
@@ -67,7 +67,7 @@ class TelegramNotificationJobTest < ActiveJob::TestCase
       )
     end
 
-    mock_service.verify
+    assert mock_service.verify
   end
 
   test "performs payment_confirmation notification" do
@@ -82,7 +82,7 @@ class TelegramNotificationJobTest < ActiveJob::TestCase
       )
     end
 
-    mock_service.verify
+    assert mock_service.verify
   end
 
   test "performs account_link_verification notification" do
@@ -99,7 +99,7 @@ class TelegramNotificationJobTest < ActiveJob::TestCase
       )
     end
 
-    mock_service.verify
+    assert mock_service.verify
   end
 
   test "handles missing user gracefully" do

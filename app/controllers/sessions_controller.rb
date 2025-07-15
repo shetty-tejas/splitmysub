@@ -42,8 +42,31 @@ class SessionsController < ApplicationController
       magic_link.use!
       start_new_session_for(magic_link.user)
 
-      flash[:notice] = "Successfully signed in with magic link!"
-      redirect_to after_authentication_url
+      # Check if this user verification is for completing an invitation
+      if session[:pending_invitation_token].present?
+        invitation_token = session.delete(:pending_invitation_token)
+        invitation = Invitation.find_by(token: invitation_token)
+
+        if invitation&.active?
+          # Complete the invitation acceptance
+          if invitation.accept!(magic_link.user)
+            # Audit log: Email verification completed for invitation
+            Rails.logger.info "AUDIT: Email verification completed for invitation - User: #{magic_link.user.id} (#{magic_link.user.email_address}), Project: #{invitation.project.id} (#{invitation.project.name}), Token: #{invitation_token[0..8]}..."
+
+            flash[:notice] = "Email verified! Welcome to #{invitation.project.name}."
+            redirect_to project_path(invitation.project)
+          else
+            flash[:alert] = "Unable to complete invitation. Please try again."
+            redirect_to invitation_path(invitation_token)
+          end
+        else
+          flash[:alert] = "Invitation has expired or is no longer valid."
+          redirect_to after_authentication_url
+        end
+      else
+        flash[:notice] = "Successfully signed in with magic link!"
+        redirect_to after_authentication_url
+      end
     else
       flash[:alert] = "Invalid or expired magic link. Please request a new one."
       redirect_to login_path

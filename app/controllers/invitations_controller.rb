@@ -1,8 +1,17 @@
 class InvitationsController < ApplicationController
   allow_unauthenticated_access only: [ :show, :accept, :confirm, :decline, :redirect_accept_to_show, :redirect_to_invitation ]
+
+  # Rate limiting for invitation actions
+  rate_limit to: 5, within: 1.minute, only: [ :create, :send_email ], with: -> {
+    respond_to do |format|
+      format.json { render json: { error: "Rate limit exceeded", message: "Too many invitation requests. Please wait a minute." }, status: :too_many_requests }
+      format.html { redirect_back(fallback_location: root_path, alert: "Too many invitation requests. Please wait a minute.") }
+    end
+  }
+
   before_action :set_project, only: [ :index, :create, :update, :send_email, :destroy ]
   before_action :set_invitation, only: [ :show, :accept, :confirm, :decline, :update, :send_email, :destroy ]
-  before_action :authorize_invitation_management, only: [ :index, :create, :destroy ]
+  before_action :authorize_invitation_management, only: [ :index, :create, :update, :send_email, :destroy ]
 
   # GET /projects/:project_id/invitations
   def index
@@ -48,6 +57,9 @@ class InvitationsController < ApplicationController
   # POST /projects/:project_id/invitations/:id/send_email
   def send_email
     if @invitation.email.present?
+      # Audit log: Invitation email sent
+      Rails.logger.info "AUDIT: Invitation email sent - User: #{Current.user.id} (#{Current.user.email_address}), Project: #{@project.id} (#{@project.name}), To: #{@invitation.email}, Token: #{@invitation.token[0..8]}..."
+
       InvitationMailer.invite(@invitation).deliver_later
 
       respond_to do |format|
@@ -83,6 +95,9 @@ class InvitationsController < ApplicationController
     @invitation.role = "member" # Explicitly set role for security
 
     if @invitation.save
+      # Audit log: Invitation created
+      Rails.logger.info "AUDIT: Invitation created - User: #{Current.user.id} (#{Current.user.email_address}), Project: #{@project.id} (#{@project.name}), Invited Email: #{@invitation.email || 'link-only'}, Token: #{@invitation.token[0..8]}..."
+
       # Don't send invitation email automatically anymore
       # InvitationMailer.invite(@invitation).deliver_later
 
@@ -137,11 +152,13 @@ class InvitationsController < ApplicationController
   # POST /invitations/:token/accept
   def accept
     if @invitation.nil?
+      Rails.logger.warn "AUDIT: Invalid invitation access attempted - Token: #{params[:token]}, IP: #{request.remote_ip}"
       redirect_to root_path, alert: "Invalid invitation link"
       return
     end
 
     if @invitation.expired?
+      Rails.logger.warn "AUDIT: Expired invitation access attempted - Token: #{@invitation.token[0..8]}..., Project: #{@invitation.project.id}, IP: #{request.remote_ip}"
       render inertia: "invitations/expired", props: {
         invitation: invitation_props(@invitation),
         project: project_with_details(@invitation.project)
@@ -158,6 +175,9 @@ class InvitationsController < ApplicationController
         # Accept invitation for existing logged-in user
         begin
           if @invitation.accept!(Current.user)
+            # Audit log: Invitation accepted by existing user
+            Rails.logger.info "AUDIT: Invitation accepted - User: #{Current.user.id} (#{Current.user.email_address}), Project: #{@invitation.project.id} (#{@invitation.project.name}), Token: #{@invitation.token[0..8]}..."
+
             redirect_to project_path(@invitation.project),
                        notice: "Welcome to #{@invitation.project.name}! You've successfully joined the project."
           else
@@ -174,6 +194,9 @@ class InvitationsController < ApplicationController
         # Log them in automatically and accept the invitation
         begin
           if @invitation.accept!(existing_user)
+            # Audit log: Invitation accepted by existing user (auto-login)
+            Rails.logger.info "AUDIT: Invitation accepted with auto-login - User: #{existing_user.id} (#{existing_user.email_address}), Project: #{@invitation.project.id} (#{@invitation.project.name}), Token: #{@invitation.token[0..8]}..."
+
             # Log the user in using the same method as the authentication system
             start_new_session_for(existing_user)
 
@@ -236,7 +259,7 @@ class InvitationsController < ApplicationController
       return
     end
 
-    # Create new user and accept invitation
+    # Create new user and require email verification for link-only invitations
     begin
       # Double-check if user exists right before creation to handle race conditions
       if User.exists?(email_address: user_email)
@@ -260,24 +283,38 @@ class InvitationsController < ApplicationController
       if user.save
         Rails.logger.info "User created successfully: #{user.id}"
 
-        # Accept the invitation
-        if @invitation.accept!(user)
-          # Log the user in using the same method as the authentication system
-          start_new_session_for(user)
+        # For link-only invitations (no email), require email verification
+        if @invitation.email.blank?
+          # Store invitation token in session for completion after email verification
+          session[:pending_invitation_token] = @invitation.token
 
-          redirect_to project_path(@invitation.project),
-                     notice: "Welcome to SplitMySub! Your account has been created and you've joined #{@invitation.project.name}."
+          # Send magic link for email verification
+          magic_link = MagicLink.generate_for_user(user, expires_in: 30.minutes)
+          MagicLinkMailer.send_magic_link(user, magic_link).deliver_now
+
+          render inertia: "invitations/email_verification_sent", props: {
+            invitation: invitation_props(@invitation),
+            project: project_with_details(@invitation.project),
+            user_email: user_email
+          }
         else
-          Rails.logger.error "Failed to accept invitation for user: #{user.id}"
-          user.destroy # Clean up if invitation acceptance fails
-          render inertia: "invitations/confirm",
-                 props: {
-                   invitation: invitation_props(@invitation),
-                   project: project_with_details(@invitation.project),
-                   user_email: @invitation.email,
-                   errors: { message: "Unable to accept invitation. Please try again." }
-                 },
-                 status: :unprocessable_entity
+          # For email-specific invitations, accept immediately (email already verified)
+          if @invitation.accept!(user)
+            start_new_session_for(user)
+            redirect_to project_path(@invitation.project),
+                       notice: "Welcome to SplitMySub! Your account has been created and you've joined #{@invitation.project.name}."
+          else
+            Rails.logger.error "Failed to accept invitation for user: #{user.id}"
+            user.destroy # Clean up if invitation acceptance fails
+            render inertia: "invitations/confirm",
+                   props: {
+                     invitation: invitation_props(@invitation),
+                     project: project_with_details(@invitation.project),
+                     user_email: @invitation.email,
+                     errors: { message: "Unable to accept invitation. Please try again." }
+                   },
+                   status: :unprocessable_entity
+          end
         end
       else
         # Return validation errors
@@ -339,11 +376,13 @@ class InvitationsController < ApplicationController
   # POST /invitations/:token/decline
   def decline
     if @invitation.nil?
+      Rails.logger.warn "AUDIT: Invalid invitation decline attempted - Token: #{params[:token]}, IP: #{request.remote_ip}"
       redirect_to root_path, alert: "Invalid invitation link"
       return
     end
 
     if @invitation.expired?
+      Rails.logger.warn "AUDIT: Expired invitation decline attempted - Token: #{@invitation.token[0..8]}..., Project: #{@invitation.project.id}, IP: #{request.remote_ip}"
       render inertia: "invitations/expired", props: {
         invitation: invitation_props(@invitation),
         project: project_with_details(@invitation.project)
@@ -352,6 +391,9 @@ class InvitationsController < ApplicationController
     end
 
     if @invitation.decline!
+      # Audit log: Invitation declined
+      Rails.logger.info "AUDIT: Invitation declined - Email: #{@invitation.email || 'link-only'}, Project: #{@invitation.project.id} (#{@invitation.project.name}), Token: #{@invitation.token[0..8]}..., IP: #{request.remote_ip}"
+
       render inertia: "invitations/declined", props: {
         invitation: invitation_props(@invitation),
         project: project_with_details(@invitation.project)
@@ -364,6 +406,9 @@ class InvitationsController < ApplicationController
 
   # DELETE /projects/:project_id/invitations/:id
   def destroy
+    # Audit log: Invitation cancelled
+    Rails.logger.info "AUDIT: Invitation cancelled - User: #{Current.user.id} (#{Current.user.email_address}), Project: #{@project.id} (#{@project.name}), Invited Email: #{@invitation.email || 'link-only'}, Token: #{@invitation.token[0..8]}..."
+
     @invitation.destroy
 
     redirect_back(fallback_location: project_invitations_path(@project),
