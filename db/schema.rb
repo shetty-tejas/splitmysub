@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_104257) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_15_134620) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -172,6 +172,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_104257) do
     t.string "subscription_url"
     t.string "slug", null: false
     t.string "currency", default: "USD", null: false
+    t.integer "memberships_count", default: 0, null: false
     t.index ["billing_cycle"], name: "index_projects_on_billing_cycle"
     t.index ["currency"], name: "index_projects_on_currency"
     t.index ["renewal_date"], name: "index_projects_on_renewal_date"

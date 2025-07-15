@@ -292,6 +292,10 @@ class BillingCyclesController < ApplicationController
     active_cycles = all_cycles.active
     archived_cycles = all_cycles.archived
 
+    # Pre-fetch payments to avoid N+1 queries
+    active_cycles_with_payments = active_cycles.includes(:payments)
+    all_cycles_with_payments = all_cycles.includes(:payments)
+
     {
       total: all_cycles.count,
       active: active_cycles.count,
@@ -299,14 +303,14 @@ class BillingCyclesController < ApplicationController
       upcoming: active_cycles.upcoming.count,
       overdue: active_cycles.overdue.count,
       due_soon: BillingCycle.due_soon.where(id: active_cycles.pluck(:id)).count,
-      fully_paid: active_cycles.select(&:fully_paid?).count,
-      partially_paid: active_cycles.select(&:partially_paid?).count,
-      unpaid: active_cycles.select(&:unpaid?).count,
-      adjusted: all_cycles.select(&:adjusted?).count,
-      archivable: all_cycles.select(&:archivable?).count,
+      fully_paid: active_cycles_with_payments.select(&:fully_paid?).count,
+      partially_paid: active_cycles_with_payments.select(&:partially_paid?).count,
+      unpaid: active_cycles_with_payments.select(&:unpaid?).count,
+      adjusted: all_cycles_with_payments.select(&:adjusted?).count,
+      archivable: all_cycles_with_payments.select(&:archivable?).count,
       total_amount: active_cycles.sum(:total_amount),
-      total_paid: active_cycles.sum(&:total_paid),
-      total_remaining: active_cycles.sum(&:amount_remaining)
+      total_paid: active_cycles_with_payments.sum(&:total_paid),
+      total_remaining: active_cycles_with_payments.sum(&:amount_remaining)
     }
   end
 

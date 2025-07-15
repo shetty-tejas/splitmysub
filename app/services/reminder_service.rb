@@ -27,7 +27,9 @@ class ReminderService
 
   def process_project_reminders(project)
     # Get upcoming billing cycles that are due within the next 30 days
+    # Pre-fetch payments and members to avoid N+1 queries
     upcoming_billing_cycles = project.billing_cycles.upcoming(30)
+                                     .includes(:payments, project: [ :user, :members ])
 
     upcoming_billing_cycles.each do |billing_cycle|
       next if billing_cycle.fully_paid?

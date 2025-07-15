@@ -182,7 +182,9 @@ class DashboardController < ApplicationController
     member_project_ids = Current.user.member_projects.pluck(:id)
     all_project_ids = (owned_project_ids + member_project_ids).uniq
 
+    # Pre-fetch project memberships to avoid N+1 queries
     all_projects = Project.where(id: all_project_ids)
+                         .includes(:project_memberships)
 
     all_projects.map do |project|
       user_cost = if owned_project_ids.include?(project.id)

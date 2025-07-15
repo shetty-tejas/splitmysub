@@ -32,6 +32,8 @@ class Project < ApplicationRecord
   scope :active, -> { where("renewal_date >= ?", Date.current) }
   scope :expiring_soon, ->(days = 7) { where(renewal_date: Date.current..days.days.from_now) }
   scope :by_billing_cycle, ->(cycle) { where(billing_cycle: cycle) }
+  scope :with_member_counts, -> { includes(:project_memberships) }
+  scope :with_payments, -> { includes(billing_cycles: :payments) }
   scope :by_currency, ->(currency) { where(currency: currency) }
   scope :with_members, -> { joins(:project_memberships).distinct }
 
@@ -53,7 +55,12 @@ class Project < ApplicationRecord
   end
 
   def total_members
-    project_memberships.count + 1 # +1 for owner
+    # Use counter_cache if available, fallback to count
+    if has_attribute?(:memberships_count)
+      (memberships_count || 0) + 1 # +1 for owner
+    else
+      project_memberships.count + 1 # +1 for owner
+    end
   end
 
   def cost_per_member

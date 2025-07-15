@@ -1,6 +1,6 @@
 class ProjectMembership < ApplicationRecord
   belongs_to :user
-  belongs_to :project
+  belongs_to :project, counter_cache: :memberships_count
 
   # Validations
   validates :user_id, uniqueness: { scope: :project_id, message: "is already a member of this project" }
