@@ -16,19 +16,28 @@ class TelegramBotServiceTest < ActiveSupport::TestCase
     )
   end
 
-  test "send_message returns result when bot is available" do
+      test "send_message returns result when bot is available" do
     service = TelegramBotService.new
 
-    # Mock the bot to simulate successful API call
+    # Mock a successful response from the Telegram API
+    response = { "ok" => true, "result" => { "message_id" => 1 } }
+
+    # Mock the entire API call chain
     mock_bot = Minitest::Mock.new
     mock_api = Minitest::Mock.new
 
+    # Expect api to be called and return our mock_api
     mock_bot.expect :api, mock_api
-    mock_api.expect :send_message, { "ok" => true, "result" => { "message_id" => 1 } } do |args|
-      args[:chat_id] == @chat_id && args[:text] == "Hello"
+
+    # Expect send_message to be called with any hash and return our response
+    mock_api.expect :send_message, response do |args|
+      # args should be a hash with chat_id, text, parse_mode, reply_markup
+      args.is_a?(Hash) && args[:chat_id] == @chat_id && args[:text] == "Hello"
     end
 
+    # Set the bot instance variable directly and mark as initialized
     service.instance_variable_set(:@bot, mock_bot)
+    service.instance_variable_set(:@initialized, true)
 
     result = service.send_message(chat_id: @chat_id, text: "Hello")
     assert_equal({ "message_id" => 1 }, result)
@@ -39,24 +48,36 @@ class TelegramBotServiceTest < ActiveSupport::TestCase
 
   test "send_message returns nil when bot is not available" do
     service = TelegramBotService.new
+
+    # Set bot to nil and mark as initialized to simulate no bot available
     service.instance_variable_set(:@bot, nil)
+    service.instance_variable_set(:@initialized, true)
 
     result = service.send_message(chat_id: @chat_id, text: "Hello")
     assert_nil result
   end
 
-  test "send_message handles API error" do
+      test "send_message handles API error" do
     service = TelegramBotService.new
+
+    # Mock an error response from the Telegram API
+    response = { "ok" => false, "description" => "Bot was blocked" }
 
     mock_bot = Minitest::Mock.new
     mock_api = Minitest::Mock.new
 
+    # Expect api to be called and return our mock_api
     mock_bot.expect :api, mock_api
-    mock_api.expect :send_message, { "ok" => false, "description" => "Bot was blocked" } do |args|
-      args[:chat_id] == @chat_id
+
+    # Expect send_message to be called with any hash and return our error response
+    mock_api.expect :send_message, response do |args|
+      # args should be a hash with chat_id, text, parse_mode, reply_markup
+      args.is_a?(Hash) && args[:chat_id] == @chat_id && args[:text] == "Hello"
     end
 
+    # Set the bot instance variable directly and mark as initialized
     service.instance_variable_set(:@bot, mock_bot)
+    service.instance_variable_set(:@initialized, true)
 
     result = service.send_message(chat_id: @chat_id, text: "Hello")
     assert_nil result
