@@ -92,6 +92,27 @@ class TelegramBotService
     end
   end
 
+  def process_message(message)
+    Rails.logger.info "Processing polling message: #{message.inspect}"
+
+    # Convert polling message to webhook format for compatibility with existing code
+    if message.text
+      update = {
+        "message" => {
+          "chat" => { "id" => message.chat.id },
+          "from" => {
+            "id" => message.from.id,
+            "username" => message.from.username
+          },
+          "text" => message.text
+        }
+      }
+      process_text_message(update)
+    else
+      Rails.logger.info "Received non-text message type from polling: #{message.inspect}"
+    end
+  end
+
   private
 
   def process_text_message(update)
