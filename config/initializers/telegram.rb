@@ -1,8 +1,14 @@
-# Skip Telegram integration in test environment or if explicitly disabled
-unless Rails.env.test? || ENV["DISABLE_TELEGRAM"] == "true"
+# Skip Telegram integration in test environment
+unless Rails.env.test?
   Rails.application.config.after_initialize do
     # Configure Telegram bot if token is available
     begin
+      # Skip if telegram-bot-ruby gem is not available
+      unless defined?(Telegram::Bot)
+        Rails.logger.warn "Telegram bot gem not available - Telegram integration disabled"
+        return
+      end
+
       token = Rails.application.credentials.telegram_bot_token
 
       if token.present?
@@ -41,5 +47,5 @@ unless Rails.env.test? || ENV["DISABLE_TELEGRAM"] == "true"
     end
   end
 else
-  Rails.logger.info "Skipping Telegram integration (test environment or explicitly disabled)"
+  Rails.logger.info "Skipping Telegram integration (test environment)"
 end

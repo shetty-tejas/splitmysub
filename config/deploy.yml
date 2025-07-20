@@ -7,7 +7,7 @@ image: ashwinmk2016/splitmysub
 # Deploy to these servers.
 servers:
   web:
-    - 146.190.118.95
+    - 146.190.149.87
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -75,7 +75,6 @@ env:
     SMTP_PORT: 587
     SMTP_AUTHENTICATION: plain
     SMTP_ENABLE_STARTTLS_AUTO: true
-    DISABLE_TELEGRAM: true
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.

@@ -1,15 +1,41 @@
-require "telegram/bot"
+# Skip if telegram-bot-ruby gem is not available
+begin
+  require "telegram/bot"
+rescue LoadError
+  # Define a dummy class if the gem is not available
+  class TelegramBotService
+    def initialize
+      Rails.logger.warn "TelegramBotService initialized but telegram-bot-ruby gem not available"
+    end
+
+    def send_message(*args)
+      Rails.logger.warn "Telegram message sending disabled - gem not available"
+      nil
+    end
+
+    def send_notification(*args)
+      Rails.logger.warn "Telegram notification disabled - gem not available"
+      false
+    end
+
+    def process_webhook(*args)
+      Rails.logger.warn "Telegram webhook processing disabled - gem not available"
+    end
+  end
+  return
+end
 
 class TelegramBotService
   def initialize
-    token = Rails.application.credentials.telegram_bot_token
-    @bot = token.present? ? Telegram::Bot::Client.new(token) : nil
+    # Defer bot initialization until needed to avoid credential access during class loading
+    @bot = nil
+    @initialized = false
   end
 
   def send_message(chat_id:, text:, parse_mode: "HTML", reply_markup: nil)
-    return nil unless @bot
+    return nil unless bot
 
-    response = @bot.api.send_message(
+    response = bot.api.send_message(
       chat_id: chat_id,
       text: text,
       parse_mode: parse_mode,
@@ -301,5 +327,16 @@ class TelegramBotService
 
     # Log the confirmation
     Rails.logger.info "Payment confirmed via Telegram by user #{user.id} for project #{project.id}"
+  end
+
+  private
+
+  def bot
+    return @bot if @initialized
+
+    @initialized = true
+    token = Rails.application.credentials.telegram_bot_token
+    @bot = token.present? ? Telegram::Bot::Client.new(token) : nil
+    @bot
   end
 end
