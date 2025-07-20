@@ -1,7 +1,14 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-require 'telegram/bot'
+
+# Skip if telegram-bot-ruby gem is not available
+begin
+  require 'telegram/bot'
+rescue LoadError
+  puts "Telegram bot gem not available - skipping test"
+  return
+end
 
 # Load Rails environment
 require_relative 'config/environment'

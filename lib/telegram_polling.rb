@@ -1,7 +1,14 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
-require "telegram/bot"
+
+# Skip if telegram-bot-ruby gem is not available
+begin
+  require "telegram/bot"
+rescue LoadError
+  puts "Telegram bot gem not available - skipping polling"
+  return
+end
 
 # Load Rails environment
 require_relative "../config/environment"
@@ -15,7 +22,7 @@ if token.blank?
   if Rails.env.test?
     puts "Telegram bot token not found in credentials - skipping in test environment"
     Rails.logger.info "Telegram bot token not found in credentials - skipping in test environment"
-    exit 0
+    return
   else
     puts "ERROR: Telegram bot token not found in credentials"
     Rails.logger.error "Telegram bot token not found in credentials"
