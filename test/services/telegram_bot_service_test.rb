@@ -314,4 +314,50 @@ class TelegramBotServiceTest < ActiveSupport::TestCase
       assert result
     end
   end
+
+  test "handle_unlink_command_initiates_unlink_process" do
+    service = TelegramBotService.new
+
+    service.stub :send_message, { "message_id" => 1 } do
+      result = service.send(:handle_unlink_command, @user, @chat_id.to_i)
+      assert result
+
+      @user.reload
+      assert @user.telegram_verification_token.start_with?("unlink_pending_")
+      assert @user.telegram_verification_token_expires_at > Time.current
+    end
+  end
+
+  test "handle_confirm_unlink_command_unlinks_account_when_pending" do
+    service = TelegramBotService.new
+
+    # Set up pending unlink state
+    @user.update!(
+      telegram_verification_token: "unlink_pending_#{Time.current.to_i}",
+      telegram_verification_token_expires_at: 5.minutes.from_now
+    )
+
+    service.stub :send_message, { "message_id" => 1 } do
+      result = service.send(:handle_confirm_unlink_command, @user, @chat_id.to_i)
+      assert result
+
+      @user.reload
+      assert_nil @user.telegram_user_id
+      assert_nil @user.telegram_username
+      assert_nil @user.telegram_verification_token
+    end
+  end
+
+  test "handle_confirm_unlink_command_rejects_when_not_pending" do
+    service = TelegramBotService.new
+
+    service.stub :send_message, { "message_id" => 1 } do
+      result = service.send(:handle_confirm_unlink_command, @user, @chat_id.to_i)
+      assert result
+
+      # User should still be linked
+      @user.reload
+      assert_equal @chat_id.to_s, @user.telegram_user_id
+    end
+  end
 end
