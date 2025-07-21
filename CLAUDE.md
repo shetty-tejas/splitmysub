@@ -36,8 +36,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bin/rails "reminders:process"` - Send daily payment reminders
 
 ### Telegram Bot
-- `ruby lib/telegram_polling.rb` - Start Telegram bot polling (runs automatically with `bin/dev`)
-- Bot responds to commands: `/start`, `/help`, `/status`, `/payments`, `/pay`, `/settings`
+- `bin/rails telegram:setup_webhook` - Configure webhook for development/production
+- `bin/rails telegram:webhook_info` - Check webhook status and configuration
+- `bin/rails telegram:remove_webhook` - Disable webhooks (fallback to polling)
+- `bin/rails telegram:test_webhook` - Test webhook endpoint locally
+- `ruby lib/telegram_polling.rb` - Start polling mode (fallback, not default)
+- Bot responds to commands: `/start`, `/help`, `/status`, `/payments`, `/pay`, `/settings`, `/unlink`
 
 ## Application Architecture
 
@@ -86,11 +90,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Bot Framework**: telegram-bot-ruby gem for Telegram API integration
 - **Account Linking**: Users can link Telegram accounts via verification tokens in profile settings
 - **Notifications**: Payment reminders, billing cycle alerts, and payment confirmations via Telegram
-- **Bot Commands**: Interactive commands for payment management and status checking
-- **Services**: `TelegramBotService` for API interactions, `TelegramNotificationService` for message formatting
+- **Bot Commands**: Interactive commands including `/unlink` for account management
+- **Services**: `TelegramBotService` with webhook and polling support, `TelegramNotificationService` for message formatting
 - **Jobs**: `TelegramNotificationJob` for asynchronous delivery
 - **Models**: `TelegramMessage` for delivery tracking and status
-- **Polling**: Continuous webhook processing via `lib/telegram_polling.rb`
+- **Webhooks**: Primary integration method via `TelegramController` at `/telegram/webhook`
+- **Polling**: Fallback method available via `lib/telegram_polling.rb`
 
 ### Background Jobs
 - **Queue**: SolidQueue for job processing
@@ -120,9 +125,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Configuration & Environment
 - **Credentials**: Telegram bot token stored in Rails credentials (`telegram_bot_token`)
-- **Routes**: Telegram-specific routes in `config/routes.rb` for profile integration
+- **Routes**: Telegram webhook endpoint and profile integration routes in `config/routes.rb`
 - **Initializers**: Telegram configuration in `config/initializers/telegram.rb`
-- **Development**: Telegram polling runs automatically with `bin/dev` via Procfile.dev
+- **Development**: Webhook-based integration requiring ngrok for local testing
+- **Environment Variables**: `TELEGRAM_WEBHOOK_URL` for development webhook setup
 
 ### Development Tools
 - **Letter Opener**: Email preview in development
@@ -139,3 +145,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Documentation
 - **Invitation Flow**: Complete documentation in `docs/INVITATION_FLOW_DOCUMENTATION.md`
 - **Authentication Flow**: Complete documentation in `docs/AUTHENTICATION_FLOW_DOCUMENTATION.md`
+- **Telegram Webhooks**: Complete webhook setup and troubleshooting in `docs/TELEGRAM_WEBHOOKS.md`
