@@ -15,6 +15,15 @@ Rails.application.configure do
   # Enable server timing.
   config.server_timing = true
 
+  # Allow ngrok hosts for webhook development
+  if ENV["TELEGRAM_USE_WEBHOOKS"] == "true" && ENV["TELEGRAM_WEBHOOK_URL"].present?
+    webhook_host = URI.parse(ENV["TELEGRAM_WEBHOOK_URL"]).host
+    config.hosts << webhook_host if webhook_host
+  end
+
+  # Also allow any *.ngrok-free.app hosts for development convenience
+  config.hosts << /.*\.ngrok-free\.app/
+
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
   if Rails.root.join("tmp/caching-dev.txt").exist?
