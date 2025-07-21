@@ -213,8 +213,6 @@ class TelegramBotService
       handle_settings_command(user, chat_id)
     when "/unlink"
       handle_unlink_command(user, chat_id)
-    when "/confirm_unlink"
-      handle_confirm_unlink_command(user, chat_id)
     when /^\/pay/
       handle_pay_command(user, text, chat_id)
     else
@@ -374,44 +372,20 @@ class TelegramBotService
     Rails.logger.info "Payment confirmed via Telegram by user #{user.id} for project #{project.id}"
   end
 
-  def handle_unlink_command(user, chat_id)
-    # Confirm the user wants to unlink
+    def handle_unlink_command(user, chat_id)
+    # Store user name for goodbye message
+    user_name = user.first_name
+
+    # Unlink the account directly
+    user.unlink_telegram_account!
+
     send_message(
       chat_id: chat_id,
-      text: "🔓 <b>Unlink Telegram Account</b>\n\nAre you sure you want to unlink your Telegram account from SplitMySub?\n\n⚠️ After unlinking:\n• You won't receive payment reminders via Telegram\n• You won't be able to use bot commands\n• You can re-link anytime from your profile settings\n\nSend <code>/confirm_unlink</code> to proceed or any other message to cancel.",
+      text: "🔓 <b>Account Unlinked</b>\n\nGoodbye #{user_name}! Your Telegram account has been successfully unlinked from SplitMySub.\n\n📱 To re-link in the future:\n1. Go to your SplitMySub profile settings\n2. Generate a new verification token\n3. Send /start [token] to this bot\n\nThank you for using SplitMySub! 👋",
       parse_mode: "HTML"
     )
 
-    # Store a temporary flag to handle the confirmation
-    # We'll use the user's session or a simple time-based check
-    user.update_column(:telegram_verification_token, "unlink_pending_#{Time.current.to_i}")
-    user.update_column(:telegram_verification_token_expires_at, 5.minutes.from_now)
-  end
-
-  def handle_confirm_unlink_command(user, chat_id)
-    # Check if user is in pending unlink state
-    if user.telegram_verification_token&.start_with?("unlink_pending_") &&
-       user.telegram_verification_token_expires_at > Time.current
-
-      # Store user name for goodbye message
-      user_name = user.first_name
-
-      # Unlink the account
-      user.unlink_telegram_account!
-
-      send_message(
-        chat_id: chat_id,
-        text: "🔓 <b>Account Unlinked</b>\n\nGoodbye #{user_name}! Your Telegram account has been successfully unlinked from SplitMySub.\n\n📱 To re-link in the future:\n1. Go to your SplitMySub profile settings\n2. Generate a new verification token\n3. Send /start [token] to this bot\n\nThank you for using SplitMySub! 👋",
-        parse_mode: "HTML"
-      )
-
-      Rails.logger.info "Telegram account unlinked via bot by user #{user.id}"
-    else
-      send_message(
-        chat_id: chat_id,
-        text: "❌ No pending unlink request found. Use /unlink to start the unlinking process."
-      )
-    end
+    Rails.logger.info "Telegram account unlinked via bot by user #{user.id}"
   end
 
   private
