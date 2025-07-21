@@ -50,11 +50,14 @@ The system uses SolidQueue (already configured in Gemfile). Background jobs are 
 ```
 
 ### 3. Daily Reminder Processing
+The application supports multiple ways to schedule daily reminder processing:
+
+#### Option 1: Manual Cron Job (Recommended)
 Set up a cron job to run daily reminder processing. Add to your crontab:
 
 ```bash
 # Run daily at 9:00 AM
-0 9 * * * cd /path/to/your/app && bin/rails "reminders:send_daily"
+0 9 * * * cd /path/to/your/app && bin/rails "reminders:process"
 ```
 
 Or use whenever gem for more sophisticated scheduling:
@@ -62,9 +65,42 @@ Or use whenever gem for more sophisticated scheduling:
 ```ruby
 # In config/schedule.rb (if using whenever gem)
 every 1.day, at: '9:00 am' do
-  rake 'reminders:send_daily'
+  rake 'reminders:process'
 end
 ```
+
+#### Option 2: Background Job Scheduling
+Alternatively, you can use the DailyReminderProcessorJob directly:
+
+```bash
+# Schedule the job to run daily at 9 AM
+0 9 * * * cd /path/to/your/app && bin/rails runner "DailyReminderProcessorJob.perform_later"
+```
+
+#### Option 3: SolidQueue Recurring Tasks (Advanced)
+SolidQueue supports recurring tasks, but this is not currently configured. You can enable it by adding to `config/recurring.yml`:
+
+```yaml
+production:
+  daily_reminders:
+    class: DailyReminderProcessorJob
+    schedule: "0 9 * * *"  # Daily at 9 AM
+    queue: default
+
+  billing_cycle_generation:
+    class: BillingCycleGeneratorJob
+    schedule: "0 6 * * *"  # Daily at 6 AM
+    queue: default
+    args: [3]  # 3 months ahead
+
+  old_cycle_archiving:
+    class: BillingCycleArchiverJob
+    schedule: "0 3 * * 0"  # Weekly on Sunday at 3 AM
+    queue: default
+    args: [6]  # Archive cycles older than 6 months
+```
+
+**Note**: If using SolidQueue recurring tasks, you don't need the manual cron jobs. The recurring tasks will be managed automatically by SolidQueue.
 
 ### 4. Email and Telegram Configuration
 Ensure your email settings are configured. The app supports Resend API (recommended) or SMTP:
@@ -83,6 +119,8 @@ For Telegram notifications, configure the bot token in Rails credentials:
 # config/credentials.yml.enc
 telegram_bot_token: your-telegram-bot-token
 ```
+
+**Note**: The Telegram bot uses webhooks for real-time message processing. For development setup and webhook configuration, see [docs/TELEGRAM_WEBHOOKS.md](TELEGRAM_WEBHOOKS.md).
 
 ## Usage
 
@@ -124,13 +162,22 @@ You can manually trigger reminder processing:
 
 ```bash
 # Process all reminders
-bin/rails "reminders:send_daily"
+bin/rails "reminders:process"
 
 # Test email configuration
 bin/rails "email:test[your-email@example.com]"
 
 # Clean up expired invitations
 bin/rails "invitations:cleanup"
+
+# Show reminder statistics
+bin/rails "reminders:stats"
+
+# Test reminders for specific project
+bin/rails "reminders:test[PROJECT_ID]"
+
+# Schedule daily reminder processing job
+bin/rails "reminders:schedule_daily"
 ```
 
 ### 4. Preview Reminders
@@ -166,7 +213,7 @@ SolidQueue::Job.failed.count
 ### 3. Email and Telegram Delivery Monitoring
 - Monitor email delivery rates and bounces through your email provider's dashboard
 - Check Telegram message delivery status in the `telegram_messages` table
-- Monitor Telegram bot polling status in application logs
+- Monitor Telegram webhook delivery status in application logs
 
 ### 4. Database Cleanup
 Periodically clean up old reminder logs and expired tokens (if implemented).
@@ -197,7 +244,7 @@ Test the reminder system in development:
 bin/dev
 
 # In another terminal, trigger reminders
-bin/rails "reminders:send_daily"
+bin/rails "reminders:process"
 
 # View emails at http://localhost:3000/letter_opener
 ```

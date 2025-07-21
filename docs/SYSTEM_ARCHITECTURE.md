@@ -111,7 +111,7 @@ SplitMySub implements service objects for complex business logic, keeping contro
    - `ReminderService` - Processes payment reminders and escalation
    - `BillingCycleGeneratorService` - Generates billing cycles automatically
    - `BillingCycleManager` - Manages billing cycle lifecycle
-   - `TelegramBotService` - Handles Telegram bot interactions
+   - `TelegramBotService` - Handles Telegram bot interactions via webhooks
    - `ErrorNotificationService` - Centralized error handling and notification
 
 2. **Email and Notification Services**
@@ -136,6 +136,34 @@ SplitMySub implements service objects for complex business logic, keeping contro
    # Billing cycle generation
    BillingCycleGeneratorJob.perform_later
    ```
+
+### **Telegram Integration**
+
+The Telegram bot integration uses **webhooks** for real-time message processing:
+
+```ruby
+# Route: POST /telegram/webhook
+class TelegramController < ApplicationController
+  def webhook
+    TelegramBotService.new.process_webhook(params)
+  end
+end
+
+# Service processes messages and commands
+class TelegramBotService
+  def process_webhook(update)
+    # Handle /start, /help, /unlink, /pay commands
+    # Process account linking and notifications
+  end
+end
+```
+
+**Key Features:**
+- Event-driven message processing via webhooks
+- Account linking with verification tokens
+- Payment confirmation commands
+- Notification preferences management
+- Direct account unlinking via `/unlink` command
 
 ### **Query Object Pattern**
 
@@ -442,18 +470,25 @@ scope :with_recent_payments, -> {
 **SolidQueue** for asynchronous job processing:
 
 ```ruby
-# config/schedule.rb
-every 1.day, at: '6:00 am' do
-  runner "BillingCycleGeneratorJob.perform_later"
-end
+# Daily reminder processing can be scheduled via cron:
+# 0 9 * * * cd /path/to/your/app && bin/rails "reminders:process"
+# Or using the background job directly:
+# 0 9 * * * cd /path/to/your/app && bin/rails runner "DailyReminderProcessorJob.perform_later"
 
-every 1.day, at: '9:00 am' do
-  runner "ReminderService.process_all_reminders"
-end
+# Manual task execution:
+bin/rails "reminders:process"              # Process all reminders
+bin/rails "reminders:stats"                # Show reminder statistics
+bin/rails "reminders:test[PROJECT_ID]"     # Test reminders for specific project
+bin/rails "reminders:schedule_daily"       # Schedule daily processing job
 
-every 1.hour do
-  runner "MagicLink.cleanup_expired"
-end
+# Billing cycle management:
+BillingCycleGeneratorJob.perform_later     # Generate upcoming billing cycles
+BillingCycleArchiverJob.perform_later      # Archive old billing cycles
+
+# Email and notification jobs:
+PaymentConfirmationJob.perform_later(payment_id)
+ReminderMailerJob.perform_later(billing_cycle_id:, reminder_schedule_id:, user_id:)
+TelegramNotificationJob.perform_later(notification_params)
 ```
 
 ---

@@ -33,7 +33,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Admin Tasks
 - `bin/rails "invitations:cleanup"` - Clean up expired invitations
-- `bin/rails "reminders:send_daily"` - Send daily payment reminders
+- `bin/rails "reminders:process"` - Send daily payment reminders
 
 ### Telegram Bot
 - `ruby lib/telegram_polling.rb` - Start Telegram bot polling (runs automatically with `bin/dev`)
