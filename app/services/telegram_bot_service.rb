@@ -147,18 +147,37 @@ class TelegramBotService
       user = User.find_by(telegram_verification_token: token)
 
       if user && user.telegram_verification_token_expires_at > Time.current
-        # Link the account
-        user.update!(
-          telegram_user_id: chat_id.to_s,
-          telegram_username: user_info["username"],
-          telegram_verification_token: nil,
-          telegram_verification_token_expires_at: nil
-        )
+        # Check if this Telegram account is already linked to someone else
+        existing_linked_user = User.find_by(telegram_user_id: chat_id.to_s)
 
-        send_message(
-          chat_id: chat_id,
-          text: "🎉 Account linked successfully! Welcome to SplitMySub, #{user.first_name}!\n\nYou can now receive payment reminders and manage your subscriptions through this bot.\n\nType /help to see available commands."
-        )
+        if existing_linked_user && existing_linked_user.id != user.id
+          send_message(
+            chat_id: chat_id,
+            text: "⚠️ This Telegram account is already linked to another SplitMySub account.\n\nIf you want to link it to a different account, please first unlink it from your current account in the profile settings, then try again."
+          )
+          return
+        end
+
+        # Link the account (or update if already linked to same user)
+        begin
+          user.update!(
+            telegram_user_id: chat_id.to_s,
+            telegram_username: user_info["username"],
+            telegram_verification_token: nil,
+            telegram_verification_token_expires_at: nil
+          )
+
+          send_message(
+            chat_id: chat_id,
+            text: "🎉 Account linked successfully! Welcome to SplitMySub, #{user.first_name}!\n\nYou can now receive payment reminders and manage your subscriptions through this bot.\n\nType /help to see available commands."
+          )
+        rescue ActiveRecord::RecordInvalid => e
+          Rails.logger.error "Failed to link Telegram account: #{e.message}"
+          send_message(
+            chat_id: chat_id,
+            text: "❌ Unable to link account due to a validation error. Please try generating a new verification token from your profile settings."
+          )
+        end
       else
         send_message(
           chat_id: chat_id,

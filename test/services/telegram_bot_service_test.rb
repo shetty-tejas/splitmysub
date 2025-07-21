@@ -181,6 +181,27 @@ class TelegramBotServiceTest < ActiveSupport::TestCase
     end
   end
 
+  test "handle_start_command_gracefully_handles_already_linked_account" do
+    service = TelegramBotService.new
+
+    # Create another user and link them to the chat_id
+    other_user = User.create!(
+      first_name: "Other",
+      last_name: "User",
+      email_address: "other_linked_user_#{rand(10000)}@example.com",
+      telegram_user_id: @chat_id.to_s
+    )
+
+    # Try to link the same chat_id to a different user
+    token = @user.generate_telegram_verification_token
+
+    service.stub :send_message, { "message_id" => 1 } do
+      # Should not raise an error, should send warning message instead
+      result = service.send(:handle_start_command, @chat_id.to_i, "/start #{token}", { "username" => "testuser" })
+      assert result
+    end
+  end
+
   test "handle_start_command_with_invalid_token_shows_error" do
     service = TelegramBotService.new
 

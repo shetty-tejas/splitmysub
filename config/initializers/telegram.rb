@@ -28,10 +28,10 @@ unless Rails.env.test?
           end
 
           if webhook_url.present?
-            begin
+          begin
               # Enhanced webhook setup with additional parameters
               webhook_params = {
-                url: webhook_url,
+              url: webhook_url,
                 allowed_updates: [ "message", "callback_query" ],
                 max_connections: 100,
                 drop_pending_updates: true
@@ -43,15 +43,15 @@ unless Rails.env.test?
 
               response = Rails.application.config.telegram_bot.api.set_webhook(webhook_params)
 
-              if response["ok"]
-                Rails.logger.info "Telegram webhook set successfully: #{webhook_url}"
+            if response["ok"]
+              Rails.logger.info "Telegram webhook set successfully: #{webhook_url}"
                 Rails.logger.info "Webhook mode: #{Rails.env.production? ? 'production' : 'development'}"
-              else
-                Rails.logger.error "Failed to set Telegram webhook: #{response['description']}"
-              end
-            rescue => e
-              Rails.logger.error "Error setting up Telegram webhook: #{e.message}"
+            else
+              Rails.logger.error "Failed to set Telegram webhook: #{response['description']}"
             end
+          rescue => e
+            Rails.logger.error "Error setting up Telegram webhook: #{e.message}"
+          end
           else
             Rails.logger.warn "Webhook mode enabled but TELEGRAM_WEBHOOK_URL not configured"
           end
