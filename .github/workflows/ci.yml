@@ -89,7 +89,7 @@ jobs:
   deploy:
     needs: [scan_ruby, lint, test]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: false  # Deploy step disabled - change to true to re-enable
     timeout-minutes: 20
     env:
       RAILS_ENV: production
