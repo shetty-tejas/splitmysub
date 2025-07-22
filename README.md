@@ -55,7 +55,7 @@ SplitMySub is a comprehensive subscription cost-sharing platform that eliminates
 
 ### 🔔 **Smart Reminders**
 - Automated email reminders before payment due dates
-- Telegram notifications for users with linked accounts
+- Telegram notifications via webhook-based bot integration
 - Configurable reminder timing (default: 7 days before)
 - Escalating reminder sequence (gentle → follow-up → final notice)
 - Customizable reminder templates

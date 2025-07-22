@@ -38,6 +38,7 @@ env:
     - RESEND_API_KEY
     - ADMIN_PASSWORD
     - DOCKER_REGISTRY_TOKEN
+    - TELEGRAM_BOT_TOKEN
   clear:
     # Rails environment
     RAILS_ENV: production
@@ -61,6 +62,9 @@ env:
     
     APP_HOST: splitmysubscription.xyz
     APP_PROTOCOL: https
+    
+    # Telegram webhook configuration
+    TELEGRAM_USE_WEBHOOKS: true
     
     # Vite configuration for production
     VITE_RUBY_HOST: 0.0.0.0
@@ -139,7 +143,7 @@ logging:
 #   telegram:
 #     image: ashwinmk2016/splitmysub
 #     host: 146.190.118.95
-#     cmd: ruby lib/telegram_polling.rb
+#     cmd: echo "Telegram webhooks are now handled by main app - no separate service needed"
 #     env:
 #       secret:
 #         - RAILS_MASTER_KEY

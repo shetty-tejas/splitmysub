@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Development Server
-- `bin/dev` - Start the development server using foreman/overmind (runs Rails server + Vite + Telegram polling)
+- `bin/dev` - Start the development server using foreman/overmind (runs Rails server + Vite)
 - `bin/rails s` - Start Rails server only
 - `bin/vite dev` - Start Vite development server only
 
@@ -24,7 +24,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bin/rails db:reset` - Drop, create, migrate and seed database
 
 ### Code Quality
-- `bundle exec rubocop` - Run Ruby linter (configured for Rails omakase)
+- `bin/rubocop` - Run Ruby linter (configured for Rails omakase)
 - `bundle exec brakeman` - Run security scanner
 
 ### Email Testing
@@ -33,11 +33,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Admin Tasks
 - `bin/rails "invitations:cleanup"` - Clean up expired invitations
-- `bin/rails "reminders:send_daily"` - Send daily payment reminders
+- `bin/rails "reminders:process"` - Send daily payment reminders
 
 ### Telegram Bot
-- `ruby lib/telegram_polling.rb` - Start Telegram bot polling (runs automatically with `bin/dev`)
-- Bot responds to commands: `/start`, `/help`, `/status`, `/payments`, `/pay`, `/settings`
+- `bin/rails telegram:setup_webhook` - Configure webhook for development/production
+- `bin/rails telegram:webhook_info` - Check webhook status and configuration
+- `bin/rails telegram:remove_webhook` - Remove webhooks
+- `bin/rails telegram:reset_webhook` - Reset webhook (remove and setup)
+- `bin/rails telegram:test_webhook` - Test webhook endpoint locally
+- Bot responds to commands: `/start`, `/help`, `/status`, `/payments`, `/pay`, `/settings`, `/unlink`
 
 ## Application Architecture
 
@@ -86,11 +90,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Bot Framework**: telegram-bot-ruby gem for Telegram API integration
 - **Account Linking**: Users can link Telegram accounts via verification tokens in profile settings
 - **Notifications**: Payment reminders, billing cycle alerts, and payment confirmations via Telegram
-- **Bot Commands**: Interactive commands for payment management and status checking
-- **Services**: `TelegramBotService` for API interactions, `TelegramNotificationService` for message formatting
+- **Bot Commands**: Interactive commands including `/start`, `/help`, `/status`, `/payments`, `/pay`, `/settings`, `/unlink`
+- **Services**: `TelegramBotService` for webhook processing, `TelegramNotificationService` for message formatting
 - **Jobs**: `TelegramNotificationJob` for asynchronous delivery
 - **Models**: `TelegramMessage` for delivery tracking and status
-- **Polling**: Continuous webhook processing via `lib/telegram_polling.rb`
+- **Webhooks**: Primary integration method via `TelegramController` at `/telegram/webhook`
+- **Routes**: Profile integration routes for token generation, status checking, unlinking, and notification preferences
+- **Testing**: Full webhook endpoint testing with mocked service calls
 
 ### Background Jobs
 - **Queue**: SolidQueue for job processing
@@ -120,9 +126,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Configuration & Environment
 - **Credentials**: Telegram bot token stored in Rails credentials (`telegram_bot_token`)
-- **Routes**: Telegram-specific routes in `config/routes.rb` for profile integration
-- **Initializers**: Telegram configuration in `config/initializers/telegram.rb`
-- **Development**: Telegram polling runs automatically with `bin/dev` via Procfile.dev
+- **Webhook Secret**: Optional webhook secret token in Rails credentials (`telegram_webhook_secret`)
+- **Routes**: Telegram webhook endpoint and profile integration routes in `config/routes.rb`
+- **Initializers**: Telegram webhook configuration in `config/initializers/telegram.rb`
+- **Development**: Webhook-based integration requiring ngrok for local testing
+- **Environment Variables**: 
+  - `TELEGRAM_WEBHOOK_URL` for development webhook setup
+  - `TELEGRAM_USE_WEBHOOKS=true` to enable webhooks in development
 
 ### Development Tools
 - **Letter Opener**: Email preview in development
@@ -134,8 +144,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Minitest**: Rails default testing framework
 - **Fixtures**: Test data in `test/fixtures/`
 - **Integration Tests**: Full workflow testing in `test/integration/`
+- **Controller Tests**: Including TelegramController webhook endpoint testing
+- **Service Tests**: TelegramBotService and TelegramNotificationService testing
 - **Authentication Helpers**: `sign_in_as(user)` and `admin_authenticate` helpers
 
 ### Documentation
 - **Invitation Flow**: Complete documentation in `docs/INVITATION_FLOW_DOCUMENTATION.md`
 - **Authentication Flow**: Complete documentation in `docs/AUTHENTICATION_FLOW_DOCUMENTATION.md`
+- **Telegram Webhooks**: Complete webhook setup and troubleshooting in `docs/TELEGRAM_WEBHOOKS.md`

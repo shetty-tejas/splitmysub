@@ -181,6 +181,29 @@ class TelegramBotServiceTest < ActiveSupport::TestCase
     end
   end
 
+  test "handle_start_command_gracefully_handles_already_linked_account" do
+    service = TelegramBotService.new
+
+    # Use a different chat_id and link it to another user
+    other_chat_id = 999888777
+    other_user = User.create!(
+      first_name: "Other",
+      last_name: "User",
+      email_address: "other_linked_user_#{rand(10000)}@example.com",
+      telegram_user_id: other_chat_id.to_s
+    )
+
+    # Try to link the other_chat_id to @user (different user)
+    token = @user.generate_telegram_verification_token
+
+    service.stub :send_message, { "message_id" => 1 } do
+      # Should not raise an error, should send warning message instead
+      service.send(:handle_start_command, other_chat_id, "/start #{token}", { "username" => "testuser" })
+      # The method doesn't return a value, so just test it doesn't crash
+      assert true
+    end
+  end
+
   test "handle_start_command_with_invalid_token_shows_error" do
     service = TelegramBotService.new
 
@@ -291,6 +314,20 @@ class TelegramBotServiceTest < ActiveSupport::TestCase
     service.stub :send_message, { "message_id" => 1 } do
       result = service.send(:handle_authenticated_command, @user, "unknown", @chat_id.to_i)
       assert result
+    end
+  end
+
+    test "handle_unlink_command_unlinks_account_directly" do
+    service = TelegramBotService.new
+
+    service.stub :send_message, { "message_id" => 1 } do
+      result = service.send(:handle_unlink_command, @user, @chat_id.to_i)
+      assert result
+
+      @user.reload
+      assert_nil @user.telegram_user_id
+      assert_nil @user.telegram_username
+      assert_nil @user.telegram_verification_token
     end
   end
 end

@@ -8,6 +8,8 @@ services:
     environment:
       - RAILS_ENV=production
       - SECRET_KEY_BASE=your_secret_key_base_here_change_this_in_production
+      - TELEGRAM_USE_WEBHOOKS=true
+      # Add TELEGRAM_BOT_TOKEN as needed (should be set via secrets in production)
     volumes:
       - splitmysub_storage:/rails/storage
       - splitmysub_db:/rails/db

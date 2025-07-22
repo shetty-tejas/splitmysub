@@ -92,27 +92,6 @@ class TelegramBotService
     end
   end
 
-  def process_message(message)
-    Rails.logger.info "Processing polling message: #{message.inspect}"
-
-    # Convert polling message to webhook format for compatibility with existing code
-    if message.text
-      update = {
-        "message" => {
-          "chat" => { "id" => message.chat.id },
-          "from" => {
-            "id" => message.from.id,
-            "username" => message.from.username
-          },
-          "text" => message.text
-        }
-      }
-      process_text_message(update)
-    else
-      Rails.logger.info "Received non-text message type from polling: #{message.inspect}"
-    end
-  end
-
   private
 
   def process_text_message(update)
@@ -147,18 +126,37 @@ class TelegramBotService
       user = User.find_by(telegram_verification_token: token)
 
       if user && user.telegram_verification_token_expires_at > Time.current
-        # Link the account
-        user.update!(
-          telegram_user_id: chat_id.to_s,
-          telegram_username: user_info["username"],
-          telegram_verification_token: nil,
-          telegram_verification_token_expires_at: nil
-        )
+        # Check if this Telegram account is already linked to someone else
+        existing_linked_user = User.find_by(telegram_user_id: chat_id.to_s)
 
-        send_message(
-          chat_id: chat_id,
-          text: "🎉 Account linked successfully! Welcome to SplitMySub, #{user.first_name}!\n\nYou can now receive payment reminders and manage your subscriptions through this bot.\n\nType /help to see available commands."
-        )
+        if existing_linked_user && existing_linked_user.id != user.id
+          send_message(
+            chat_id: chat_id,
+            text: "⚠️ This Telegram account is already linked to another SplitMySub account.\n\nIf you want to link it to a different account, please first unlink it from your current account in the profile settings, then try again."
+          )
+          return
+        end
+
+        # Link the account (or update if already linked to same user)
+        begin
+          user.update!(
+            telegram_user_id: chat_id.to_s,
+            telegram_username: user_info["username"],
+            telegram_verification_token: nil,
+            telegram_verification_token_expires_at: nil
+          )
+
+          send_message(
+            chat_id: chat_id,
+            text: "🎉 Account linked successfully! Welcome to SplitMySub, #{user.first_name}!\n\nYou can now receive payment reminders and manage your subscriptions through this bot.\n\nType /help to see available commands."
+          )
+        rescue ActiveRecord::RecordInvalid => e
+          Rails.logger.error "Failed to link Telegram account: #{e.message}"
+          send_message(
+            chat_id: chat_id,
+            text: "❌ Unable to link account due to a validation error. Please try generating a new verification token from your profile settings."
+          )
+        end
       else
         send_message(
           chat_id: chat_id,
@@ -192,6 +190,8 @@ class TelegramBotService
       handle_payments_command(user, chat_id)
     when "/settings"
       handle_settings_command(user, chat_id)
+    when "/unlink"
+      handle_unlink_command(user, chat_id)
     when /^\/pay/
       handle_pay_command(user, text, chat_id)
     else
@@ -210,12 +210,13 @@ class TelegramBotService
       /payments - List all pending payments
       /pay [project] - Mark a payment as completed
       /settings - Manage notification preferences
+      /unlink - Unlink your Telegram account from SplitMySub
       /help - Show this help message
 
       💡 You can also receive automatic payment reminders and updates through this bot!
     TEXT
 
-    send_message(chat_id: chat_id, text: help_text)
+    send_message(chat_id: chat_id, text: help_text, parse_mode: "HTML")
   end
 
   def handle_status_command(user, chat_id)
@@ -348,6 +349,22 @@ class TelegramBotService
 
     # Log the confirmation
     Rails.logger.info "Payment confirmed via Telegram by user #{user.id} for project #{project.id}"
+  end
+
+    def handle_unlink_command(user, chat_id)
+    # Store user name for goodbye message
+    user_name = user.first_name
+
+    # Unlink the account directly
+    user.unlink_telegram_account!
+
+    send_message(
+      chat_id: chat_id,
+      text: "🔓 <b>Account Unlinked</b>\n\nGoodbye #{user_name}! Your Telegram account has been successfully unlinked from SplitMySub.\n\n📱 To re-link in the future:\n1. Go to your SplitMySub profile settings\n2. Generate a new verification token\n3. Send /start [token] to this bot\n\nThank you for using SplitMySub! 👋",
+      parse_mode: "HTML"
+    )
+
+    Rails.logger.info "Telegram account unlinked via bot by user #{user.id}"
   end
 
   private
