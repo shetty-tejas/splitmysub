@@ -43,12 +43,16 @@ unless Rails.env.test?
 
               response = Rails.application.config.telegram_bot.api.set_webhook(webhook_params)
 
-            if response["ok"]
-              Rails.logger.info "Telegram webhook set successfully: #{webhook_url}"
+              # Handle both boolean and hash responses from Telegram API
+              success = response == true || (response.is_a?(Hash) && response["ok"])
+              
+              if success
+                Rails.logger.info "Telegram webhook set successfully: #{webhook_url}"
                 Rails.logger.info "Webhook mode: #{Rails.env.production? ? 'production' : 'development'}"
-            else
-              Rails.logger.error "Failed to set Telegram webhook: #{response['description']}"
-            end
+              else
+                error_msg = response.is_a?(Hash) ? response["description"] : "Unknown error"
+                Rails.logger.error "Failed to set Telegram webhook: #{error_msg}"
+              end
           rescue => e
             Rails.logger.error "Error setting up Telegram webhook: #{e.message}"
           end
