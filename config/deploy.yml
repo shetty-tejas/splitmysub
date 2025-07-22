@@ -38,6 +38,7 @@ env:
     - RESEND_API_KEY
     - ADMIN_PASSWORD
     - DOCKER_REGISTRY_TOKEN
+    - TELEGRAM_BOT_TOKEN
   clear:
     # Rails environment
     RAILS_ENV: production
@@ -61,6 +62,9 @@ env:
     
     APP_HOST: splitmysubscription.xyz
     APP_PROTOCOL: https
+    
+    # Telegram webhook configuration
+    TELEGRAM_USE_WEBHOOKS: true
     
     # Vite configuration for production
     VITE_RUBY_HOST: 0.0.0.0
