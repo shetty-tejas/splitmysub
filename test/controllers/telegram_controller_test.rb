@@ -23,16 +23,16 @@ class TelegramControllerTest < ActionDispatch::IntegrationTest
         text: "/start"
       }
     }
-    
+
     post "/telegram/webhook", params: update.to_json, headers: { "Content-Type" => "application/json" }
-    
+
     assert_response :ok
     assert_empty response.body
   end
 
   test "webhook endpoint handles invalid JSON" do
     post "/telegram/webhook", params: "invalid json", headers: { "Content-Type" => "application/json" }
-    
+
     assert_response :bad_request
   end
 
@@ -49,7 +49,7 @@ class TelegramControllerTest < ActionDispatch::IntegrationTest
     # Mock service to raise an error
     TelegramBotService.stub :new, -> { raise StandardError.new("Service error") } do
       post "/telegram/webhook", params: update.to_json, headers: { "Content-Type" => "application/json" }
-      
+
       assert_response :internal_server_error
     end
   end
