@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Development Server
-- `bin/dev` - Start the development server using foreman/overmind (runs Rails server + Vite + Telegram polling)
+- `bin/dev` - Start the development server using foreman/overmind (runs Rails server + Vite)
 - `bin/rails s` - Start Rails server only
 - `bin/vite dev` - Start Vite development server only
 
@@ -38,9 +38,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Telegram Bot
 - `bin/rails telegram:setup_webhook` - Configure webhook for development/production
 - `bin/rails telegram:webhook_info` - Check webhook status and configuration
-- `bin/rails telegram:remove_webhook` - Disable webhooks (fallback to polling)
+- `bin/rails telegram:remove_webhook` - Disable webhooks
 - `bin/rails telegram:test_webhook` - Test webhook endpoint locally
-- `ruby lib/telegram_polling.rb` - Start polling mode (fallback, not default)
 - Bot responds to commands: `/start`, `/help`, `/status`, `/payments`, `/pay`, `/settings`, `/unlink`
 
 ## Application Architecture
@@ -91,11 +90,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Account Linking**: Users can link Telegram accounts via verification tokens in profile settings
 - **Notifications**: Payment reminders, billing cycle alerts, and payment confirmations via Telegram
 - **Bot Commands**: Interactive commands including `/unlink` for account management
-- **Services**: `TelegramBotService` with webhook and polling support, `TelegramNotificationService` for message formatting
+- **Services**: `TelegramBotService` with webhook support, `TelegramNotificationService` for message formatting
 - **Jobs**: `TelegramNotificationJob` for asynchronous delivery
 - **Models**: `TelegramMessage` for delivery tracking and status
 - **Webhooks**: Primary integration method via `TelegramController` at `/telegram/webhook`
-- **Polling**: Fallback method available via `lib/telegram_polling.rb`
 
 ### Background Jobs
 - **Queue**: SolidQueue for job processing

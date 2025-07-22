@@ -139,7 +139,7 @@ logging:
 #   telegram:
 #     image: ashwinmk2016/splitmysub
 #     host: 146.190.118.95
-#     cmd: ruby lib/telegram_polling.rb
+#     cmd: echo "Telegram webhooks are now handled by main app - no separate service needed"
 #     env:
 #       secret:
 #         - RAILS_MASTER_KEY
