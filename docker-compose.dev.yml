@@ -10,7 +10,6 @@ services:
     environment:
       - RAILS_ENV=development
       - BUNDLE_WITHOUT=
-      - TELEGRAM_USE_WEBHOOKS=true
       - TELEGRAM_WEBHOOK_URL=${TELEGRAM_WEBHOOK_URL:-}
     volumes:
       - .:/rails

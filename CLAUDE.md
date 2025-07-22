@@ -131,8 +131,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Initializers**: Telegram webhook configuration in `config/initializers/telegram.rb`
 - **Development**: Webhook-based integration requiring ngrok for local testing
 - **Environment Variables**: 
-  - `TELEGRAM_WEBHOOK_URL` for development webhook setup
-  - `TELEGRAM_USE_WEBHOOKS=true` to enable webhooks in development
+  - `TELEGRAM_WEBHOOK_URL` for development webhook setup (webhooks auto-enabled when present)
+  - Production webhooks are automatically configured using `base_url` from credentials
 
 ### Development Tools
 - **Letter Opener**: Email preview in development

@@ -62,9 +62,6 @@ env:
     APP_HOST: splitmysubscription.xyz
     APP_PROTOCOL: https
     
-    # Telegram webhook configuration
-    TELEGRAM_USE_WEBHOOKS: true
-    
     # Vite configuration for production
     VITE_RUBY_HOST: 0.0.0.0
     VITE_RUBY_PORT: 3036

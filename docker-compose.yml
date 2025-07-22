@@ -8,7 +8,7 @@ services:
     environment:
       - RAILS_ENV=production
       - SECRET_KEY_BASE=your_secret_key_base_here_change_this_in_production
-      - TELEGRAM_USE_WEBHOOKS=true
+      # Telegram bot token is handled via Rails credentials
     volumes:
       - splitmysub_storage:/rails/storage
       - splitmysub_db:/rails/db

@@ -17,17 +17,17 @@ unless Rails.env.test?
         # Initialize the global bot instance
         Rails.application.config.telegram_bot = Telegram::Bot::Client.new(token)
 
-        # Set up webhook in production or development (if configured)
-        use_webhooks = Rails.env.production? || (Rails.env.development? && ENV["TELEGRAM_USE_WEBHOOKS"] == "true")
+        # Determine webhook URL based on environment
+        webhook_url = if Rails.env.development?
+          ENV.fetch("TELEGRAM_WEBHOOK_URL", nil)
+        elsif Rails.env.production?
+          "#{Rails.application.credentials.base_url}/telegram/webhook"
+        else
+          nil
+        end
 
-        if use_webhooks
-          webhook_url = if Rails.env.development?
-            ENV.fetch("TELEGRAM_WEBHOOK_URL", nil)
-          else
-            "#{Rails.application.credentials.base_url}/telegram/webhook"
-          end
-
-          if webhook_url.present?
+        # Use webhooks if webhook URL is available, otherwise log info
+        if webhook_url.present?
           begin
               # Enhanced webhook setup with additional parameters
               webhook_params = {
@@ -52,11 +52,8 @@ unless Rails.env.test?
           rescue => e
             Rails.logger.error "Error setting up Telegram webhook: #{e.message}"
           end
-          else
-            Rails.logger.warn "Webhook mode enabled but TELEGRAM_WEBHOOK_URL not configured"
-          end
         else
-          Rails.logger.info "Telegram bot initialized for development (polling mode - no webhook)"
+          Rails.logger.info "Telegram bot initialized without webhook (TELEGRAM_WEBHOOK_URL not configured for development)"
         end
       else
         Rails.logger.warn "Telegram bot token not configured - Telegram integration disabled"
