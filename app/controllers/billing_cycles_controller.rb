@@ -63,7 +63,7 @@ class BillingCyclesController < ApplicationController
       user_permissions: {
         is_owner: @project.is_owner?(Current.user),
         is_member: @project.is_member?(Current.user),
-        can_manage: @project.is_owner?(Current.user),
+        can_manage: @project.is_owner?(Current.user)
       }
     }
   end

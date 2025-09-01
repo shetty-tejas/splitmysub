@@ -69,7 +69,7 @@ class PaymentsController < ApplicationController
       }
     end
   end
-  
+
   def mark_as_paid
     user = User.find_by(id: params[:user_id])
     return redirect_back_or_to @billing_cycle, alert: "User not found." unless user
@@ -79,7 +79,7 @@ class PaymentsController < ApplicationController
                                              confirmed_by: Current.user, confirmation_date: Date.today).tap do |p|
                                              p.amount = p.expected_amount
                end
-    
+
     if @payment.save
       redirect_back_or_to @billing_cycle, notice: "Marked as Paid for #{user.full_name}"
     else
@@ -129,7 +129,7 @@ class PaymentsController < ApplicationController
   def authorize_billing_cycle_management
     return true if @billing_cycle.project&.is_owner?(Current.user)
 
-    return redirect_back_or_to @billing_cycle, alert: "You are not authorized to update this resource"
+    redirect_back_or_to @billing_cycle, alert: "You are not authorized to update this resource"
   end
 
   def payment_params

@@ -45,7 +45,7 @@ unless Rails.env.test?
 
               # Handle both boolean and hash responses from Telegram API
               success = response == true || (response.is_a?(Hash) && response["ok"])
-              
+
               if success
                 Rails.logger.info "Telegram webhook set successfully: #{webhook_url}"
                 Rails.logger.info "Webhook mode: #{Rails.env.production? ? 'production' : 'development'}"

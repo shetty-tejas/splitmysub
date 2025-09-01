@@ -101,19 +101,19 @@ class BillingCycle < ApplicationRecord
     project.cost_per_member
   end
 
-  def members_who_paid(status = [:confirmed])
+  def members_who_paid(status = [ :confirmed ])
     User.joins(:payments).where(payments: { billing_cycle: self, status: }).distinct
   end
 
   def user_successfully_paid?(user = Current.user)
-    members_who_paid([:confirmed, :pending]).exists?(id: user)
+    members_who_paid([ :confirmed, :pending ]).exists?(id: user)
   end
 
   def user_payment_pending?(user = Current.user)
-    !members_who_paid([:confirmed, :pending]).exists?(id: user)
+    !members_who_paid([ :confirmed, :pending ]).exists?(id: user)
   end
 
-  def members_who_havent_paid(status = [:confirmed])
+  def members_who_havent_paid(status = [ :confirmed ])
     all_members = [ project.user ] + project.members.to_a
     paid_members = members_who_paid(status).to_a
     all_members - paid_members
