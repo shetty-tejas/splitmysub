@@ -218,10 +218,10 @@
             {formatCurrency(billing_cycle.amount_remaining)}
           </div>
           <p class="text-xs text-muted-foreground">
-            {billing_cycle.members_who_havent_paid.length} member{billing_cycle
+            {billing_cycle.members_who_havent_paid.length || "no"} member{billing_cycle
               .members_who_havent_paid.length === 1
               ? ""
-              : "s"} pending
+              : "s"} pending, rejected or disputed.
           </p>
         </CardContent>
       </Card>
@@ -257,7 +257,7 @@
         <CardHeader>
           <CardTitle class="flex items-center gap-2">
             <CheckCircle class="w-5 h-5 text-green-600" />
-            Members Who Paid ({billing_cycle.members_who_paid.length})
+            Successfully paid by {billing_cycle.members_who_paid.length || "zero"} {billing_cycle.members_who_paid.length === 1 ? "member" : "members"}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -285,8 +285,7 @@
         <CardHeader>
           <CardTitle class="flex items-center gap-2">
             <XCircle class="w-5 h-5 text-red-600" />
-            Members Who Haven't Paid ({billing_cycle.members_who_havent_paid
-              .length})
+            Payment unsuccessful for {billing_cycle.members_who_havent_paid.length || "zero"} {billing_cycle.members_who_havent_paid.length === 1 ? "member" : "members"}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -312,11 +311,20 @@
 
     <!-- Payment Details -->
     <Card class="mt-8">
-      <CardHeader>
+      <CardHeader class="flex-row justify-between">
         <CardTitle class="flex items-center gap-2">
           <DollarSign class="w-5 h-5" />
           Payment Details ({payments.length})
         </CardTitle>
+
+        {#if user_permissions.can_pay}
+          <Button href="/billing_cycles/{billing_cycle.id}/payments/new"
+            variant="default"
+            size="sm"
+          >
+            Submit Proof
+          </Button>
+        {/if}
       </CardHeader>
       <CardContent>
         {#if payments.length === 0}

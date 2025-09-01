@@ -13,7 +13,6 @@
     Plus,
     Calendar,
     DollarSign,
-    Users,
     AlertCircle,
     CheckCircle,
     Clock,
@@ -234,15 +233,15 @@
         <CardHeader
           class="flex flex-row items-center justify-between space-y-0 pb-2"
         >
-          <CardTitle class="text-sm font-medium">Total Amount</CardTitle>
+          <CardTitle class="text-sm font-medium">Collected Amount</CardTitle>
           <DollarSign class="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div class="text-2xl font-bold">
-            {formatCurrency(safeStats.total_amount, project.currency)}
+            {formatCurrency(safeStats.total_paid, project.currency)}
           </div>
           <p class="text-xs text-muted-foreground">
-            {formatCurrency(safeStats.total_paid, project.currency)} collected
+            of total {formatCurrency(safeStats.total_amount, project.currency)} to date
           </p>
         </CardContent>
       </Card>
@@ -276,7 +275,7 @@
             {formatCurrency(safeStats.total_remaining, project.currency)}
           </div>
           <p class="text-xs text-muted-foreground">
-            {safeStats.due_soon} due soon
+            {safeStats.due_soon} due soon, {safeStats.overdue} overdue
           </p>
         </CardContent>
       </Card>
@@ -432,31 +431,44 @@
 
                   {#if cycle.days_until_due !== undefined}
                     <div class="mt-2 text-sm">
-                      {#if cycle.overdue}
-                        <span class="text-red-600 font-medium">
-                          Overdue by {Math.abs(cycle.days_until_due)} day{Math.abs(
-                            cycle.days_until_due,
-                          ) === 1
-                            ? ""
-                            : "s"}
-                        </span>
-                      {:else if cycle.days_until_due === 0}
-                        <span class="text-orange-600 font-medium"
-                          >Due today</span
-                        >
+                      {#if cycle.fully_paid}
+                          <span class="text-gray-600">
+                            Settled - no payment due 🎉
+                          </span>
                       {:else}
-                        <span class="text-gray-600">
-                          Due in {cycle.days_until_due} day{cycle.days_until_due ===
-                          1
-                            ? ""
-                            : "s"}
-                        </span>
+                        {#if cycle.overdue}
+                          <span class="text-red-600 font-medium">
+                            Overdue by {Math.abs(cycle.days_until_due)} day{Math.abs(
+                              cycle.days_until_due,
+                            ) === 1
+                              ? ""
+                              : "s"}
+                          </span>
+                        {:else if cycle.days_until_due === 0}
+                          <span class="text-orange-600 font-medium"
+                            >Due today</span
+                          >
+                        {:else}
+                          <span class="text-gray-600">
+                            Due in {cycle.days_until_due} day{cycle.days_until_due ===
+                            1
+                              ? ""
+                              : "s"}
+                          </span>
+                        {/if}
                       {/if}
                     </div>
                   {/if}
                 </div>
 
-                <div class="flex gap-2">
+                <div class="flex flex-col gap-2">
+                  {#if cycle.can_pay}
+                    <Button href="/billing_cycles/{cycle.id}/payments/new"
+                      variant="default"
+                      size="sm" >
+                      Submit Proof
+                    </Button>
+                  {/if}
                   <Button
                     href="/projects/{project.slug}/billing_cycles/{cycle.id}"
                     variant="outline"

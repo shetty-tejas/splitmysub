@@ -133,14 +133,20 @@ class Payment < ApplicationRecord
   end
 
   def overpaid?
+    return false unless amount
+
     amount > expected_amount
   end
 
   def underpaid?
+    return false unless amount
+
     amount < expected_amount
   end
 
   def correct_amount?
+    return false unless amount
+
     amount == expected_amount
   end
 

@@ -64,7 +64,7 @@ class BillingConfig < ApplicationRecord
     create!(
       generation_months_ahead: 3,
       archiving_months_threshold: 6,
-      due_soon_days: 7,
+      due_soon_days: 30,
       auto_archiving_enabled: true,
       auto_generation_enabled: true,
       default_billing_frequencies: [ "monthly" ],

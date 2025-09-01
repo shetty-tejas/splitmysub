@@ -329,7 +329,7 @@
           <!-- Status Filter -->
           <select
             bind:value={statusFilter}
-            class="px-3 py-2 border border-input bg-background rounded-md text-sm"
+            class="px-3 py-2 border border-input bg-background rounded-md text-sm pr-8"
           >
             <option value="">All Statuses</option>
             <option value="pending">Pending</option>
@@ -340,7 +340,7 @@
           <!-- Disputed Filter -->
           <select
             bind:value={disputedFilter}
-            class="px-3 py-2 border border-input bg-background rounded-md text-sm"
+            class="px-3 py-2 border border-input bg-background rounded-md text-sm pr-8"
           >
             <option value="">All Payments</option>
             <option value="true">Disputed Only</option>
@@ -349,7 +349,7 @@
           <!-- Sort -->
           <select
             bind:value={sortBy}
-            class="px-3 py-2 border border-input bg-background rounded-md text-sm"
+            class="px-3 py-2 border border-input bg-background rounded-md text-sm pr-8"
           >
             <option value="date_desc">Newest First</option>
             <option value="date_asc">Oldest First</option>
@@ -602,7 +602,7 @@
             <select
               id="batch-action-select"
               bind:value={batchAction}
-              class="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
+              class="w-full px-3 py-2 border border-input bg-background rounded-md text-sm pr-8"
             >
               <option value="">Select action...</option>
               <option value="confirm">Confirm Payments</option>
@@ -619,7 +619,7 @@
               id="batch-notes-textarea"
               bind:value={batchNotes}
               placeholder="Add notes for this batch action..."
-              class="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
+              class="w-full px-3 py-2 border border-input bg-background rounded-md text-sm pr-8"
               rows="3"
             ></textarea>
           </div>

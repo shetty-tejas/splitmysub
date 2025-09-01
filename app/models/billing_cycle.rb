@@ -12,8 +12,8 @@ class BillingCycle < ApplicationRecord
   validate :due_date_cannot_be_in_past, on: :create
 
   # Basic scopes (without hardcoded business logic)
-  scope :upcoming, -> { where("due_date >= ?", Date.current) }
-  scope :overdue, -> { where("due_date < ?", Date.current) }
+  scope :upcoming, -> { where(due_date: Date.current...) }
+  scope :overdue, -> { where(due_date: ...Date.current) }
   scope :for_project, ->(project) { where(project: project) }
   scope :by_currency, ->(currency) { joins(:project).where(projects: { currency: currency }) }
   scope :with_payments, -> { joins(:payments).distinct }
@@ -23,9 +23,8 @@ class BillingCycle < ApplicationRecord
 
   # Class methods to replace removed scopes with configurable values
   def self.due_soon(days = nil)
-    config = BillingConfig.current
-    threshold_days = days || config.due_soon_days
-    where(due_date: Date.current..threshold_days.days.from_now)
+    threshold_days = days || BillingConfig.current.due_soon_days
+    where(due_date: Date.today..threshold_days.days.from_now)
   end
 
   def self.archivable
@@ -36,7 +35,9 @@ class BillingCycle < ApplicationRecord
   # Simple status methods
   def overdue?
     return false unless due_date
-    Date.current > due_date && payment_status != "paid"
+    return false if payment_status == "paid"
+
+    Date.current > due_date
   end
 
   def days_until_due
@@ -46,7 +47,11 @@ class BillingCycle < ApplicationRecord
 
   # Payment calculation methods
   def total_paid
-    payments.sum(:amount)
+    payments.where(status: :confirmed).sum(:amount)
+  end
+
+  def total_pending
+    payments.where(status: :pending).sum(:amount)
   end
 
   def amount_remaining
@@ -96,13 +101,21 @@ class BillingCycle < ApplicationRecord
     project.cost_per_member
   end
 
-  def members_who_paid
-    User.joins(:payments).where(payments: { billing_cycle: self }).distinct
+  def members_who_paid(status = [:confirmed])
+    User.joins(:payments).where(payments: { billing_cycle: self, status: }).distinct
   end
 
-  def members_who_havent_paid
+  def user_successfully_paid?(user = Current.user)
+    members_who_paid([:confirmed, :pending]).exists?(id: user)
+  end
+
+  def user_payment_pending?(user = Current.user)
+    !members_who_paid([:confirmed, :pending]).exists?(id: user)
+  end
+
+  def members_who_havent_paid(status = [:confirmed])
     all_members = [ project.user ] + project.members.to_a
-    paid_members = members_who_paid.to_a
+    paid_members = members_who_paid(status).to_a
     all_members - paid_members
   end
 
@@ -164,9 +177,9 @@ class BillingCycle < ApplicationRecord
   # Convenience methods that delegate to services (for backward compatibility)
   def due_soon?(days = nil)
     return false unless due_date # Guard against nil due_date
-    config = BillingConfig.current
-    threshold_days = days || config.due_soon_days
-    due_date && due_date <= threshold_days.days.from_now && due_date >= Date.current
+
+    threshold_days = days || BillingConfig.current.due_soon_days
+    due_date <= threshold_days.days.from_now && due_date >= Date.current
   end
 
   def archivable?
@@ -204,11 +217,12 @@ class BillingCycle < ApplicationRecord
   end
 
   def self.overdue
-    where("due_date < ? AND total_amount > (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE billing_cycle_id = billing_cycles.id)", Date.current)
+    where(due_date: ...Date.today)
+      .where("total_amount > (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE billing_cycle_id = billing_cycles.id and status = 'confirmed')")
   end
 
-  def self.upcoming(days = 7)
-    where(due_date: Date.current..Date.current + days.days)
+  def self.upcoming(days = BillingConfig.current.due_soon_days)
+    where(due_date: Date.today..(Date.today+days.days))
   end
 
   private
