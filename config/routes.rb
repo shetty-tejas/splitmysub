@@ -77,7 +77,11 @@ Rails.application.routes.draw do
 
   # Nested payment routes under billing cycles
   resources :billing_cycles, only: [] do
-    resources :payments, only: [ :new, :create ]
+    resources :payments, only: [ :new, :create ] do
+      collection do
+        post "mark_as_paid/:user_id", action: :mark_as_paid
+      end
+    end
   end
 
   # Invitation acceptance routes (public, no authentication required)

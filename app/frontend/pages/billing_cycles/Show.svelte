@@ -61,6 +61,10 @@
     }
   }
 
+  function markAsPaid(id) {
+    router.post(`/billing_cycles/${billing_cycle.id}/payments/mark_as_paid/${id}`);
+  }
+
   function downloadEvidence(payment) {
     if (payment.evidence_url) {
       window.open(payment.evidence_url, "_blank");
@@ -300,7 +304,16 @@
                   class="flex items-center justify-between p-3 bg-red-50 rounded-lg"
                 >
                   <span class="font-medium">{member.email_address}</span>
+                  {#if user_permissions.can_manage}
+                      <Button onclick={() => markAsPaid(member.id)}
+                        variant="default"
+                        size="sm"
+                      >
+                      Mark as Paid
+                      </Button>
+                  {:else}
                   <XCircle class="w-4 h-4 text-red-600" />
+                  {/if}
                 </div>
               {/each}
             </div>
