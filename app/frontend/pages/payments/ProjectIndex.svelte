@@ -220,7 +220,7 @@
           <!-- Status Filter -->
           <select
             bind:value={filterStatus}
-            class="px-3 py-2 border border-input bg-background rounded-md text-sm"
+            class="px-3 py-2 border border-input bg-background rounded-md text-sm pr-8"
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>

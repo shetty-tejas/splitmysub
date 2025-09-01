@@ -20,7 +20,7 @@ class BillingCyclesController < ApplicationController
     @billing_cycles = @billing_cycles.upcoming if params[:filter] == "upcoming"
     @billing_cycles = @billing_cycles.overdue if params[:filter] == "overdue"
     if params[:filter] == "due_soon"
-      days = params[:days]&.to_i || 7
+      days = params[:days]&.to_i || BillingConfig.current.due_soon_days
       @billing_cycles = @billing_cycles.where(id: BillingCycle.due_soon(days).pluck(:id))
     end
 
@@ -80,7 +80,8 @@ class BillingCyclesController < ApplicationController
       user_permissions: {
         is_owner: @project.is_owner?(Current.user),
         is_member: @project.is_member?(Current.user),
-        can_manage: @project.is_owner?(Current.user)
+        can_manage: @project.is_owner?(Current.user),
+        can_pay: @billing_cycle.user_payment_pending?(Current.user)
       }
     }
   end
@@ -245,11 +246,14 @@ class BillingCyclesController < ApplicationController
       created_at: billing_cycle.created_at,
       updated_at: billing_cycle.updated_at,
       total_paid: billing_cycle.total_paid,
+      fully_paid: billing_cycle.fully_paid?,
+      total_pending: billing_cycle.total_pending,
       amount_remaining: billing_cycle.amount_remaining,
       expected_payment_per_member: billing_cycle.expected_payment_per_member,
       payment_status: billing_cycle.payment_status,
       overdue: billing_cycle.overdue?,
-      days_until_due: billing_cycle.days_until_due
+      days_until_due: billing_cycle.days_until_due,
+      can_pay: billing_cycle.user_payment_pending?(Current.user)
     }
   end
 

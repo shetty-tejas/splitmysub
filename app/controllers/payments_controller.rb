@@ -1,6 +1,7 @@
 class PaymentsController < ApplicationController
   before_action :set_payment, only: [ :show, :update, :destroy ]
-  before_action :set_billing_cycle, only: [ :new, :create ]
+  before_action :set_billing_cycle, only: [ :new, :create, :mark_as_paid ]
+  before_action :authorize_billing_cycle_management, only: [ :mark_as_paid ]
   before_action :authorize_payment_access, only: [ :show ]
   before_action :authorize_payment_modification, only: [ :update, :destroy ]
 
@@ -69,6 +70,25 @@ class PaymentsController < ApplicationController
     end
   end
 
+  def mark_as_paid
+    user = User.find_by(id: params[:user_id])
+    return redirect_back_or_to @billing_cycle, alert: "User not found." unless user
+    return redirect_back_or_to @billing_cycle, alert: "User has already paid." if @billing_cycle.user_successfully_paid?(user)
+
+    @payment = @billing_cycle.payments.build(
+      user:,
+      status: "confirmed",
+      notes: "Marked as Paid by #{Current.user.full_name}",
+      confirmed_by: Current.user,
+      confirmation_date: Date.today).tap { |p| p.amount = p.expected_amount }
+
+    if @payment.save
+      redirect_back_or_to @billing_cycle, notice: "Marked as Paid for #{user.full_name}"
+    else
+      redirect_back_or_to @billing_cycle, alert: "Couldn't mark as paid."
+    end
+  end
+
   def update
     if @payment.update(payment_params)
       redirect_to @payment, notice: "Payment updated successfully!"
@@ -106,6 +126,12 @@ class PaymentsController < ApplicationController
   def authorize_payment_modification
     authorize!(:update, @payment) if action_name == "update"
     authorize!(:destroy, @payment) if action_name == "destroy"
+  end
+
+  def authorize_billing_cycle_management
+    return true if @billing_cycle.project&.is_owner?(Current.user)
+
+    redirect_back_or_to @billing_cycle, alert: "You are not authorized to update this resource"
   end
 
   def payment_params

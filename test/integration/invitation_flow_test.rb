@@ -279,7 +279,7 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "cannot invite project owner" do
@@ -294,7 +294,7 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
     test "cannot invite existing member" do
@@ -312,7 +312,7 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "email validation during invitation creation" do
@@ -327,7 +327,7 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
         }
       }, headers: { "Accept" => "application/json" }
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
 
     # Test email without proper domain
     assert_no_difference "Invitation.count" do
@@ -338,7 +338,7 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
         }
       }, headers: { "Accept" => "application/json" }
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
 
     # Test valid email
     assert_difference "Invitation.count", 1 do
@@ -387,7 +387,7 @@ class InvitationFlowTest < ActionDispatch::IntegrationTest
     end
 
     # Should return unprocessable entity for existing user
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "link only invitation requires email verification" do

@@ -148,7 +148,7 @@ class DashboardController < ApplicationController
       total_amount_paid: Current.user.payments.confirmed.sum(:amount),
       upcoming_due_soon: BillingCycle.joins(:project)
                                     .where(project_id: all_project_ids)
-                                    .due_soon(7)
+                                    .due_soon
                                     .count
     }
   end

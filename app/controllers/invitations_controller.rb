@@ -44,7 +44,7 @@ class InvitationsController < ApplicationController
         format.json do
           render json: {
             errors: @invitation.errors.full_messages
-          }, status: :unprocessable_entity
+          }, status: :unprocessable_content
         end
         format.html do
           redirect_back(fallback_location: project_path(@project),
@@ -78,7 +78,7 @@ class InvitationsController < ApplicationController
         format.json do
           render json: {
             error: "Cannot send email: no email address provided"
-          }, status: :unprocessable_entity
+          }, status: :unprocessable_content
         end
         format.html do
           redirect_back(fallback_location: project_path(@project),
@@ -118,7 +118,7 @@ class InvitationsController < ApplicationController
         format.json do
           render json: {
             errors: @invitation.errors.full_messages
-          }, status: :unprocessable_entity
+          }, status: :unprocessable_content
         end
         format.html do
           redirect_back(fallback_location: project_path(@project),
@@ -255,7 +255,7 @@ class InvitationsController < ApplicationController
                user_email: @invitation.email,
                errors: { email: [ "An account with this email already exists. Please sign in instead." ] }
              },
-             status: :unprocessable_entity
+             status: :unprocessable_content
       return
     end
 
@@ -270,7 +270,7 @@ class InvitationsController < ApplicationController
                  user_email: @invitation.email,
                  errors: { email: [ "An account with this email already exists. Please sign in instead." ] }
                },
-               status: :unprocessable_entity
+               status: :unprocessable_content
         return
       end
 
@@ -313,7 +313,7 @@ class InvitationsController < ApplicationController
                      user_email: @invitation.email,
                      errors: { message: "Unable to accept invitation. Please try again." }
                    },
-                   status: :unprocessable_entity
+                   status: :unprocessable_content
           end
         end
       else
@@ -326,7 +326,7 @@ class InvitationsController < ApplicationController
                  user_email: @invitation.email,
                  errors: user.errors.as_json
                },
-               status: :unprocessable_entity
+               status: :unprocessable_content
       end
     rescue ActiveRecord::RecordNotUnique => e
       Rails.logger.error "RecordNotUnique error: #{e.message}"
@@ -337,7 +337,7 @@ class InvitationsController < ApplicationController
                user_email: @invitation.email,
                errors: { email: [ "An account with this email already exists. Please contact the project owner." ] }
              },
-             status: :unprocessable_entity
+             status: :unprocessable_content
     rescue ActiveRecord::StatementInvalid => e
       Rails.logger.error "StatementInvalid error: #{e.message}"
       if e.message.include?("UNIQUE constraint failed") || e.message.include?("duplicate key")
@@ -348,7 +348,7 @@ class InvitationsController < ApplicationController
                  user_email: @invitation.email,
                  errors: { email: [ "An account with this email already exists. Please contact the project owner." ] }
                },
-               status: :unprocessable_entity
+               status: :unprocessable_content
       else
         render inertia: "invitations/confirm",
                props: {
@@ -357,7 +357,7 @@ class InvitationsController < ApplicationController
                  user_email: @invitation.email,
                  errors: { message: "Something went wrong while creating your account. Please try again or contact support." }
                },
-               status: :unprocessable_entity
+               status: :unprocessable_content
       end
     rescue StandardError => e
       Rails.logger.error "Error in invitation confirmation: #{e.class.name} - #{e.message}"
@@ -369,7 +369,7 @@ class InvitationsController < ApplicationController
                user_email: @invitation.email,
                errors: { message: "Something went wrong while creating your account. Please try again or contact support." }
              },
-             status: :unprocessable_entity
+             status: :unprocessable_content
     end
   end
 

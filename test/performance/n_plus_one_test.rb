@@ -76,11 +76,8 @@ class NPlusOneTest < ActiveSupport::TestCase
 
     # Test the optimized billing cycle stats
     assert_queries(2) do # Should be minimal queries with includes
-      all_cycles = @project.billing_cycles
-      active_cycles = all_cycles.upcoming
-
       # Use the optimized version with includes
-      active_cycles_with_payments = active_cycles.includes(:payments)
+      active_cycles_with_payments = @project.billing_cycles.includes(:payments)
 
       # These should not trigger additional queries
       active_cycles_with_payments.each do |cycle|
