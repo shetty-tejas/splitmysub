@@ -12,25 +12,19 @@ class BillingCycle < ApplicationRecord
   validate :due_date_cannot_be_in_past, on: :create
 
   # Basic scopes (without hardcoded business logic)
-  scope :upcoming, -> { where(due_date: Date.current...) }
-  scope :overdue, -> { where(due_date: ...Date.current) }
+  scope :upcoming, ->(days = BillingConfig.current.due_soon_days) { where(due_date: Date.today..days.days.from_now) }
+  scope :overdue, -> do
+    where(due_date: ...Date.today)
+      .where("total_amount > (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE billing_cycle_id = billing_cycles.id AND status = 'confirmed')")
+  end
+  scope :archivable, -> { where("due_date < ? AND archived = false", BillingConfig.current.archiving_cutoff_date) }
+
   scope :for_project, ->(project) { where(project: project) }
   scope :by_currency, ->(currency) { joins(:project).where(projects: { currency: currency }) }
   scope :with_payments, -> { joins(:payments).distinct }
   scope :without_payments, -> { left_joins(:payments).where(payments: { id: nil }) }
   scope :archived, -> { where(archived: true) }
   scope :active, -> { where(archived: false) }
-
-  # Class methods to replace removed scopes with configurable values
-  def self.due_soon(days = nil)
-    threshold_days = days || BillingConfig.current.due_soon_days
-    where(due_date: Date.today..threshold_days.days.from_now)
-  end
-
-  def self.archivable
-    config = BillingConfig.current
-    where("due_date < ? AND archived = ?", config.archiving_cutoff_date, false)
-  end
 
   # Simple status methods
   def overdue?
@@ -209,20 +203,8 @@ class BillingCycle < ApplicationRecord
     Date.new(cycle_year, cycle_month).strftime("%B %Y")
   end
 
-  def self.for_month_year(month, year)
-    # Since cycle_month and cycle_year are now virtual, we need to filter by due_date
-    start_date = Date.new(year, month, 1)
-    end_date = start_date.end_of_month
-    where(due_date: start_date..end_date)
-  end
-
-  def self.overdue
-    where(due_date: ...Date.today)
-      .where("total_amount > (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE billing_cycle_id = billing_cycles.id and status = 'confirmed')")
-  end
-
-  def self.upcoming(days = BillingConfig.current.due_soon_days)
-    where(due_date: Date.today..(Date.today+days.days))
+  class << self
+    alias due_soon upcoming
   end
 
   private

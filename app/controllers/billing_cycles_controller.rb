@@ -20,7 +20,7 @@ class BillingCyclesController < ApplicationController
     @billing_cycles = @billing_cycles.upcoming if params[:filter] == "upcoming"
     @billing_cycles = @billing_cycles.overdue if params[:filter] == "overdue"
     if params[:filter] == "due_soon"
-      days = params[:days]&.to_i || 7
+      days = params[:days]&.to_i || BillingConfig.current.due_soon_days
       @billing_cycles = @billing_cycles.where(id: BillingCycle.due_soon(days).pluck(:id))
     end
 

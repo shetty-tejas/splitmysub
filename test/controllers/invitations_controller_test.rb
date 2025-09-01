@@ -68,7 +68,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     json_response = JSON.parse(response.body)
     assert json_response["errors"].present?
   end
@@ -83,7 +83,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     json_response = JSON.parse(response.body)
     assert json_response["errors"].present?
   end
@@ -98,7 +98,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     json_response = JSON.parse(response.body)
     assert json_response["errors"].present?
   end
@@ -115,7 +115,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     json_response = JSON.parse(response.body)
     assert json_response["errors"].present?
   end
@@ -163,7 +163,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       invitation: { email: "invalid-email" }
     }, headers: { "Accept" => "application/json" }
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     json_response = JSON.parse(response.body)
     assert_includes json_response["errors"], "Email must be a valid email address with a proper domain"
   end
@@ -189,7 +189,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
            headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     json_response = JSON.parse(response.body)
     assert_equal "Cannot send email: no email address provided", json_response["error"]
   end
@@ -326,7 +326,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "should not confirm expired invitation" do
@@ -355,7 +355,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   # Decline tests
@@ -441,7 +441,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     json_response = JSON.parse(response.body)
     assert json_response["errors"].present?
   end
@@ -456,7 +456,7 @@ class InvitationsControllerTest < ActionDispatch::IntegrationTest
       }, headers: { "Accept" => "application/json" }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     json_response = JSON.parse(response.body)
     assert json_response["errors"].present?
   end

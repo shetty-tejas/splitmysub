@@ -75,10 +75,12 @@ class PaymentsController < ApplicationController
     return redirect_back_or_to @billing_cycle, alert: "User not found." unless user
     return redirect_back_or_to @billing_cycle, alert: "User has already paid." if @billing_cycle.user_successfully_paid?(user)
 
-    @payment = @billing_cycle.payments.build(user:, status: "confirmed", notes: "Marked as Paid by #{Current.user.full_name}",
-                                             confirmed_by: Current.user, confirmation_date: Date.today).tap do |p|
-                                             p.amount = p.expected_amount
-               end
+    @payment = @billing_cycle.payments.build(
+      user:,
+      status: "confirmed",
+      notes: "Marked as Paid by #{Current.user.full_name}",
+      confirmed_by: Current.user,
+      confirmation_date: Date.today).tap { |p| p.amount = p.expected_amount }
 
     if @payment.save
       redirect_back_or_to @billing_cycle, notice: "Marked as Paid for #{user.full_name}"
