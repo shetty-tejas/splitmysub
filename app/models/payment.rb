@@ -4,13 +4,12 @@ class Payment < ApplicationRecord
   belongs_to :billing_cycle
   belongs_to :user
   belongs_to :confirmed_by, class_name: "User", optional: true
-  has_many_attached :evidence_files
 
   # ActiveStorage for payment evidence
   has_one_attached :evidence
 
   # File validations for evidence
-  validate :evidence_validation, if: -> { evidence.attached? }
+  validate :evidence_has_acceptable_file_type_and_size, if: :has_evidence?
 
   # Validations
   validates :amount, presence: true, numericality: { greater_than: 0 }
@@ -31,8 +30,10 @@ class Payment < ApplicationRecord
   validate :amount_within_expected_range
 
   # Callbacks
-  after_update :send_confirmation_email, if: :saved_change_to_status?
-  after_update :track_status_change, if: :saved_change_to_status?
+  after_create_commit :trigger_auto_approval, if: :has_evidence?
+
+  after_update_commit :send_confirmation_email, if: :saved_change_to_status?
+  after_update_commit :track_status_change, if: :saved_change_to_status?
 
   # Scopes for common queries
   scope :pending, -> { where(status: "pending") }
@@ -133,20 +134,14 @@ class Payment < ApplicationRecord
   end
 
   def overpaid?
-    return false unless amount
-
     amount > expected_amount
   end
 
   def underpaid?
-    return false unless amount
-
     amount < expected_amount
   end
 
   def correct_amount?
-    return false unless amount
-
     amount == expected_amount
   end
 
@@ -203,8 +198,8 @@ class Payment < ApplicationRecord
 
   private
 
-  def evidence_validation
-    return unless evidence.attached?
+  def evidence_has_acceptable_file_type_and_size
+    return unless has_evidence?
 
     # Validate file type
     allowed_types = %w[image/png image/jpg image/jpeg image/heic application/pdf]
@@ -225,6 +220,10 @@ class Payment < ApplicationRecord
     if amount > expected * 2 # Allow up to 2x expected (for covering others)
       errors.add(:amount, "cannot exceed #{expected * 2} (2x the expected amount)")
     end
+  end
+
+  def trigger_auto_approval
+    # TODO: Perform a job.
   end
 
   def send_confirmation_email
@@ -248,10 +247,6 @@ class Payment < ApplicationRecord
     # Use update_column to avoid triggering callbacks again
     update_column(:status_history, current_history + [ change_record ])
   end
-
-
-
-
 
   def status_changed_from_pending_to_confirmed?
     status_was == "pending" && status == "confirmed"

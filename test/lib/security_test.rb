@@ -65,8 +65,7 @@ class SecurityTest < ActiveSupport::TestCase
 
     # Test that file validation is in place (this would be in the models)
     # We'll test this indirectly by checking if the Payment model has validations
-    payment = Payment.new
-    assert payment.respond_to?(:evidence_validation, true)
+    assert Payment.new.respond_to?(:evidence_has_acceptable_file_type_and_size, true)
   end
 
     test "file type validation constants" do
